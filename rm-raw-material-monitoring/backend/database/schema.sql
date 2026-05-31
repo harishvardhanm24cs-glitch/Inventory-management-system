@@ -1,0 +1,11 @@
+-- Initial Schema for Raw Material Monitoring System (rm_monitor)
+
+CREATE TABLE IF NOT EXISTS materials (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  quantity DECIMAL(10, 2) NOT NULL,
+  unit VARCHAR(50) DEFAULT 'kg',
+  batch_number VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

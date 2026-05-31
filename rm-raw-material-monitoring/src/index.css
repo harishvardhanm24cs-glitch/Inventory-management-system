@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  
+  --color-primary: #4F8CFF;
+  --color-primary-hover: #3B82F6;
+  --color-bg-main: #F4F7FB;
+  --color-card: #FFFFFF;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-text-main: #374151;
+  --color-text-muted: #6B7280;
+
+  --shadow-saas: 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-saas-hover: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+@layer base {
+  :root {
+    --primary: 221 100% 65%; /* #4F8CFF */
+    --background: 214 32% 97%; /* #F4F7FB */
+    --foreground: 215 25% 27%;
+    --card: 0 0% 100%;
+    --border: 214 32% 91%;
+    --radius: 12px;
+  }
+
+  body {
+    @apply bg-bg-main text-text-main font-sans antialiased;
+    background-image: none; /* Remove previous mesh gradients */
+  }
+}
+
+@layer components {
+  .saas-card {
+    @apply bg-card rounded-xl border border-slate-200/50 shadow-saas transition-all duration-200 hover:shadow-saas-hover hover:-translate-y-1;
+  }
+
+  .saas-button {
+    @apply bg-primary text-white rounded-xl px-5 py-2.5 font-semibold shadow-sm transition-all duration-200 hover:bg-primary-hover hover:shadow-md active:scale-95 flex items-center justify-center gap-2;
+  }
+
+  .saas-sidebar-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200;
+  }
+
+  .saas-sidebar-item-active {
+    @apply bg-[#F0F7FF] text-primary font-bold shadow-sm;
+  }
+
+  .saas-sidebar-item-inactive {
+    @apply text-text-muted hover:bg-slate-50 hover:text-text-main;
+  }
+
+  .icon-container {
+    @apply w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200;
+  }
+  
+  /* Standard Table Design */
+  .saas-table {
+    @apply w-full border-separate border-spacing-0;
+  }
+
+  .saas-table th {
+    @apply py-4 px-6 text-left text-[11px] font-black uppercase tracking-widest text-text-muted border-b border-slate-100;
+  }
+
+  .saas-table td {
+    @apply py-5 px-6 text-sm text-text-main border-b border-slate-50;
+  }
+
+  .saas-table tr:nth-child(even) td {
+    @apply bg-slate-50/30;
+  }
+
+  .saas-table tr:hover td {
+    @apply bg-slate-50/80;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-saas-fade {
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 rounded-full hover:bg-slate-300 transition-colors border-2 border-bg-main bg-clip-padding;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-area, #print-area * {
+    visibility: visible;
+  }
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    background: white !important;
+    margin: 0;
+    padding: 0;
+  }
+}

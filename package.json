@@ -1,0 +1,19 @@
+{
+  "name": "rm-raw-material-monitoring-fullstack",
+  "version": "1.0.0",
+  "description": "Full-stack inventory monitoring system",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd rm-raw-material-monitoring && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "install:all": "npm install && cd rm-raw-material-monitoring && npm install && cd ../backend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "mongodb": "^7.1.1",
+    "qrcode": "^1.5.4"
+  }
+}
