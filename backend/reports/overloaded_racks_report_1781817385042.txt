@@ -1,0 +1,17 @@
+======================================================================
+RACK OVERLOAD AUDIT REPORT
+Generated on: 19/6/2026, 2:46:25 am
+======================================================================
+
+ALERT: Detected 1 overloaded rack capacity discrepancies!
+
+--- DETAILED INVENTORY SHELF OVERLOADS ---
+Rack Code          : A5
+Material Assigned  : E2E-TEST-MAT-622758
+Current Capacity   : 120.00 KG (Inventory: 120.00 KG)
+Max Capacity Limit : 100.00 KG
+Excess Load        : 20.00 KG
+Occupancy %        : 120.00%
+--------------------------------------------------
+
+STATUS: Report generated only. No database modifications were performed (run with --repair to fix).

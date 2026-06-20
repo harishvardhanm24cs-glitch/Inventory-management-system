@@ -101,6 +101,19 @@ export const initDB = async () => {
             await connection.query('ALTER TABLE scan_logs ADD COLUMN location VARCHAR(100) AFTER batch_number');
         }
 
+        // 6. Material Movements Table (Phase 4 Step 1)
+        await connection.query(`
+            CREATE TABLE IF NOT EXISTS material_movements (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                barcode_id VARCHAR(50) NOT NULL,
+                material_name VARCHAR(255),
+                source_location VARCHAR(100),
+                destination_location VARCHAR(100),
+                movement_type VARCHAR(50),
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
         connection.release();
         console.log('Phase 2: Industrial Tables Created Successfully.');
     } catch (err: any) {

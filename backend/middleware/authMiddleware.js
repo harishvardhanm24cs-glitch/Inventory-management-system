@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import db from '../config/db.js';
 
 dotenv.config();
 
@@ -17,6 +18,22 @@ export const protect = async (req, res, next) => {
 
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'rm_secret_key');
+
+      // Fetch user from DB to get the current role
+      const [users] = await db.query('SELECT role FROM users WHERE id = ?', [decoded.id]);
+      const databaseRole = users.length > 0 ? users[0].role : null;
+      req.databaseRole = databaseRole;
+
+      const currentTokenRole = decoded.role;
+
+      // If role was changed in database: force logout and require reauthentication.
+      if (databaseRole && databaseRole !== currentTokenRole) {
+        console.log(`[AUTH DEBUG] Role mismatch! Token role: '${currentTokenRole}', Database role: '${databaseRole}'. Forcing logout.`);
+        return res.status(401).json({
+          status: 'error',
+          message: 'Not authorized, role has changed. Please log in again.'
+        });
+      }
 
       // Attach user details to request object
       req.user = decoded;
@@ -41,14 +58,26 @@ export const protect = async (req, res, next) => {
 
 /**
  * Middleware to authorize specific user roles.
- * @param {...string} roles - Array of permitted roles (e.g. 'manager', 'worker')
+ * @param {...string} roles - Array of permitted roles (e.g. 'manager', 'worker', 'admin')
  */
 export const authorize = (...roles) => {
   return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.role)) {
+    const currentTokenRole = req.user ? req.user.role : 'unknown';
+    const databaseRole = req.databaseRole || currentTokenRole;
+
+    console.log(`[AUTH DEBUG] req.user:`, req.user);
+    console.log(`[AUTH DEBUG] req.user.role:`, currentTokenRole);
+    console.log(`[AUTH DEBUG] requiredRole:`, roles);
+    console.log(`[AUTH DEBUG] current token role:`, currentTokenRole);
+    console.log(`[AUTH DEBUG] database role:`, databaseRole);
+
+    const isAllowed = req.user && roles.includes(currentTokenRole);
+    console.log(`[AUTH DEBUG] authorization decision:`, isAllowed ? 'ALLOWED' : 'DENIED');
+
+    if (!isAllowed) {
       return res.status(403).json({
         status: 'error',
-        message: `Forbidden: role '${req.user?.role || 'unknown'}' is not allowed to access this resource`
+        message: `Forbidden: role '${currentTokenRole}' is not allowed to access this resource`
       });
     }
     next();
@@ -56,6 +85,6 @@ export const authorize = (...roles) => {
 };
 
 // Role check aliases
-export const managerOnly = authorize('manager');
+export const managerOnly = authorize('manager', 'admin');
 export const workerOnly = authorize('worker');
-export const anyRole = authorize('manager', 'worker');
+export const anyRole = authorize('manager', 'worker', 'admin');

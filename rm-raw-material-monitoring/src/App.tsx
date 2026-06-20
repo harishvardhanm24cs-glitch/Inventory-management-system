@@ -8,7 +8,6 @@ import WarehouseTwin from './pages/WarehouseTwin';
 import RackView from './pages/RackView';
 import Alerts from './pages/Alerts';
 import Analytics from './pages/Analytics';
-import { BarcodeRegistry } from './pages/BarcodeRegistry';
 import BatchInventory from './pages/BatchInventory';
 import { CreateBarcode } from './pages/CreateBarcode';
 import IoTConsole from './pages/IoTConsole';
@@ -19,9 +18,19 @@ import SubstitutionManager from './pages/SubstitutionManager';
 import Transactions from './pages/Transactions';
 import UserGuide from './pages/UserGuide';
 import Scanner from './pages/Scanner';
+import OutwardScanner from './pages/OutwardScanner';
+import BulkQRGenerator from './pages/BulkQRGenerator';
+import QRRegistry from './pages/QRRegistry';
+import QRHistory from './pages/QRHistory';
+import AIInsights from './pages/AIInsights';
+import Reports from './pages/Reports';
+import ManagerDashboard from './pages/ManagerDashboard';
+import QRTraceability from './pages/QRTraceability';
+import HealthDashboard from './pages/HealthDashboard';
+import TestCenter from './pages/TestCenter';
+import AuditLog from './pages/AuditLog';
 import DashboardLayout from './components/layout/DashboardLayout';
 import AuthLayout from './components/layout/AuthLayout';
-import { InventoryProvider } from './context/InventoryContext';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { Toaster } from 'react-hot-toast';
@@ -32,8 +41,7 @@ function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <InventoryProvider>
-          <Router>
+        <Router>
             <Toaster position="top-right" />
             <BackendStatus />
             <Routes>
@@ -62,6 +70,10 @@ function App() {
                 <Route path="/scan" element={<ScanPage />} />
                 <Route path="/remove-rm" element={<ScanPage />} />
                 <Route path="/scanner" element={<Scanner />} />
+                <Route path="/outward-scanner" element={<OutwardScanner />} />
+                <Route path="/bulk-qr" element={<BulkQRGenerator />} />
+                <Route path="/qr-registry" element={<QRRegistry />} />
+                <Route path="/qr-history" element={<QRHistory />} />
                 <Route path="/warehouse" element={<WarehouseTwin />} />
                 <Route path="/map" element={<RackView />} />
                 <Route path="/batches" element={<BatchInventory />} />
@@ -70,13 +82,19 @@ function App() {
                 <Route path="/iota-console" element={<Navigate to="/iot-console" replace />} />
                 <Route path="/substitutes" element={<SubstitutionManager />} />
                 <Route path="/create-barcode" element={<CreateBarcode />} />
-                <Route path="/barcode-registry" element={<BarcodeRegistry />} />
                 <Route path="/analytics" element={<Analytics />} />
+                <Route path="/ai-insights" element={<AIInsights />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/manager-dashboard" element={<ManagerDashboard />} />
+                <Route path="/qr-traceability" element={<QRTraceability />} />
                 <Route path="/alerts" element={<Alerts />} />
                 <Route path="/transactions" element={<Transactions />} />
+                <Route path="/audit" element={<AuditLog />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/guide" element={<UserGuide />} />
+                <Route path="/health" element={<HealthDashboard />} />
+                <Route path="/tests" element={<TestCenter />} />
                 
                 {/* Fallback Route inside Layout */}
                 <Route path="*" element={
@@ -87,7 +105,6 @@ function App() {
               </Route>
             </Routes>
           </Router>
-        </InventoryProvider>
       </ThemeProvider>
     </AuthProvider>
   );

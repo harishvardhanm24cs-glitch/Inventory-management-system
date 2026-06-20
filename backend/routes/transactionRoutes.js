@@ -9,9 +9,11 @@ const router = express.Router();
 router.get('/', protect, anyRole, async (req, res, next) => {
   try {
     const [transactions] = await db.query(
-      `SELECT t.id, t.transaction_type, t.quantity, t.created_at, m.material_name, m.barcode, m.batch_number, m.id as material_id
+      `SELECT t.id, t.transaction_type, t.quantity, t.created_at, m.material_name, m.barcode, m.batch_number, m.id as material_id, r.rack_code, u.name AS user_name
        FROM transactions t 
        JOIN materials m ON t.material_id = m.id 
+       LEFT JOIN racks r ON r.material_name = m.material_name
+       LEFT JOIN users u ON t.user_id = u.id
        ORDER BY t.created_at DESC`
     );
     

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Plus, Package, QrCode, Upload, FileSpreadsheet, CheckCircle2, AlertTriangle, RefreshCw, Printer } from 'lucide-react';
 import { generateQRCode } from '../../lib/qrcode';
 import api from '../../services/api';
+import { useInventory } from '../../context/InventoryContext';
 
 interface AddMaterialModalProps {
     isOpen: boolean;
@@ -9,6 +10,7 @@ interface AddMaterialModalProps {
 }
 
 const AddMaterialModal: React.FC<AddMaterialModalProps> = ({ isOpen, onClose }) => {
+    const { refreshData } = useInventory();
     const [formData, setFormData] = useState({
         name: '',
         stock: 0,
@@ -55,6 +57,7 @@ const AddMaterialModal: React.FC<AddMaterialModalProps> = ({ isOpen, onClose }) 
             };
 
             await api.createMaterial(materialData);
+            await refreshData();
 
             onClose();
             // Reset form

@@ -14,6 +14,15 @@ import transactionRoutes from './routes/transactionRoutes.js';
 import rackRoutes from './routes/rackRoutes.js';
 import qrRoutes from './routes/qrRoutes.js';
 import scannerRoutes from './routes/scannerRoutes.js';
+import warehouseRoutes from './routes/warehouseRoutes.js';
+import digitalTwinRoutes from './routes/digitalTwinRoutes.js';
+import rackInventoryRoutes from './routes/rackInventoryRoutes.js';
+import materialLocatorRoutes from './routes/materialLocatorRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
+import reportRoutes from './routes/reportRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
+import movementRoutes from './routes/movementRoutes.js';
+import auditLogRoutes from './routes/auditLogRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,6 +49,16 @@ console.log('uploads folder detected');
 // Statically serve uploads folder (placed BEFORE all routes)
 app.use('/uploads', express.static(uploadsPath));
 console.log('static route active');
+
+// Ensure reports folder exists directly inside backend root
+const reportsPath = path.join(__dirname, 'reports');
+if (!fs.existsSync(reportsPath)) {
+  fs.mkdirSync(reportsPath, { recursive: true });
+}
+
+// Statically serve reports folder
+app.use('/reports', express.static(reportsPath));
+console.log('reports static route active');
 
 // Fallback handler for missing uploads (placed BEFORE all routes)
 app.use('/uploads', (req, res) => {
@@ -94,7 +113,17 @@ app.use('/api/logs', transactionRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/racks', rackRoutes);
 app.use('/api/generate-qr', qrRoutes);
+app.use('/api/qr', qrRoutes);
 app.use('/api/scanner', scannerRoutes);
+app.use('/api/warehouse', warehouseRoutes);
+app.use('/api/digital-twin', digitalTwinRoutes);
+app.use('/api/rack-inventory', rackInventoryRoutes);
+app.use('/api/material-locator', materialLocatorRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/movements', movementRoutes);
+app.use('/api/audit-logs', auditLogRoutes);
 
 // Catch-all route for unhandled requests (404)
 app.use((req, res, next) => {

@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, getProfile } from '../controllers/authController.js';
+import { register, login, getProfile, logout } from '../controllers/authController.js';
 import { protect, managerOnly, workerOnly } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -14,6 +14,9 @@ router.post('/login', login);
 // Protected routes
 // GET /api/auth/profile
 router.get('/profile', protect, getProfile);
+
+// POST /api/auth/logout
+router.post('/logout', protect, logout);
 
 // Role authorization testing routes
 // GET /api/auth/manager-only

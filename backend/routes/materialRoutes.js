@@ -5,7 +5,9 @@ import {
   createMaterial,
   updateMaterial,
   deleteMaterial,
-  adjustStock
+  adjustStock,
+  searchMaterials,
+  getMaterialPredictions
 } from '../controllers/materialController.js';
 import { protect, managerOnly, anyRole } from '../middleware/authMiddleware.js';
 
@@ -13,7 +15,15 @@ const router = express.Router();
 
 // Get all materials
 // GET /api/materials
-router.get('/', protect, anyRole, getAllMaterials);
+router.get('/', getAllMaterials);
+
+// Get AI stock predictions
+// GET /api/materials/predictions
+router.get('/predictions', protect, anyRole, getMaterialPredictions);
+
+// Search materials
+// GET /api/materials/search
+router.get('/search', protect, anyRole, searchMaterials);
 
 // Get single material by barcode
 // GET /api/materials/:barcode
@@ -29,7 +39,12 @@ router.put('/:id', protect, managerOnly, updateMaterial);
 
 // Delete material
 // DELETE /api/materials/:id
-router.delete('/:id', protect, managerOnly, deleteMaterial);
+router.delete('/:id', protect, managerOnly, async (req, res, next) => {
+  console.log("DELETE USER:", req.user);
+  console.log("DELETE ROLE:", req.user.role);
+  // Forward to controller
+  return deleteMaterial(req, res, next);
+});
 
 // Adjust stock quantity (Inward/Outward transaction log)
 // POST /api/materials/:id/stock

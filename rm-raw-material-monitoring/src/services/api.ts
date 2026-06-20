@@ -58,7 +58,7 @@ const mapMaterial = (m: any) => ({
     barcode: m.barcode,
     name: m.material_name,
     category: 'Paint Material',
-    location: 'Warehouse Zone A',
+    location: m.location || 'UNASSIGNED',
     stock: parseFloat(m.quantity) || 0,
     unit: m.unit,
     minLimit: parseFloat(m.threshold_limit) || 0,
@@ -74,6 +74,27 @@ const mapMaterial = (m: any) => ({
     registrationId: m.barcode || '',
     weight: parseFloat(m.quantity) || 0,
 });
+
+// Helper to map backend predictions structure to React Prediction structure
+const mapPrediction = (p: any) => {
+    let riskVal: 'high' | 'medium' | 'stable' = 'stable';
+    if (p.risk) {
+        const r = p.risk.toLowerCase();
+        if (r === 'high') riskVal = 'high';
+        else if (r === 'medium') riskVal = 'medium';
+    }
+
+    return {
+        id: String(p.id),
+        name: p.materialName || p.material_name || '',
+        stock: parseFloat(p.quantity) || parseFloat(p.current_stock) || 0,
+        unit: p.unit || 'KG',
+        avgDailyConsumption: parseFloat(p.dailyRate) || parseFloat(p.avg_daily_usage) || 0,
+        daysRemaining: p.daysUntilReorder !== undefined ? parseInt(p.daysUntilReorder, 10) : (p.days_until_threshold !== undefined ? parseInt(p.days_until_threshold, 10) : 0),
+        recommendedReorder: parseFloat(p.recommendedReorderQty) || parseFloat(p.recommended_reorder_qty) || 0,
+        risk: riskVal,
+    };
+};
 
 // API Service Functions
 export const apiService = {
@@ -124,7 +145,14 @@ export const apiService = {
         try {
             const res: any = await apiClient.get('/materials');
             console.log('[API Success] GET /materials succeeded:', res);
-            const rawMaterials = res.materials || [];
+            let rawMaterials = [];
+            if (res && res.success === true && Array.isArray(res.data)) {
+                rawMaterials = res.data;
+            } else if (res && Array.isArray(res.materials)) {
+                rawMaterials = res.materials;
+            } else {
+                rawMaterials = res.materials || [];
+            }
             return rawMaterials.map(mapMaterial);
         } catch (err: any) {
             console.error('[API Failure] GET /materials failed:', err.message);
@@ -180,9 +208,18 @@ export const apiService = {
                 quantity: parseFloat(String(data.amount)) || 0.00
             };
             const res: any = await apiClient.post(`/materials/${id}/stock`, backendData);
-            console.log('[API Success] POST /materials/' + id + '/stock succeeded:', res);
-            const m = res.material;
-            const t = res.transaction;
+            console.log('[API Success] POST /materials/' + id + '/stock raw response:', JSON.stringify(res));
+
+            // Defensive: res.material and res.transaction may be undefined if backend shape differs
+            const m = res?.material || res?.data?.material || null;
+            const t = res?.transaction || res?.data?.transaction || null;
+
+            if (!m || !t) {
+                // Return a minimal success object so callers don't crash
+                console.warn('[API Warn] updateStock: material or transaction missing in response. Returning raw.');
+                return res;
+            }
+
             return {
                 material: mapMaterial(m),
                 transaction: {
@@ -209,8 +246,15 @@ export const apiService = {
                 threshold_limit: minLimit
             };
             const res: any = await apiClient.put(`/materials/${id}`, backendData);
-            console.log('[API Success] PUT /materials/' + id + ' succeeded:', res);
-            return mapMaterial(res.material);
+            console.log('[API Success] PUT /materials/' + id + ' raw response:', JSON.stringify(res));
+
+            // Defensive: res.material may be undefined if backend shape differs
+            const m = res?.material || res?.data?.material || null;
+            if (!m) {
+                console.warn('[API Warn] updateLimits: material missing in response. Returning raw.');
+                return res;
+            }
+            return mapMaterial(m);
         } catch (err: any) {
             console.error('[API Failure] PUT /materials/' + id + ' failed:', err.message);
             throw err;
@@ -227,11 +271,20 @@ export const apiService = {
             throw err;
         }
     },
-    updateLocation: (id: string, location: any): Promise<any> => Promise.resolve({ success: true }),
+    updateLocation: async (id: string, data: any): Promise<any> => {
+        console.log(`[API Call] PUT /materials/${id} with data:`, data);
+        try {
+            const res: any = await apiClient.put(`/materials/${id}`, data);
+            console.log('[API Success] PUT /materials/' + id + ' succeeded:', res);
+            return res.material || res.data;
+        } catch (err: any) {
+            console.error('[API Failure] PUT /materials/' + id + ' failed:', err.message);
+            throw err;
+        }
+    },
     updateSubstitute: (id: string, substituteId: string | null): Promise<any> => Promise.resolve({ success: true }),
 
     // --- Products ---
-    getProducts: (): Promise<any> => Promise.resolve([]),
     getProduct: (productId: string): Promise<any> => Promise.resolve({}),
     createProduct: (data: any): Promise<any> => Promise.resolve({}),
     bulkCreateProducts: (products: any[]): Promise<any> => Promise.resolve({ success: true }),
@@ -246,13 +299,23 @@ export const apiService = {
             const res: any = await apiClient.get('/alerts');
             console.log('[API Success] GET /alerts succeeded:', res);
             const rawAlerts = res.data || [];
-            return rawAlerts.map((a: any) => ({
-                id: a.id,
-                type: a.alert_status === 'active' ? 'critical' : 'success',
-                title: a.alert_status === 'active' ? 'Low Stock Warning' : 'Resolved Stock Warning',
-                message: a.message,
-                time: a.created_at ? new Date(a.created_at).toLocaleTimeString() : 'Just now',
-            }));
+            return rawAlerts.map((a: any) => {
+                let mappedType = 'SYSTEM_ALERT';
+                if (a.message.includes('Rack Almost Full') || a.message.includes('Almost Full')) {
+                    mappedType = 'RACK_ALMOST_FULL';
+                } else if (a.message.includes('Low Stock Warning') || a.message.includes('Low Stock')) {
+                    mappedType = 'LOW_STOCK_WARNING';
+                }
+                return {
+                    id: a.id,
+                    type: mappedType,
+                    severity: a.alert_status === 'active' ? 'critical' : 'medium',
+                    title: a.alert_status === 'active' ? 'Active Alert' : 'Resolved Alert',
+                    message: a.message,
+                    date: a.created_at,
+                    time: a.created_at ? new Date(a.created_at).toLocaleTimeString() : 'Just now',
+                };
+            });
         } catch (err: any) {
             console.error('[API Failure] GET /alerts failed:', err.message);
             return [];
@@ -270,11 +333,12 @@ export const apiService = {
                 id: String(t.id),
                 materialId: String(t.material_id),
                 materialName: t.material_name || 'Unknown',
+                barcode: t.barcode || '',
                 type: t.transaction_type,
                 quantity: parseFloat(t.quantity) || 0,
                 batchNumber: t.batch_number || '',
-                location: 'Warehouse Zone A',
-                user: 'System Operator',
+                location: t.rack_code || 'Warehouse Zone A',
+                user: t.user_name || 'System Operator',
                 timestamp: t.created_at || new Date().toISOString()
             }));
         } catch (err: any) {
@@ -284,7 +348,120 @@ export const apiService = {
     },
     getAnalytics: (): Promise<any> => Promise.resolve({}),
     getAnomalies: (): Promise<any> => Promise.resolve([]),
-    getPredictions: (): Promise<any> => Promise.resolve([]),
+    getPredictions: async (): Promise<any> => {
+        console.log('[API Call] GET /materials/predictions');
+        try {
+            const res: any = await apiClient.get('/materials/predictions');
+            console.log('[API Success] GET /materials/predictions succeeded:', res);
+            const list = res.data || [];
+            return list.map(mapPrediction);
+        } catch (err: any) {
+            console.error('[API Failure] GET /materials/predictions failed:', err.message);
+            throw err;
+        }
+    },
+    getAiPredictions: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/predictions');
+        try {
+            const res: any = await apiClient.get('/ai/predictions');
+            console.log('[API Success] GET /ai/predictions succeeded:', res);
+            return res.data || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/predictions failed:', err.message);
+            throw err;
+        }
+    },
+    getAiReorderRecommendations: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/reorder-recommendations');
+        try {
+            const res: any = await apiClient.get('/ai/reorder-recommendations');
+            console.log('[API Success] GET /ai/reorder-recommendations succeeded:', res);
+            return res.data || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/reorder-recommendations failed:', err.message);
+            throw err;
+        }
+    },
+    getAiRiskAnalysis: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/risk-analysis');
+        try {
+            const res: any = await apiClient.get('/ai/risk-analysis');
+            console.log('[API Success] GET /ai/risk-analysis succeeded:', res);
+            return res.data || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/risk-analysis failed:', err.message);
+            throw err;
+        }
+    },
+    getRiskAnalysis: async (): Promise<any> => {
+        return apiService.getAiRiskAnalysis();
+    },
+    getAiRecommendations: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/recommendations');
+        try {
+            const res: any = await apiClient.get('/ai/recommendations');
+            console.log('[API Success] GET /ai/recommendations succeeded:', res);
+            return res.data || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/recommendations failed:', err.message);
+            throw err;
+        }
+    },
+    getRackOptimizations: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/rack-optimization');
+        try {
+            const res: any = await apiClient.get('/ai/rack-optimization');
+            console.log('[API Success] GET /ai/rack-optimization succeeded:', res);
+            return res.data || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/rack-optimization failed:', err.message);
+            throw err;
+        }
+    },
+    getAiAlertPrioritization: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/alert-prioritization');
+        try {
+            const res: any = await apiClient.get('/ai/alert-prioritization');
+            console.log('[API Success] GET /ai/alert-prioritization succeeded:', res);
+            return res.data || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/alert-prioritization failed:', err.message);
+            throw err;
+        }
+    },
+    getWarehouseStats: async (): Promise<any> => {
+        console.log('[API Call] GET /warehouse/stats');
+        try {
+            const res = await apiClient.get('/warehouse/stats');
+            console.log('[API Success] GET /warehouse/stats succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /warehouse/stats failed:', err.message);
+            throw err;
+        }
+    },
+    searchMaterials: async (query: string): Promise<any> => {
+        console.log(`[API Call] GET /materials/search with query: ${query}`);
+        try {
+            const res = await apiClient.get(`/materials/search?q=${encodeURIComponent(query)}`);
+            console.log('[API Success] GET /materials/search succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /materials/search failed:', err.message);
+            throw err;
+        }
+    },
+    locateMaterials: async (search: string): Promise<any> => {
+        console.log(`[API Call] GET /material-locator with search term: ${search}`);
+        try {
+            const res = await apiClient.get(`/material-locator?search=${encodeURIComponent(search)}`);
+            console.log('[API Success] GET /material-locator succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /material-locator failed:', err.message);
+            throw err;
+        }
+    },
 
     // --- Barcode Master & Registry ---
     getNextBarcodeId: (): Promise<any> => Promise.resolve({ nextId: 'BAR-' + Date.now() }),
@@ -362,13 +539,13 @@ export const apiService = {
     getQRById: (id: string): Promise<any> => Promise.resolve({}),
     deleteQR: (id: string): Promise<any> => Promise.resolve({ success: true }),
     generateQR: async (data: any): Promise<any> => {
-        console.log('[API Call] POST /generate-qr with:', data);
+        console.log('[API Call] POST /qr/generate with:', data);
         try {
-            const res = await apiClient.post('/generate-qr', data);
-            console.log('[API Success] POST /generate-qr succeeded:', res);
+            const res = await apiClient.post('/qr/generate', data);
+            console.log('[API Success] POST /qr/generate succeeded:', res);
             return res;
         } catch (err: any) {
-            console.error('[API Failure] POST /generate-qr failed:', err.message);
+            console.error('[API Failure] POST /qr/generate failed:', err.message);
             throw err;
         }
     },
@@ -383,6 +560,76 @@ export const apiService = {
             throw err;
         }
     },
+    autoStore: async (data: any): Promise<any> => {
+        console.log('[API Call] POST /scanner/auto-store with:', data);
+        try {
+            const res = await apiClient.post('/scanner/auto-store', data);
+            console.log('[API Success] POST /scanner/auto-store succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /scanner/auto-store failed:', err.message);
+            throw err;
+        }
+    },
+    outwardScan: async (data: { barcode_id: string }): Promise<any> => {
+        console.log('[API Call] POST /scanner/outward with:', data);
+        try {
+            const res = await apiClient.post('/scanner/outward', data);
+            console.log('[API Success] POST /scanner/outward succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /scanner/outward failed:', err.message);
+            throw err;
+        }
+    },
+
+    assignRack: async (data: { material_id: number; quantity: number; rack_code?: string }): Promise<any> => {
+        console.log('[API Call] POST /racks/assign with data:', data);
+        try {
+            const res = await apiClient.post('/racks/assign', data);
+            console.log('[API Success] POST /racks/assign succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /racks/assign failed:', err.message);
+            throw err;
+        }
+    },
+
+    bulkGenerateQR: async (data: { material_name: string; quantity: number; rack_code?: string; units: number }): Promise<any> => {
+        console.log('[API Call] POST /qr/bulk-generate with data:', data);
+        try {
+            const res = await apiClient.post('/qr/bulk-generate', data);
+            console.log('[API Success] POST /qr/bulk-generate succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /qr/bulk-generate failed:', err.message);
+            throw err;
+        }
+    },
+
+    getQrList: async (params?: { q?: string; status?: string; page?: number; limit?: number }): Promise<any> => {
+        console.log('[API Call] GET /qr/list with params:', params);
+        try {
+            const res = await apiClient.get('/qr/list', { params });
+            console.log('[API Success] GET /qr/list succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /qr/list failed:', err.message);
+            throw err;
+        }
+    },
+
+    getQrTrace: async (barcodeId: string): Promise<any> => {
+        console.log(`[API Call] GET /qr/trace/${barcodeId}`);
+        try {
+            const res = await apiClient.get(`/qr/trace/${encodeURIComponent(barcodeId)}`);
+            console.log('[API Success] GET /qr/trace succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /qr/trace failed:', err.message);
+            throw err;
+        }
+    },
 
     // --- Racks ---
     getRacks: async (): Promise<any> => {
@@ -393,6 +640,17 @@ export const apiService = {
             return res;
         } catch (err: any) {
             console.error('[API Failure] GET /racks failed:', err.message);
+            throw err;
+        }
+    },
+    getEmptyRacks: async (): Promise<any> => {
+        console.log('[API Call] GET /racks/empty');
+        try {
+            const res = await apiClient.get('/racks/empty');
+            console.log('[API Success] GET /racks/empty succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /racks/empty failed:', err.message);
             throw err;
         }
     },
@@ -429,6 +687,203 @@ export const apiService = {
             throw err;
         }
     },
+    getDigitalTwin: async (): Promise<any> => {
+        console.log('[API Call] GET /digital-twin');
+        try {
+            const res = await apiClient.get('/digital-twin');
+            console.log('[API Success] GET /digital-twin succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /digital-twin failed:', err.message);
+            throw err;
+        }
+    },
+    getRackInventory: async (): Promise<any> => {
+        console.log('[API Call] GET /rack-inventory');
+        try {
+            const res: any = await apiClient.get('/rack-inventory');
+            console.log('[API Success] GET /rack-inventory succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /rack-inventory failed:', err.message);
+            throw err;
+        }
+    },
+    updateRackInventory: async (rackCode: string, data: { current_capacity?: number; max_capacity?: number }): Promise<any> => {
+        console.log(`[API Call] PUT /rack-inventory/${rackCode}`, data);
+        try {
+            const res: any = await apiClient.put(`/rack-inventory/${rackCode}`, data);
+            console.log('[API Success] PUT /rack-inventory succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] PUT /rack-inventory failed:', err.message);
+            throw err;
+        }
+    },
+    getRackMaterials: async (rackCode: string): Promise<any> => {
+        console.log(`[API Call] GET /racks/${rackCode}/materials`);
+        try {
+            const res: any = await apiClient.get(`/racks/${encodeURIComponent(rackCode)}/materials`);
+            console.log(`[API Success] GET /racks/${rackCode}/materials succeeded:`, res);
+            return res;
+        } catch (err: any) {
+            console.error(`[API Failure] GET /racks/${rackCode}/materials failed:`, err.message);
+            throw err;
+        }
+    },
+    createMovement: async (data: {
+        barcode_id?: string;
+        material_name?: string;
+        source_location: string;
+        destination_location: string;
+        movement_type: 'INWARD' | 'OUTWARD';
+    }): Promise<any> => {
+        console.log('[API Call] POST /movements with:', data);
+        try {
+            const res: any = await apiClient.post('/movements', data);
+            console.log('[API Success] POST /movements succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /movements failed:', err.message);
+            // Non-fatal — don't block the scanner flow
+            return null;
+        }
+    },
+    getMovementsRecent: async (): Promise<any> => {
+        console.log('[API Call] GET /movements/recent');
+        try {
+            const res: any = await apiClient.get('/movements/recent');
+            console.log('[API Success] GET /movements/recent succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /movements/recent failed:', err.message);
+            throw err;
+        }
+    },
+    uploadReport: async (formData: FormData): Promise<any> => {
+        console.log('[API Call] POST /reports/upload');
+        try {
+            const res = await apiClient.post('/reports/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log('[API Success] POST /reports/upload succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /reports/upload failed:', err.message);
+            throw err;
+        }
+    },
+    getReports: async (): Promise<any> => {
+        console.log('[API Call] GET /reports');
+        try {
+            const res = await apiClient.get('/reports');
+            console.log('[API Success] GET /reports succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /reports failed:', err.message);
+            throw err;
+        }
+    },
+    deleteReport: async (filename: string): Promise<any> => {
+        console.log(`[API Call] DELETE /reports/${filename}`);
+        try {
+            const res = await apiClient.delete(`/reports/${filename}`);
+            console.log('[API Success] DELETE /reports succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] DELETE /reports failed:', err.message);
+            throw err;
+        }
+    },
+    getDashboardStats: async (): Promise<any> => {
+        console.log('[API Call] GET /dashboard/stats');
+        try {
+            const res = await apiClient.get('/dashboard/stats');
+            console.log('[API Success] GET /dashboard/stats succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /dashboard/stats failed:', err.message);
+            throw err;
+        }
+    },
+    getQrHistoryList: async (params?: { action?: string; limit?: number; page?: number }): Promise<any> => {
+        console.log('[API Call] GET /qr/history with params:', params);
+        try {
+            const res = await apiClient.get('/qr/history', { params });
+            console.log('[API Success] GET /qr/history succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /qr/history failed:', err.message);
+            throw err;
+        }
+    },
+    getQrBarcodeHistory: async (barcodeId: string): Promise<any> => {
+        console.log(`[API Call] GET /qr/history/${barcodeId}`);
+        try {
+            const res = await apiClient.get(`/qr/history/${encodeURIComponent(barcodeId)}`);
+            console.log('[API Success] GET /qr/history/' + barcodeId + ' succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /qr/history/' + barcodeId + ' failed:', err.message);
+            throw err;
+        }
+    },
+    getReportPdf: async (reportType: string, action: 'preview' | 'download', params?: any): Promise<Blob> => {
+        console.log(`[API Call] GET /reports/${reportType} with action: ${action}`, params);
+        try {
+            const res = await apiClient.get(`/reports/${reportType}`, {
+                params: { ...params, action },
+                responseType: 'blob'
+            });
+            return res as any;
+        } catch (err: any) {
+            console.error(`[API Failure] GET /reports/${reportType} failed:`, err.message);
+            throw err;
+        }
+    },
+    getAuditLogs: async (params?: any): Promise<any> => {
+        console.log('[API Call] GET /audit-logs with params:', params);
+        try {
+            const res = await apiClient.get('/audit-logs', { params });
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /audit-logs failed:', err.message);
+            throw err;
+        }
+    },
+    getRecentAuditLogs: async (limit?: number): Promise<any> => {
+        console.log('[API Call] GET /audit-logs/recent');
+        try {
+            const res = await apiClient.get('/audit-logs/recent', { params: { limit } });
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /audit-logs/recent failed:', err.message);
+            throw err;
+        }
+    },
+    exportAuditLogs: async (params?: any): Promise<any> => {
+        console.log('[API Call] GET /audit-logs/export with params:', params);
+        try {
+            const res = await apiClient.get('/audit-logs/export', { params });
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /audit-logs/export failed:', err.message);
+            throw err;
+        }
+    },
+    getTrafficAnalytics: async (): Promise<any> => {
+        console.log('[API Call] GET /qr/traffic-analytics');
+        try {
+            const res = await apiClient.get('/qr/traffic-analytics');
+            console.log('[API Success] GET /qr/traffic-analytics succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /qr/traffic-analytics failed:', err.message);
+            throw err;
+        }
+    },
     
     // Legacy Aliases
     addInventory: (data: any): Promise<any> => apiService.createMaterial(data),
@@ -443,6 +898,17 @@ export const apiService = {
         const res = await apiClient.delete(url, config);
         return { data: res };
     },
+    updateMaterialLimits: async (id: string, minLimit: number, criticalLimit: number): Promise<any> => {
+        return apiService.updateLimits(id, minLimit, criticalLimit);
+    },
 };
+
+export const getAiPredictions = apiService.getAiPredictions;
+export const getAiReorderRecommendations = apiService.getAiReorderRecommendations;
+export const getAiRiskAnalysis = apiService.getAiRiskAnalysis;
+export const getRackOptimizations = apiService.getRackOptimizations;
+export const getRacks = apiService.getRacks;
+export const getAuditLogs = apiService.getAuditLogs;
+export const exportAuditLogs = apiService.exportAuditLogs;
 
 export default apiService;

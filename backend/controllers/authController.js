@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import db from '../config/db.js';
 import dotenv from 'dotenv';
+import { logAudit } from '../utils/auditLogger.js';
 
 dotenv.config();
 
@@ -114,6 +115,13 @@ export const login = async (req, res, next) => {
     // Generate JWT token
     const token = generateToken(user.id, user.email, user.role);
 
+    // Log user login
+    await logAudit({
+      action_type: 'User Login',
+      user_name: user.name,
+      action_details: `${user.name} logged in successfully`
+    });
+
     res.status(200).json({
       status: 'success',
       message: 'Login successful',
@@ -150,6 +158,31 @@ export const getProfile = async (req, res, next) => {
     res.status(200).json({
       status: 'success',
       user: users[0]
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Logout User
+ * POST /api/auth/logout
+ */
+export const logout = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const [users] = await db.query('SELECT name FROM users WHERE id = ?', [userId]);
+    const userName = users.length > 0 ? users[0].name : 'User';
+
+    await logAudit({
+      action_type: 'User Logout',
+      user_name: userName,
+      action_details: `${userName} logged out of the system`
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Logged out successfully'
     });
   } catch (error) {
     next(error);

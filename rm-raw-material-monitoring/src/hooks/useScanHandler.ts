@@ -47,6 +47,11 @@ export const useScanHandler = () => {
                 toast.success(`Success: Removed ${result.quantity} KG ❌`);
             }
             await refreshData();
+            // Trigger real-time digital twin state refresh
+            window.dispatchEvent(new CustomEvent('rack-inventory-update'));
+            if (typeof (window as any).refreshDigitalTwin === 'function') {
+                (window as any).refreshDigitalTwin();
+            }
             return { success: true, data: response };
         } catch (err: any) {
             toast.error(err.message || "Failed to update inventory");

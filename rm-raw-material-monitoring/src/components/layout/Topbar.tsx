@@ -3,7 +3,7 @@ import { useState } from 'react';
 import NotificationPanel from './NotificationPanel';
 import { useInventory } from '../../context/InventoryContext';
 import { cn } from '../../lib/utils';
-// import { Button } from '../ui/Button';
+import MaterialSearchModal from '../ui/MaterialSearchModal';
 
 interface TopbarProps {
     onMenuClick: () => void;
@@ -17,6 +17,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
     const { profileName, role } = useAuth(); // 'role' is already correctly destructured from useAuth
     const { alerts } = useInventory();
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     const roleLabels: Record<string, string> = {
         store: 'Store Worker',
@@ -44,7 +45,6 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
                             if (path === 'smart-scanner') return 'AI Insights';
                             if (path === 'scanner') return 'Smart Scanner';
                             if (path === 'production-check') return 'Quality Check';
-                            if (path === 'barcode-registry') return 'SKU Registry';
                             if (path === 'remove-rm') return 'Remove RM';
                             return path.replace(/-/g, ' ');
                         })()}
@@ -53,12 +53,16 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <div className="hidden lg:flex items-center bg-white/40 px-4 py-2 rounded-2xl border border-white/40 group focus-within:ring-2 ring-primary/20 transition-all backdrop-blur-md shadow-inner">
-                    <div className="text-slate-400 group-focus-within:text-primary transition-colors"><SearchIcon size={16} /></div>
+                <div 
+                    onClick={() => setIsSearchOpen(true)}
+                    className="hidden lg:flex items-center bg-white/40 px-4 py-2 rounded-2xl border border-white/40 hover:border-slate-300 transition-all backdrop-blur-md shadow-inner cursor-pointer"
+                >
+                    <div className="text-slate-400 group-hover:text-primary transition-colors"><SearchIcon size={16} /></div>
                     <input 
                         type="text" 
+                        readOnly
                         placeholder="Neural search materials..." 
-                        className="bg-transparent border-none outline-none text-[12px] ml-3 w-48 font-bold text-slate-700 placeholder:text-slate-400"
+                        className="bg-transparent border-none outline-none text-[12px] ml-3 w-48 font-bold text-slate-700 placeholder:text-slate-450 cursor-pointer"
                     />
                 </div>
 
@@ -90,6 +94,11 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
                     </div>
                 </div>
             </div>
+
+            <MaterialSearchModal 
+                isOpen={isSearchOpen} 
+                onClose={() => setIsSearchOpen(false)} 
+            />
         </header>
     );
 };

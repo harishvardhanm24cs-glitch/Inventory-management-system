@@ -11,6 +11,7 @@ import autoTable from 'jspdf-autotable';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { Button } from '../components/ui/Button';
 import API from '../services/api';
+import { useInventory } from '../context/InventoryContext';
 
 const StatusBadge = ({ status }: { status: string }) => {
     const styles = {
@@ -39,46 +40,18 @@ const StatusBadge = ({ status }: { status: string }) => {
 };
 
 const Inventory = () => {
-    const [materials, setMaterials] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { materials: contextMaterials, loading, deleteMaterial, lastUpdated, refreshData } = useInventory();
+    const materials = contextMaterials as any[];
     const [searchTerm, setSearchTerm] = useState('');
     const [filterLocation, setFilterLocation] = useState('All');
     const [selectedMaterial, setSelectedMaterial] = useState<{ name: string; id: string; barcode: string } | null>(null);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
 
-    const fetchMaterials = async () => {
-        try {
-            const response = await API.getMaterials();
-            console.log(response);
-            if (response && response.materials) {
-                setMaterials(response.materials);
-            } else if (Array.isArray(response)) {
-                setMaterials(response);
-            } else if (response && response.data) {
-                const data = response.data;
-                if (data.materials) {
-                    setMaterials(data.materials);
-                } else if (Array.isArray(data)) {
-                    setMaterials(data);
-                }
-            }
-        } catch (error) {
-            console.error('Failed to fetch materials:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchMaterials();
-    }, []);
-
     const handleDelete = async (id: string) => {
         if (!window.confirm('Delete this material?')) return;
         try {
-            await API.deleteMaterial(id);
-            setMaterials(prev => prev.filter(m => String(m.id) !== id));
+            await deleteMaterial(id);
         } catch (error) {
             console.error('Failed to delete material:', error);
             alert('Failed to delete material');
@@ -209,9 +182,16 @@ const Inventory = () => {
                         </div>
                     </div>
                     
-                    <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
-                        <Package size={14} className="text-primary" />
-                        {filteredData.length} Live Items
+                    <div className="flex items-center gap-4">
+                        {lastUpdated && (
+                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                                Last Updated: {lastUpdated}
+                            </span>
+                        )}
+                        <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
+                            <Package size={14} className="text-primary" />
+                            {filteredData.length} Live Items
+                        </div>
                     </div>
                 </div>
 
@@ -418,7 +398,7 @@ const Inventory = () => {
             <BulkImportModal
                 isOpen={isBulkModalOpen}
                 onClose={() => setIsBulkModalOpen(false)}
-                onSuccess={() => {}}
+                onSuccess={refreshData}
             />
         </div>
     );

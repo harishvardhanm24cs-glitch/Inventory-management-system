@@ -31,6 +31,9 @@ app.use('/api/scan', require('./routes/scanRoutes'));
 app.use('/api/transactions', require('./routes/transactionRoutes'));
 app.use('/api/alerts', require('./routes/alertRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+app.use('/api/rack-inventory', require('./routes/rackInventoryRoutes'));
+app.use('/api/racks', require('./routes/racksRoutes'));
+
 
 // Serve static uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

@@ -19,6 +19,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Verify SMTP connection configuration on load
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('[Email Service] SMTP Connection Verification Failed:', error);
+  } else {
+    console.log('[Email Service] SMTP Connection Verified Successfully.');
+  }
+});
+
 /**
  * Reusable async function to send alerts.
  * Sends email, manages connection exceptions, handles logging, and returns sending status.
@@ -47,19 +56,19 @@ export const sendEmail = async (to, subject, text) => {
     const info = await transporter.sendMail(mailOptions);
     
     // Log success details securely (does not expose credentials)
-    console.log(`[Email Service] Alert email sent successfully to ${to}. Message ID: ${info.messageId}`);
+    console.log(`[Email Service] Email sent successfully to ${to}. Message ID: ${info.messageId}`);
     
     return {
       success: true,
       messageId: info.messageId,
     };
   } catch (error) {
-    // Log failure details
-    console.error(`[Email Service] Failed to send email to ${to}:`, error.message);
+    // Log failure details with full error stack/information
+    console.error(`[Email Service] Email failed to send to ${to}:`, error);
     
     return {
       success: false,
-      error: error.message,
+      error: error.message || String(error),
     };
   }
 };

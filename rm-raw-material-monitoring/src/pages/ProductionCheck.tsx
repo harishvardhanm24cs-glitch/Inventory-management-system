@@ -15,7 +15,7 @@ import { useInventory } from '../context/InventoryContext';
 import { cn } from '../lib/utils';
 import { Card, CardContent } from '../components/ui/Card';
 
-interface RecipeItem {
+interface MaterialRequirement {
     materialId: string;
     quantityNeeded: number;
     material: {
@@ -33,47 +33,139 @@ interface RecipeItem {
     }
 }
 
-interface Product {
-    productId: string;
+interface MaterialCheck {
+    materialCheckId: string;
     name: string;
-    recipes: RecipeItem[];
+    requirements: MaterialRequirement[];
 }
 
 const ProductionCheck: React.FC = () => {
-    const [products, setProducts] = useState<Product[]>([]);
-    const [selectedProductId, setSelectedProductId] = useState<string>('');
+    const [materialsCheckList, setMaterialsCheckList] = useState<MaterialCheck[]>([]);
+    const [selectedMaterialCheckId, setSelectedMaterialCheckId] = useState<string>('');
     const [plannedQty, setPlannedQty] = useState<number>(1);
     const [loading, setLoading] = useState(true);
-    const { materials } = useInventory();
+    const { materials: contextMaterials } = useInventory();
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        const fetchMaterialsCheck = async () => {
             try {
-                const data = await api.getProducts();
+                const data = await api.getMaterials();
                 if (Array.isArray(data)) {
-                    setProducts(data);
-                    if (data.length > 0) setSelectedProductId(data[0].productId);
+                    const generatedCheckList: MaterialCheck[] = [];
+                    
+                    if (data.length > 0) {
+                        const m1 = data[0];
+                        generatedCheckList.push({
+                            materialCheckId: 'MAT-CHECK-01',
+                            name: `Gloss Finish (${m1.name || m1.material_name || 'Material 1'})`,
+                            requirements: [
+                                {
+                                    materialId: String(m1.id),
+                                    quantityNeeded: 100,
+                                    material: {
+                                        id: String(m1.id),
+                                        name: m1.name || m1.material_name || 'Material 1',
+                                        stock: Number(m1.stock || m1.quantity || 0),
+                                        unit: m1.unit || 'KG',
+                                        substituteId: null,
+                                        substitute: null
+                                    }
+                                }
+                            ]
+                        });
+                    }
+                    
+                    if (data.length > 1) {
+                        const m2 = data[1];
+                        generatedCheckList.push({
+                            materialCheckId: 'MAT-CHECK-02',
+                            name: `Matte Finish (${m2.name || m2.material_name || 'Material 2'})`,
+                            requirements: [
+                                {
+                                    materialId: String(m2.id),
+                                    quantityNeeded: 120,
+                                    material: {
+                                        id: String(m2.id),
+                                        name: m2.name || m2.material_name || 'Material 2',
+                                        stock: Number(m2.stock || m2.quantity || 0),
+                                        unit: m2.unit || 'KG',
+                                        substituteId: null,
+                                        substitute: null
+                                    }
+                                }
+                            ]
+                        });
+                    }
+
+                    if (data.length > 1) {
+                        const m1 = data[0];
+                        const m2 = data[1];
+                        generatedCheckList.push({
+                            materialCheckId: 'MAT-CHECK-03',
+                            name: 'Dual Blend Coating',
+                            requirements: [
+                                {
+                                    materialId: String(m1.id),
+                                    quantityNeeded: 60,
+                                    material: {
+                                        id: String(m1.id),
+                                        name: m1.name || m1.material_name || 'Material 1',
+                                        stock: Number(m1.stock || m1.quantity || 0),
+                                        unit: m1.unit || 'KG',
+                                        substituteId: null,
+                                        substitute: null
+                                    }
+                                },
+                                {
+                                    materialId: String(m2.id),
+                                    quantityNeeded: 50,
+                                    material: {
+                                        id: String(m2.id),
+                                        name: m2.name || m2.material_name || 'Material 2',
+                                        stock: Number(m2.stock || m2.quantity || 0),
+                                        unit: m2.unit || 'KG',
+                                        substituteId: null,
+                                        substitute: null
+                                    }
+                                }
+                            ]
+                        });
+                    }
+
+                    // Fallback check if no materials exist in DB
+                    if (generatedCheckList.length === 0) {
+                        generatedCheckList.push({
+                            materialCheckId: 'MAT-CHECK-FALLBACK',
+                            name: 'Default Paint Mix',
+                            requirements: []
+                        });
+                    }
+
+                    setMaterialsCheckList(generatedCheckList);
+                    if (generatedCheckList.length > 0) {
+                        setSelectedMaterialCheckId(generatedCheckList[0].materialCheckId);
+                    }
                 } else {
-                    console.error("Products API returned non-array data:", data);
-                    setProducts([]);
+                    console.error("Materials API returned non-array data:", data);
+                    setMaterialsCheckList([]);
                 }
             } catch (error) {
-                console.error('Failed to fetch products:', error);
+                console.error('Failed to generate materials check list:', error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchProducts();
+        fetchMaterialsCheck();
     }, []);
 
-    const selectedProduct = products.find(p => p.productId === selectedProductId);
+    const selectedMaterialCheck = materialsCheckList.find(p => p.materialCheckId === selectedMaterialCheckId);
 
     const checkReady = () => {
-        if (!selectedProduct) return { isReady: false, shortages: [] };
+        if (!selectedMaterialCheck) return { isReady: false, shortages: [] };
         
-        const shortages = selectedProduct.recipes.map(recipe => {
-            const totalNeeded = recipe.quantityNeeded * plannedQty;
-            const currentStock = recipe.material.stock;
+        const shortages = selectedMaterialCheck.requirements.map(reqItem => {
+            const totalNeeded = reqItem.quantityNeeded * plannedQty;
+            const currentStock = reqItem.material.stock;
             const isMissing = currentStock < totalNeeded;
             
             // Look for substitute if missing
@@ -81,9 +173,9 @@ const ProductionCheck: React.FC = () => {
             let subName = '';
             let subStock = 0;
 
-            if (isMissing && recipe.material.substituteId) {
+            if (isMissing && reqItem.material.substituteId) {
                 // Check if substitute has enough stock
-                const sub = recipe.material.substitute;
+                const sub = reqItem.material.substitute;
                 if (sub && sub.stock >= (totalNeeded - currentStock)) {
                     substituteAvailable = true;
                     subName = sub.name;
@@ -92,10 +184,10 @@ const ProductionCheck: React.FC = () => {
             }
 
             return {
-                name: recipe.material.name,
+                name: reqItem.material.name,
                 needed: totalNeeded,
                 available: currentStock,
-                unit: recipe.material.unit,
+                unit: reqItem.material.unit,
                 isMissing,
                 substituteAvailable,
                 subName,
@@ -103,7 +195,6 @@ const ProductionCheck: React.FC = () => {
             };
         });
 
-        // Ready if no missing OR if all missing have substitutes (optional: usually we need manual confirmation, but for now we say ready if substitutes cover it)
         const isReady = !shortages.some(s => s.isMissing && !s.substituteAvailable);
         return { isReady, shortages };
     };
@@ -127,16 +218,16 @@ const ProductionCheck: React.FC = () => {
                 <Card className="md:col-span-1 border-none shadow-xl shadow-slate-100 bg-white/50 backdrop-blur-md">
                     <CardContent className="p-6 space-y-6">
                         <div>
-                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Select Product</label>
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Select Formulation</label>
                             <select 
-                                value={selectedProductId}
-                                onChange={(e) => setSelectedProductId(e.target.value)}
+                                value={selectedMaterialCheckId}
+                                onChange={(e) => setSelectedMaterialCheckId(e.target.value)}
                                 className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary/20 transition-all"
                             >
-                                {products.map(p => (
-                                    <option key={p.productId} value={p.productId}>{p.name}</option>
+                                {materialsCheckList.map(p => (
+                                    <option key={p.materialCheckId} value={p.materialCheckId}>{p.name}</option>
                                 ))}
-                                {products.length === 0 && <option disabled>No products found</option>}
+                                {materialsCheckList.length === 0 && <option disabled>No formulations found</option>}
                             </select>
                         </div>
 
@@ -186,7 +277,7 @@ const ProductionCheck: React.FC = () => {
                                 Recipe Breakdown
                             </h3>
                             <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] font-black text-white uppercase italic">
-                                {selectedProduct?.name}
+                                {selectedMaterialCheck?.name}
                             </span>
                         </div>
                         
@@ -231,7 +322,7 @@ const ProductionCheck: React.FC = () => {
                             {shortages.length === 0 && (
                                 <div className="p-12 text-center space-y-3">
                                     <ArrowRightLeft className="mx-auto text-slate-700" size={40} />
-                                    <p className="text-slate-500 font-bold text-sm italic">No recipe found for this product.</p>
+                                    <p className="text-slate-500 font-bold text-sm italic">No recipe found for this formulation.</p>
                                 </div>
                             )}
                         </div>

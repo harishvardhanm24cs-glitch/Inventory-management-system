@@ -276,6 +276,285 @@ app.get('/api/inventory', async (req: any, res: any) => {
     });
 });
 
+const ensureDefaultRacks = async () => {
+    const defaultRacks = [
+      { rack_code: 'A1', zone_name: 'RECEIVING ZONE', max_capacity: 100 },
+      { rack_code: 'A2', zone_name: 'RECEIVING ZONE', max_capacity: 100 },
+      { rack_code: 'A3', zone_name: 'RECEIVING ZONE', max_capacity: 100 },
+      { rack_code: 'A4', zone_name: 'RECEIVING ZONE', max_capacity: 100 },
+      { rack_code: 'B1', zone_name: 'STORAGE ZONE',   max_capacity: 100 },
+      { rack_code: 'B2', zone_name: 'STORAGE ZONE',   max_capacity: 100 },
+      { rack_code: 'B3', zone_name: 'STORAGE ZONE',   max_capacity: 100 },
+      { rack_code: 'B4', zone_name: 'STORAGE ZONE',   max_capacity: 100 },
+      { rack_code: 'C1', zone_name: 'DISPATCH ZONE',  max_capacity: 100 },
+      { rack_code: 'C2', zone_name: 'DISPATCH ZONE',  max_capacity: 100 },
+      { rack_code: 'C3', zone_name: 'DISPATCH ZONE',  max_capacity: 100 },
+      { rack_code: 'C4', zone_name: 'DISPATCH ZONE',  max_capacity: 100 },
+    ];
+
+    for (const rack of defaultRacks) {
+        await pool.query(
+            `INSERT IGNORE INTO rm_system.rack_inventory (rack_code, zone_name, current_capacity, max_capacity, occupancy_percentage)
+             VALUES (?, ?, 0, ?, 0)`,
+            [rack.rack_code, rack.zone_name, rack.max_capacity]
+        );
+    }
+};
+
+// GET /api/rack-inventory
+app.get('/api/rack-inventory', async (req: any, res: any) => {
+    await safeExecute(res, async () => {
+        await ensureDefaultRacks();
+
+        const [racks]: any = await pool.query(
+            `SELECT id, rack_code, zone_name, current_capacity, max_capacity, occupancy_percentage, updated_at FROM rm_system.rack_inventory ORDER BY zone_name, rack_code ASC`
+        );
+
+        const [materials]: any = await pool.query(
+            `SELECT id, rack_code, material_name, quantity, COALESCE(weight, quantity) AS weight, threshold_limit, unit, batch_number, barcode FROM rm_system.materials ORDER BY rack_code, material_name ASC`
+        );
+
+        const materialsByRack = new Map<string, any[]>();
+        for (const mat of materials) {
+            const rackCode = mat.rack_code;
+            if (!rackCode) continue;
+
+            const name = mat.material_name;
+            const quantity = parseFloat(mat.quantity) || 0;
+            const weight = parseFloat(mat.weight) || 0;
+
+            if (quantity < 0 || weight < 0) {
+                console.error(`[VALIDATION ERROR] Negative inventory not allowed for material '${name}' in Rack '${rackCode}': Quantity=${quantity}, Weight=${weight}`);
+                continue;
+            }
+
+            if (!materialsByRack.has(rackCode)) {
+                materialsByRack.set(rackCode, []);
+            }
+
+            const rackMats = materialsByRack.get(rackCode)!;
+            const existing = rackMats.find((m: any) => m.material_name === name);
+
+            if (existing) {
+                console.log(`[VALIDATION MERGE] Duplicate material entry '${name}' in Rack '${rackCode}' merged automatically.`);
+                existing.quantity += quantity;
+                existing.weight += weight;
+                existing.threshold_limit = Math.max(existing.threshold_limit, parseFloat(mat.threshold_limit) || 0);
+            } else {
+                rackMats.push({
+                    id: mat.id,
+                    material_name: name,
+                    quantity,
+                    weight,
+                    threshold_limit: parseFloat(mat.threshold_limit) || 0,
+                    unit: mat.unit || 'KG',
+                    batch_number: mat.batch_number || null,
+                    barcode: mat.barcode || null
+                });
+            }
+        }
+
+        const transformed = racks.map((rack: any) => {
+            const rackCode = rack.rack_code;
+            const rackMats = materialsByRack.get(rackCode) || [];
+
+            const occ = parseFloat(rack.occupancy_percentage) || 0;
+            const currentCap = parseFloat(rack.current_capacity) || 0;
+            const maxCap = parseFloat(rack.max_capacity) || 100;
+
+            if (currentCap > maxCap) {
+                console.error(`[VALIDATION ERROR] Rack ${rackCode} occupancy ${currentCap} KG exceeds max capacity ${maxCap} KG!`);
+            }
+            if (currentCap < 0 || maxCap < 0 || occ < 0) {
+                console.error(`[VALIDATION ERROR] Rack ${rackCode} has negative capacity stats! Current: ${currentCap}, Max: ${maxCap}, Occ: ${occ}%`);
+            }
+
+            let color_status: 'GRAY' | 'GREEN' | 'YELLOW' | 'RED';
+            if (occ === 0)        color_status = 'GRAY';
+            else if (occ <= 40)   color_status = 'GREEN';
+            else if (occ <= 80)   color_status = 'YELLOW';
+            else                  color_status = 'RED';
+
+            return {
+                id: rack.id,
+                rack_code: rackCode,
+                zone_name: rack.zone_name,
+                current_capacity: currentCap,
+                max_capacity: maxCap,
+                occupancy_percentage: occ,
+                color_status,
+                last_updated: rack.updated_at || null,
+                last_scan: null,
+                materials: rackMats
+            };
+        });
+
+        res.status(200).json({
+            success: true,
+            data: transformed
+        });
+    });
+});
+
+// GET /api/rack-inventory/:rackCode
+app.get('/api/rack-inventory/:rackCode', async (req: any, res: any) => {
+    const { rackCode } = req.params;
+    await safeExecute(res, async () => {
+        const [rows]: any = await pool.query(
+            `SELECT id, rack_code, zone_name, current_capacity, max_capacity, occupancy_percentage, updated_at FROM rm_system.rack_inventory WHERE rack_code = ?`,
+            [rackCode]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: `Rack ${rackCode} not found` });
+        }
+
+        const rack = rows[0];
+        const occ = parseFloat(rack.occupancy_percentage) || 0;
+        let color_status: 'GRAY' | 'GREEN' | 'YELLOW' | 'RED';
+        if (occ === 0)        color_status = 'GRAY';
+        else if (occ <= 40)   color_status = 'GREEN';
+        else if (occ <= 80)   color_status = 'YELLOW';
+        else                  color_status = 'RED';
+
+        res.status(200).json({
+            success: true,
+            data: {
+                id: rack.id,
+                rack_code: rack.rack_code,
+                zone_name: rack.zone_name,
+                current_capacity: parseFloat(rack.current_capacity) || 0,
+                max_capacity: parseFloat(rack.max_capacity) || 100,
+                occupancy_percentage: occ,
+                color_status,
+                last_updated: rack.updated_at || null
+            }
+        });
+    });
+});
+
+// PUT /api/rack-inventory/:rackCode
+app.put('/api/rack-inventory/:rackCode', async (req: any, res: any) => {
+    const { rackCode } = req.params;
+    const { current_capacity, max_capacity } = req.body;
+
+    await safeExecute(res, async () => {
+        const [rows]: any = await pool.query(
+            `SELECT id, rack_code, zone_name, current_capacity, max_capacity FROM rm_system.rack_inventory WHERE rack_code = ?`,
+            [rackCode]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: `Rack ${rackCode} not found` });
+        }
+
+        const rack = rows[0];
+        const newCurrent = current_capacity !== undefined ? parseFloat(current_capacity) : parseFloat(rack.current_capacity);
+        const newMax = max_capacity !== undefined ? parseFloat(max_capacity) : parseFloat(rack.max_capacity);
+
+        if (isNaN(newCurrent) || newCurrent < 0 || newCurrent > newMax) {
+            return res.status(400).json({ error: 'current_capacity must be a number between 0 and max_capacity' });
+        }
+
+        const newOcc = newMax > 0 ? parseFloat(((newCurrent / newMax) * 100).toFixed(2)) : 0;
+
+        await pool.query(
+            `UPDATE rm_system.rack_inventory SET current_capacity = ?, max_capacity = ?, occupancy_percentage = ? WHERE rack_code = ?`,
+            [newCurrent, newMax, newOcc, rackCode]
+        );
+
+        let color_status: 'GRAY' | 'GREEN' | 'YELLOW' | 'RED';
+        if (newOcc === 0)        color_status = 'GRAY';
+        else if (newOcc <= 40)   color_status = 'GREEN';
+        else if (newOcc <= 80)   color_status = 'YELLOW';
+        else                     color_status = 'RED';
+
+        res.status(200).json({
+            success: true,
+            data: {
+                id: rack.id,
+                rack_code: rackCode,
+                zone_name: rack.zone_name,
+                current_capacity: newCurrent,
+                max_capacity: newMax,
+                occupancy_percentage: newOcc,
+                color_status
+            }
+        });
+    });
+});
+
+// GET /api/racks/:rackCode/materials
+app.get('/api/racks/:rackCode/materials', async (req: any, res: any) => {
+    const rackCode = req.params.rackCode;
+    await safeExecute(res, async () => {
+        const [rackRows]: any = await pool.query(
+            `SELECT rack_code, occupancy_percentage, current_capacity, max_capacity FROM rm_system.rack_inventory WHERE rack_code = ?`,
+            [rackCode]
+        );
+
+        if (rackRows.length === 0) {
+            return res.status(404).json({ error: `Rack ${rackCode} not found` });
+        }
+
+        const rack = rackRows[0];
+        const currentCap = parseFloat(rack.current_capacity) || 0;
+        const maxCap = parseFloat(rack.max_capacity) || 100;
+        const occ = parseFloat(rack.occupancy_percentage) || 0;
+
+        // 1 & 2. Validation: Occupancy capacity and Negative inventory check
+        if (currentCap > maxCap) {
+            console.error(`[VALIDATION ERROR] Rack ${rackCode} occupancy ${currentCap} KG exceeds max capacity ${maxCap} KG!`);
+        }
+        if (currentCap < 0 || maxCap < 0 || occ < 0) {
+            console.error(`[VALIDATION ERROR] Rack ${rackCode} has negative capacity stats! Current: ${currentCap}, Max: ${maxCap}, Occ: ${occ}%`);
+        }
+
+        const [materialRows]: any = await pool.query(
+            `SELECT material_name, quantity, COALESCE(weight, quantity) AS weight, threshold_limit, unit FROM rm_system.materials WHERE rack_code = ? ORDER BY material_name ASC`,
+            [rackCode]
+        );
+
+        // 3. Validation: Merge duplicate entries & prevent negative inventory
+        const mergedMap = new Map();
+        for (const row of materialRows) {
+            const name = row.material_name;
+            const quantity = parseFloat(row.quantity) || 0;
+            const weight = parseFloat(row.weight) || 0;
+            const threshold = parseFloat(row.threshold_limit) || 0;
+
+            if (quantity < 0 || weight < 0) {
+                console.error(`[VALIDATION ERROR] Negative inventory not allowed for material '${name}' in Rack '${rackCode}': Quantity=${quantity}, Weight=${weight}`);
+                continue; // Skip negative entries
+            }
+
+            if (mergedMap.has(name)) {
+                console.log(`[VALIDATION MERGE] Duplicate material entry '${name}' in Rack '${rackCode}' merged automatically.`);
+                const existing = mergedMap.get(name);
+                existing.quantity += quantity;
+                existing.weight += weight;
+                existing.threshold_limit = Math.max(existing.threshold_limit, threshold);
+            } else {
+                mergedMap.set(name, {
+                    material_name: name,
+                    quantity,
+                    weight,
+                    threshold_limit: threshold,
+                    unit: row.unit || 'KG'
+                });
+            }
+        }
+
+        const finalMaterials = Array.from(mergedMap.values());
+
+        res.status(200).json({
+            rack_code: rack.rack_code,
+            occupancy_percentage: occ,
+            materials: finalMaterials
+        });
+    });
+});
+
 // 5. Scanning Engine (Requested Phase 5)
 app.post('/api/scan', async (req: any, res: any) => {
     const { sku_id, weight, type, paint_name, batch_number, location } = req.body;
@@ -306,6 +585,32 @@ app.post('/api/scan', async (req: any, res: any) => {
                 [sku_id, action, amount, batch_number, location]
             );
 
+            // 4. Log Material Movements (Phase 4 Step 1)
+            const finalMaterialName = paint_name || 'Industrial Material';
+            if (action === 'IN') {
+                // Inward Scan: Scanner -> Receiving Zone
+                await connection.query(
+                    `INSERT INTO material_movements (barcode_id, material_name, source_location, destination_location, movement_type)
+                     VALUES (?, ?, ?, ?, ?)`,
+                    [sku_id, finalMaterialName, 'Scanner', 'Receiving Zone', 'INWARD']
+                );
+                // Inward Scan: Receiving Zone -> Rack [location]
+                const destRack = location ? (location.startsWith('Rack') ? location : `Rack ${location}`) : 'Unknown Rack';
+                await connection.query(
+                    `INSERT INTO material_movements (barcode_id, material_name, source_location, destination_location, movement_type)
+                     VALUES (?, ?, ?, ?, ?)`,
+                    [sku_id, finalMaterialName, 'Receiving Zone', destRack, 'INWARD']
+                );
+            } else {
+                // Outward Scan: Rack [location] -> Dispatch Zone
+                const srcRack = location ? (location.startsWith('Rack') ? location : `Rack ${location}`) : 'Unknown Rack';
+                await connection.query(
+                    `INSERT INTO material_movements (barcode_id, material_name, source_location, destination_location, movement_type)
+                     VALUES (?, ?, ?, ?, ?)`,
+                    [sku_id, finalMaterialName, srcRack, 'Dispatch Zone', 'OUTWARD']
+                );
+            }
+
             await connection.commit();
             res.json({ success: true, message: `Successfully processed ${action} for ${sku_id}` });
         } catch (err) {
@@ -314,6 +619,59 @@ app.post('/api/scan', async (req: any, res: any) => {
         } finally {
             connection.release();
         }
+    });
+});
+
+// POST /api/movements — record a single material movement (Phase 4 Step 4)
+app.post('/api/movements', async (req: any, res: any) => {
+    const { barcode_id, material_name, source_location, destination_location, movement_type } = req.body;
+
+    if (!source_location || !destination_location || !movement_type) {
+        return res.status(400).json({ success: false, error: 'source_location, destination_location, and movement_type are required' });
+    }
+
+    await safeExecute(res, async () => {
+        const [result]: any = await pool.query(
+            `INSERT INTO material_movements (barcode_id, material_name, source_location, destination_location, movement_type)
+             VALUES (?, ?, ?, ?, ?)`,
+            [
+                barcode_id || null,
+                material_name || 'Unknown Material',
+                source_location,
+                destination_location,
+                movement_type.toUpperCase()
+            ]
+        );
+        res.json({
+            success: true,
+            message: 'Movement recorded',
+            data: { id: result.insertId, barcode_id, material_name, source_location, destination_location, movement_type }
+        });
+    });
+});
+
+// GET /api/movements
+app.get('/api/movements', async (req: any, res: any) => {
+    await safeExecute(res, async () => {
+        const [rows]: any = await pool.query(
+            `SELECT id, barcode_id, material_name, source_location, destination_location, movement_type, timestamp
+             FROM material_movements
+             ORDER BY timestamp DESC`
+        );
+        res.json({ success: true, data: rows });
+    });
+});
+
+// GET /api/movements/recent
+app.get('/api/movements/recent', async (req: any, res: any) => {
+    await safeExecute(res, async () => {
+        const [rows]: any = await pool.query(
+            `SELECT id, barcode_id, material_name, source_location, destination_location, movement_type, timestamp
+             FROM material_movements
+             ORDER BY timestamp DESC
+             LIMIT 20`
+        );
+        res.json({ success: true, data: rows });
     });
 });
 

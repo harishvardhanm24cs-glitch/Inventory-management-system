@@ -1,30 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Layers, Plus, Trash2, Edit, AlertTriangle, CheckCircle, Info, Database, Percent, ShieldCheck } from 'lucide-react';
+import { Layers, Plus, Trash2, Edit, AlertTriangle, CheckCircle, Info, Database, Percent, ShieldCheck, ArrowDownRight, ArrowUpRight, Bell, Inbox } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import api from '../services/api';
 import { Button } from '../components/ui/Button';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import EmptyState from '../components/ui/EmptyState';
 import { cn } from '../lib/utils';
-
-interface Rack {
-  id: number;
-  rack_code: string;
-  material_name: string | null;
-  batch_number: string | null;
-  quantity: string | number;
-  max_capacity: string | number;
-  threshold_limit: string | number;
-  status: 'healthy' | 'warning' | 'critical' | 'empty';
-  occupancy_percentage: number;
-}
+import { useInventory } from '../context/InventoryContext';
+import type { Rack } from '../context/InventoryContext';
 
 export default function RackView() {
-  const [racks, setRacks] = useState<Rack[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { racks, refreshData, loading, warehouseStats, lastUpdated } = useInventory();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedRack, setSelectedRack] = useState<Rack | null>(null);
+  const [filterMode, setFilterMode] = useState<'all' | 'empty' | 'occupied'>('all');
 
   // Flash animation states
   const [flashingRacks, setFlashingRacks] = useState<Record<string, 'up' | 'down'>>({});
@@ -38,64 +28,40 @@ export default function RackView() {
   const [maxCapacity, setMaxCapacity] = useState('100');
   const [thresholdLimit, setThresholdLimit] = useState('10');
 
-  const fetchRacks = async () => {
-    try {
-      const response = await api.getRacks();
-      let newRacks: Rack[] = [];
-      if (response && response.racks) {
-        newRacks = response.racks;
-      } else if (Array.isArray(response)) {
-        newRacks = response;
-      }
-
-      // Check for quantity changes
-      const flashes: Record<string, 'up' | 'down'> = {};
-      let hasChanges = false;
-      const isFirstLoad = Object.keys(prevQuantitiesRef.current).length === 0;
-
-      newRacks.forEach(rack => {
-        const currentQty = parseFloat(String(rack.quantity)) || 0;
-        if (!isFirstLoad) {
-          const prevQty = prevQuantitiesRef.current[rack.rack_code];
-          if (prevQty !== undefined && prevQty !== currentQty) {
-            flashes[rack.rack_code] = currentQty > prevQty ? 'up' : 'down';
-            hasChanges = true;
-          }
-        }
-        prevQuantitiesRef.current[rack.rack_code] = currentQty;
-      });
-
-      if (hasChanges) {
-        setFlashingRacks(prev => ({ ...prev, ...flashes }));
-        // Clear flashes after 1.5 seconds
-        setTimeout(() => {
-          setFlashingRacks(prev => {
-            const updated = { ...prev };
-            Object.keys(flashes).forEach(code => {
-              delete updated[code];
-            });
-            return updated;
-          });
-        }, 1500);
-      }
-
-      setRacks(newRacks);
-    } catch (err: any) {
-      console.error('Failed to load racks:', err.message);
-      toast.error('Failed to load rack visualization data');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Flash animation trigger on racks update
   useEffect(() => {
-    fetchRacks();
-    const interval = setInterval(() => {
-      fetchRacks();
-    }, 3000); // Poll every 3 seconds
+    if (!racks || racks.length === 0) return;
 
-    return () => clearInterval(interval);
-  }, []);
+    const flashes: Record<string, 'up' | 'down'> = {};
+    let hasChanges = false;
+    const isFirstLoad = Object.keys(prevQuantitiesRef.current).length === 0;
+
+    racks.forEach(rack => {
+      const currentQty = parseFloat(String(rack.quantity)) || 0;
+      if (!isFirstLoad) {
+        const prevQty = prevQuantitiesRef.current[rack.rack_code];
+        if (prevQty !== undefined && prevQty !== currentQty) {
+          flashes[rack.rack_code] = currentQty > prevQty ? 'up' : 'down';
+          hasChanges = true;
+        }
+      }
+      prevQuantitiesRef.current[rack.rack_code] = currentQty;
+    });
+
+    if (hasChanges) {
+      setFlashingRacks(prev => ({ ...prev, ...flashes }));
+      // Clear flashes after 1.5 seconds
+      setTimeout(() => {
+        setFlashingRacks(prev => {
+          const updated = { ...prev };
+          Object.keys(flashes).forEach(code => {
+            delete updated[code];
+          });
+          return updated;
+        });
+      }, 1500);
+    }
+  }, [racks]);
 
   const handleOpenAddModal = () => {
     setRackCode('');
@@ -138,7 +104,7 @@ export default function RackView() {
       if (response.status === 'success') {
         toast.success('Rack created successfully');
         setIsAddModalOpen(false);
-        fetchRacks();
+        refreshData();
       }
     } catch (err: any) {
       toast.error(err.message || 'Failed to create rack');
@@ -162,7 +128,7 @@ export default function RackView() {
       if (response.status === 'success') {
         toast.success('Rack updated successfully');
         setIsEditModalOpen(false);
-        fetchRacks();
+        refreshData();
       }
     } catch (err: any) {
       toast.error(err.message || 'Failed to update rack');
@@ -176,10 +142,48 @@ export default function RackView() {
       const response = await api.deleteRack(String(id));
       if (response.status === 'success') {
         toast.success('Rack deleted successfully');
-        setRacks(prev => prev.filter(r => r.id !== id));
+        refreshData();
       }
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete rack');
+    }
+  };
+
+  // Progress bar occupancy fill color mappings
+  const getProgressBarFill = (pct: number) => {
+    if (pct <= 40) return 'bg-emerald-500'; // 0-40% GREEN
+    if (pct <= 80) return 'bg-amber-500';   // 41-80% YELLOW
+    return 'bg-rose-600';                  // 81-100% RED
+  };
+
+  // Status color mappings based on occupancy rules (GREEN/YELLOW/RED)
+  const getOccupancyColorStyles = (color: 'GREEN' | 'YELLOW' | 'RED') => {
+    switch (color) {
+      case 'GREEN':
+        return {
+          border: 'border-emerald-500 hover:border-emerald-600 shadow-[0_0_15px_rgba(16,185,129,0.04)]',
+          badge: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+          bullet: 'bg-emerald-500',
+          bar: 'bg-emerald-500',
+          pulse: ''
+        };
+      case 'YELLOW':
+        return {
+          border: 'border-amber-400 hover:border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.04)]',
+          badge: 'bg-amber-50 text-amber-600 border-amber-200',
+          bullet: 'bg-amber-500',
+          bar: 'bg-amber-500',
+          pulse: ''
+        };
+      case 'RED':
+      default:
+        return {
+          border: 'border-rose-500 hover:border-rose-600 shadow-[0_0_15px_rgba(244,63,94,0.08)] ring-1 ring-rose-500/20',
+          badge: 'bg-rose-50 text-rose-600 border-rose-200',
+          bullet: 'bg-rose-500',
+          bar: 'bg-rose-600',
+          pulse: 'animate-pulse'
+        };
     }
   };
 
@@ -240,7 +244,7 @@ export default function RackView() {
   const criticalRacks = racks.filter(r => {
     const q = parseFloat(String(r.quantity)) || 0;
     const l = parseFloat(String(r.threshold_limit)) || 10;
-    return q > 0 && q < l;
+    return q > 0 && q <= l;
   }).length;
   
   // Calculate average fill efficiency
@@ -271,58 +275,128 @@ export default function RackView() {
         </Button>
       </div>
 
-      {/* Rack Statistics Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-blue-50 text-blue-500 rounded-xl">
-            <Database size={22} />
-          </div>
-          <div>
-            <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Total Racks</p>
-            <p className="text-2xl font-black text-slate-800 mt-1">{totalRacks}</p>
-          </div>
+      {/* Warehouse Statistics Engine */}
+      {loading && !warehouseStats ? (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-pulse">
+          {[...Array(8)].map((_, idx) => (
+            <div key={idx} className="bg-slate-50 border border-slate-100 p-5 rounded-2xl h-24 flex items-center gap-4" />
+          ))}
         </div>
+      ) : (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
+          {/* Card 1: Total Racks */}
+          <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+            <div className="p-3 bg-blue-50 text-blue-500 rounded-xl">
+              <Database size={22} />
+            </div>
+            <div>
+              <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Total Racks</p>
+              <p className="text-2xl font-black text-slate-800 mt-1">{warehouseStats?.totalRacks ?? 0}</p>
+            </div>
+          </div>
 
-        <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-indigo-50 text-indigo-500 rounded-xl">
-            <ShieldCheck size={22} />
+          {/* Card 2: Occupied Racks */}
+          <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+            <div className="p-3 bg-indigo-50 text-indigo-500 rounded-xl">
+              <ShieldCheck size={22} />
+            </div>
+            <div>
+              <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Occupied Racks</p>
+              <p className="text-2xl font-black text-slate-800 mt-1">{warehouseStats?.occupiedRacks ?? 0}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Occupied</p>
-            <p className="text-2xl font-black text-slate-800 mt-1">{occupiedRacks}</p>
-          </div>
-        </div>
 
-        <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-slate-50 text-slate-500 rounded-xl">
-            <Layers size={22} />
+          {/* Card 3: Empty Racks */}
+          <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+            <div className="p-3 bg-slate-50 text-slate-500 rounded-xl">
+              <Inbox size={22} />
+            </div>
+            <div>
+              <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Empty Racks</p>
+              <p className="text-2xl font-black text-slate-800 mt-1">{warehouseStats?.emptyRacks ?? 0}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Empty Racks</p>
-            <p className="text-2xl font-black text-slate-800 mt-1">{emptyRacks}</p>
-          </div>
-        </div>
 
-        <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-rose-50 text-rose-500 rounded-xl">
-            <AlertTriangle size={22} />
+          {/* Card 4: Warehouse Utilization % */}
+          <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+            <div className="p-3 bg-emerald-50 text-emerald-500 rounded-xl">
+              <Percent size={22} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-black text-slate-450 uppercase tracking-wider">Warehouse Util %</p>
+              <div className="flex items-baseline gap-1.5">
+                <p className="text-2xl font-black text-slate-800 mt-1">{warehouseStats?.utilizationPercentage ?? 0}%</p>
+              </div>
+              <div className="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div 
+                  className={cn(
+                    "h-full rounded-full transition-all duration-500",
+                    (warehouseStats?.utilizationPercentage ?? 0) <= 40 ? "bg-emerald-500" :
+                    (warehouseStats?.utilizationPercentage ?? 0) <= 80 ? "bg-amber-500" : "bg-rose-500"
+                  )} 
+                  style={{ width: `${Math.min(warehouseStats?.utilizationPercentage ?? 0, 100)}%` }} 
+                />
+              </div>
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Critical Stock</p>
-            <p className="text-2xl font-black text-rose-600 mt-1">{criticalRacks}</p>
-          </div>
-        </div>
 
-        <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 col-span-2 lg:col-span-1">
-          <div className="p-3 bg-emerald-50 text-emerald-500 rounded-xl">
-            <Percent size={22} />
+          {/* Card 5: Critical Stock Count */}
+          <div className={cn(
+            "border p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-all",
+            (warehouseStats?.criticalCount ?? 0) > 0 ? "border-rose-200 bg-rose-50/10 shadow-[0_0_15px_rgba(244,63,94,0.02)]" : "bg-white border-slate-100"
+          )}>
+            <div className={cn(
+              "p-3 rounded-xl",
+              (warehouseStats?.criticalCount ?? 0) > 0 ? "bg-rose-50 text-rose-500 animate-pulse" : "bg-slate-50 text-slate-500"
+            )}>
+              <AlertTriangle size={22} />
+            </div>
+            <div>
+              <p className={cn(
+                "text-xs font-black uppercase tracking-wider",
+                (warehouseStats?.criticalCount ?? 0) > 0 ? "text-rose-500" : "text-slate-400"
+              )}>Critical Stock Count</p>
+              <p className={cn(
+                "text-2xl font-black mt-1",
+                (warehouseStats?.criticalCount ?? 0) > 0 ? "text-rose-600" : "text-slate-800"
+              )}>{warehouseStats?.criticalCount ?? 0}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-black text-slate-400 uppercase tracking-wider font-semibold">Fill Efficiency</p>
-            <p className="text-2xl font-black text-slate-800 mt-1">{fillEfficiency}%</p>
+
+          {/* Card 6: Low Stock Count */}
+          <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+            <div className="p-3 bg-amber-50 text-amber-500 rounded-xl">
+              <Bell size={22} />
+            </div>
+            <div>
+              <p className="text-xs font-black text-slate-450 uppercase tracking-wider">Low Stock Count</p>
+              <p className="text-2xl font-black text-slate-800 mt-1">{warehouseStats?.lowStockCount ?? 0}</p>
+            </div>
+          </div>
+
+          {/* Card 7: Today's Inward Transactions */}
+          <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+            <div className="p-3 bg-emerald-50 text-emerald-500 rounded-xl">
+              <ArrowDownRight size={22} />
+            </div>
+            <div>
+              <p className="text-xs font-black text-slate-455 uppercase tracking-wider">Today's Inward</p>
+              <p className="text-2xl font-black text-slate-800 mt-1">{warehouseStats?.todayInward ?? 0} <span className="text-xs font-bold text-slate-400">Tx</span></p>
+            </div>
+          </div>
+
+          {/* Card 8: Today's Outward Transactions */}
+          <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+            <div className="p-3 bg-amber-50 text-amber-500 rounded-xl">
+              <ArrowUpRight size={22} />
+            </div>
+            <div>
+              <p className="text-xs font-black text-slate-455 uppercase tracking-wider">Today's Outward</p>
+              <p className="text-2xl font-black text-slate-800 mt-1">{warehouseStats?.todayOutward ?? 0} <span className="text-xs font-bold text-slate-400">Tx</span></p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Warehouse occupancy grid layout */}
       {racks.length > 0 && (
@@ -335,25 +409,23 @@ export default function RackView() {
               </h3>
               <p className="text-xs text-slate-450 mt-1 font-bold">{occupiedRacks} of {totalRacks} Slots Occupied ({fillEfficiency}% overall volume)</p>
             </div>
-            <div className="flex flex-wrap gap-3 text-[9px] font-black uppercase tracking-wider">
-              <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-emerald-500 rounded-sm" /> Healthy (&gt;120%)</div>
-              <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-amber-500 rounded-sm" /> Warning (100%-120%)</div>
-              <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-rose-500 rounded-sm animate-pulse" /> Critical (&lt;100%)</div>
-              <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-slate-200 rounded-sm" /> Empty</div>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-2.5 py-1">
-            {racks.map(r => {
-              const qty = parseFloat(String(r.quantity)) || 0;
-              const lim = parseFloat(String(r.threshold_limit)) || 10;
-              const status = qty === 0 ? 'empty' :
-                             qty < lim ? 'critical' :
-                             qty <= lim * 1.2 ? 'warning' : 'healthy';
-
-              const statusColor = status === 'healthy' ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-500 hover:text-white' :
-                                  status === 'warning' ? 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-500 hover:text-white' :
-                                  status === 'critical' ? 'bg-rose-50 text-rose-600 border-rose-200 animate-pulse hover:bg-rose-500 hover:text-white' :
-                                  'bg-slate-50 text-slate-400 border-slate-200';
+              <div className="flex flex-wrap gap-3 text-[9px] font-black uppercase tracking-wider">
+               <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-emerald-500 rounded-sm" /> 0-40% Occupancy</div>
+               <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-amber-500 rounded-sm" /> 41-80% Occupancy</div>
+               <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-rose-500 rounded-sm animate-pulse" /> 81-100% Occupancy</div>
+               <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-blue-500 rounded-sm animate-pulse" /> Empty</div>
+             </div>
+           </div>
+           <div className="flex flex-wrap gap-2.5 py-1">
+             {racks.map(r => {
+               const qty = parseFloat(String(r.quantity)) || 0;
+               const limit = parseFloat(String(r.threshold_limit)) || 10;
+               const isCrit = qty > 0 && qty <= limit;
+               const statusColor = qty === 0 ? 'bg-blue-50/50 text-blue-600 border-blue-200 shadow-[0_0_8px_rgba(59,130,246,0.1)] hover:bg-blue-500 hover:text-white font-bold' :
+                                   isCrit ? 'bg-rose-100 text-rose-700 border-rose-300 animate-pulse-red' :
+                                   r.status_color === 'GREEN' ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-500 hover:text-white' :
+                                   r.status_color === 'YELLOW' ? 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-500 hover:text-white' :
+                                   'bg-rose-50 text-rose-600 border-rose-200 animate-pulse hover:bg-rose-500 hover:text-white';
               return (
                 <div
                   key={r.id}
@@ -374,14 +446,61 @@ export default function RackView() {
 
       {/* Racks Layout Grid */}
       <div className="bg-white/80 border border-slate-150/40 rounded-3xl p-6 shadow-sm backdrop-blur-xl">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-bold text-slate-800 tracking-tight flex items-center gap-2">
-            <Layers size={18} className="text-primary" />
-            Physical Warehouse Layout
-          </h2>
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-            Auto-Sync Status Enabled
-          </span>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <h2 className="text-lg font-bold text-slate-800 tracking-tight flex items-center gap-2">
+              <Layers size={18} className="text-primary" />
+              Physical Warehouse Layout
+            </h2>
+            <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+              <button
+                type="button"
+                onClick={() => setFilterMode('all')}
+                className={cn(
+                  "px-3 py-1 text-xs font-bold rounded-md transition-all",
+                  filterMode === 'all' 
+                    ? "bg-white text-slate-800 shadow-sm" 
+                    : "text-slate-400 hover:text-slate-700"
+                )}
+              >
+                All ({racks.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterMode('empty')}
+                className={cn(
+                  "px-3 py-1 text-xs font-bold rounded-md transition-all",
+                  filterMode === 'empty' 
+                    ? "bg-white text-slate-800 shadow-sm" 
+                    : "text-slate-400 hover:text-slate-700"
+                )}
+              >
+                Show Empty Racks ({emptyRacks})
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterMode('occupied')}
+                className={cn(
+                  "px-3 py-1 text-xs font-bold rounded-md transition-all",
+                  filterMode === 'occupied' 
+                    ? "bg-white text-slate-800 shadow-sm" 
+                    : "text-slate-400 hover:text-slate-700"
+                )}
+              >
+                Show Occupied Racks ({occupiedRacks})
+              </button>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            {lastUpdated && (
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                Last Updated: {lastUpdated}
+              </span>
+            )}
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+              Auto-Sync Status Enabled
+            </span>
+          </div>
         </div>
 
         {loading ? (
@@ -391,7 +510,12 @@ export default function RackView() {
           </div>
         ) : racks.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {racks.map(rack => {
+            {(filterMode === 'empty' 
+              ? racks.filter(r => (parseFloat(String(r.quantity)) || 0) === 0) 
+              : filterMode === 'occupied'
+                ? racks.filter(r => (parseFloat(String(r.quantity)) || 0) > 0)
+                : racks
+            ).map(rack => {
               const qtyVal = parseFloat(String(rack.quantity)) || 0;
               const capVal = parseFloat(String(rack.max_capacity)) || 100;
               const limitVal = parseFloat(String(rack.threshold_limit)) || 10;
@@ -402,25 +526,38 @@ export default function RackView() {
                                        qtyVal <= limitVal * 1.2 ? 'warning' : 'healthy';
 
               const colors = getStatusColor(calculatedStatus);
+              const occStyles = getOccupancyColorStyles(rack.status_color);
               const isEmpty = calculatedStatus === 'empty';
-              const isCritical = calculatedStatus === 'critical';
+              const isCriticalStock = qtyVal > 0 && qtyVal <= limitVal;
               const flashDirection = flashingRacks[rack.rack_code];
-              
+
+              const cardBg = isEmpty ? "bg-slate-50/50" :
+                             isCriticalStock ? "bg-rose-50/15" :
+                             rack.status_color === 'RED' ? "bg-rose-50/10" :
+                             rack.status_color === 'YELLOW' ? "bg-amber-50/5" : "bg-white";
+
+              const cardGlow = isEmpty ? "hover:shadow-slate-500/10 hover:border-slate-400" :
+                               isCriticalStock ? "hover:shadow-rose-500/30 hover:border-rose-500" :
+                               rack.status_color === 'RED' ? "hover:shadow-rose-500/20 hover:border-rose-400" :
+                               rack.status_color === 'YELLOW' ? "hover:shadow-amber-500/10 hover:border-amber-450" : "hover:shadow-emerald-500/10 hover:border-emerald-450";
+
               return (
                 <div
                   key={rack.id}
                   className={cn(
                     "border p-5 rounded-2xl shadow-sm transition-all duration-500 hover:scale-[1.02] flex flex-col justify-between group relative overflow-hidden",
-                    colors.cardBorder,
-                    colors.cardBg,
-                    colors.glow,
-                    isCritical && "ring-2 ring-rose-500/20",
+                    isEmpty ? "border-dashed border-slate-300 shadow-[0_0_15px_rgba(148,163,184,0.08)]" : 
+                    isCriticalStock ? "animate-pulse-red border-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.15)] z-10" : 
+                    occStyles.border,
+                    cardBg,
+                    cardGlow,
+                    rack.status_color === 'RED' && "ring-2 ring-rose-500/20",
                     flashDirection === 'up' && "ring-4 ring-emerald-500/50 shadow-lg shadow-emerald-500/30 scale-[1.04] bg-emerald-50/10 border-emerald-400 z-10",
                     flashDirection === 'down' && "ring-4 ring-rose-500/50 shadow-lg shadow-rose-500/30 scale-[1.04] bg-rose-50/10 border-rose-400 z-10"
                   )}
                 >
                   {/* Status Indicator Bar at top */}
-                  <div className={cn("absolute top-0 left-0 right-0 h-1.5", colors.bar)} />
+                  <div className={cn("absolute top-0 left-0 right-0 h-1.5", isEmpty ? "bg-slate-300" : occStyles.bar)} />
 
                   {/* Flash Update indicator */}
                   {flashDirection && (
@@ -435,13 +572,16 @@ export default function RackView() {
                   <div>
                     {/* Header: Code & Status */}
                     <div className="flex justify-between items-start mb-4">
-                      <span className="text-xs font-black font-mono bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md border border-slate-150 uppercase tracking-wider">
-                        {rack.rack_code}
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Rack Name</span>
+                        <span className="text-xs font-black font-mono bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md border border-slate-150 uppercase tracking-wider w-fit">
+                          {rack.rack_name || rack.rack_code}
+                        </span>
+                      </div>
                       
                       <div className="flex items-center gap-1.5">
-                        {/* Flashing Alert Beacon for Critical */}
-                        {isCritical && (
+                        {/* Flashing Alert Beacon for RED / CRITICAL STOCK status */}
+                        {(rack.status_color === 'RED' || isCriticalStock) && !isEmpty && (
                           <span className="relative flex h-2.5 w-2.5">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
@@ -450,11 +590,16 @@ export default function RackView() {
 
                         <span className={cn(
                           "px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-[0.08em] border flex items-center gap-1.5",
-                          colors.bg,
-                          isCritical ? "text-rose-600 bg-rose-50 border-rose-200" : ""
+                          isEmpty ? "bg-slate-100 text-slate-500 border-slate-200 font-bold" : 
+                          isCriticalStock ? "bg-rose-100 text-rose-700 border-rose-300 font-extrabold animate-pulse" :
+                          occStyles.badge
                         )}>
-                          <div className={cn("w-1.5 h-1.5 rounded-full", colors.bullet, isCritical && colors.pulse)} />
-                          {calculatedStatus}
+                          {isCriticalStock ? (
+                            <AlertTriangle size={10} className="text-rose-700 animate-bounce" />
+                          ) : (
+                            <div className={cn("w-1.5 h-1.5 rounded-full", isEmpty ? "bg-slate-400" : occStyles.bullet, isEmpty ? "" : occStyles.pulse)} />
+                          )}
+                          {isEmpty ? "Empty Rack" : isCriticalStock ? "CRITICAL STOCK" : rack.status_color}
                         </span>
                       </div>
                     </div>
@@ -467,7 +612,7 @@ export default function RackView() {
                           "font-bold text-sm mt-0.5 truncate",
                           isEmpty ? "text-slate-400 italic font-medium" : "text-slate-800"
                         )}>
-                          {rack.material_name || "Available for Storage"}
+                          {rack.material_name || "Available Space"}
                         </p>
                       </div>
 
@@ -488,6 +633,17 @@ export default function RackView() {
                           </p>
                         </div>
                       </div>
+
+                      {/* Critical Stock Alert Banner Message */}
+                      {isCriticalStock && (
+                        <div className="bg-rose-50 border border-rose-150 rounded-xl p-2.5 flex items-start gap-1.5 text-rose-700 text-[9px] font-bold leading-tight mt-1 animate-pulse">
+                          <AlertTriangle size={12} className="text-rose-600 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="uppercase tracking-wider">Critical Stock Alert</p>
+                            <p className="text-rose-500 font-semibold mt-0.5">Current quantity ({qtyVal} KG) is below the safety threshold limit ({limitVal} KG).</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -496,27 +652,30 @@ export default function RackView() {
                     {/* Progress Bar & Occupancy gauges */}
                     <div>
                       <div className="flex justify-between items-baseline mb-1">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Occupancy</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Occupancy %</span>
                         <span className={cn(
                           "text-xs font-black",
-                          isCritical ? "text-rose-600" : "text-slate-805"
+                          isCriticalStock ? "text-rose-600" : "text-slate-805"
                         )}>
                           {rack.occupancy_percentage}%
                         </span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden shadow-inner">
                         <div
-                          className={cn("h-full rounded-full transition-all duration-500", colors.bar)}
+                          className={cn("h-full rounded-full transition-all duration-500", getProgressBarFill(rack.occupancy_percentage))}
                           style={{ width: `${Math.min(rack.occupancy_percentage, 100)}%` }}
                         />
                       </div>
                       
                       {/* Capacity and Safety Limit Indicator Text */}
                       <div className="flex justify-between items-center mt-1.5">
-                        <p className="text-[10px] text-slate-400 font-semibold">
-                          {qtyVal} / {capVal} KG Stored
+                        <p className="text-[10px] text-slate-455 font-bold">
+                          {isEmpty 
+                            ? `Available Capacity: ${rack.capacity ?? capVal} KG` 
+                            : `Current Stock: ${rack.current_stock ?? qtyVal} KG / Capacity: ${rack.capacity ?? capVal} KG`
+                          }
                         </p>
-                        {isCritical && (
+                        {isCriticalStock && (
                           <p className="text-[9px] text-rose-500 font-bold uppercase tracking-wider animate-pulse flex items-center gap-1">
                             <AlertTriangle size={10} /> Below Limit
                           </p>
@@ -527,27 +686,29 @@ export default function RackView() {
                     {/* Metric HUD Grid */}
                     <div className="grid grid-cols-3 gap-1 bg-slate-50 p-2 rounded-xl border border-slate-150/40">
                       <div className="text-center">
-                        <p className="text-[7px] font-black text-slate-400 uppercase tracking-widest leading-none">Stock</p>
+                        <p className="text-[7px] font-black text-slate-455 uppercase tracking-widest leading-none">
+                          {isEmpty ? "Available Cap" : "Current Stock"}
+                        </p>
                         <p className={cn(
                           "text-[10px] font-black mt-1 leading-none",
-                          isCritical ? "text-rose-600" : calculatedStatus === 'warning' ? "text-amber-600" : "text-slate-800"
+                          isEmpty ? "text-slate-500" : isCriticalStock ? "text-rose-600" : calculatedStatus === 'warning' ? "text-amber-600" : "text-slate-800"
                         )}>
-                          {qtyVal} KG
+                          {isEmpty ? `${rack.capacity ?? capVal} KG` : `${rack.current_stock ?? qtyVal} KG`}
                         </p>
                       </div>
                       <div className="text-center border-x border-slate-200">
-                        <p className="text-[7px] font-black text-slate-400 uppercase tracking-widest leading-none">Max Cap</p>
+                        <p className="text-[7px] font-black text-slate-455 uppercase tracking-widest leading-none">Capacity</p>
                         <p className="text-[10px] font-black text-slate-700 mt-1 leading-none">
-                          {capVal} KG
+                          {rack.capacity ?? capVal} KG
                         </p>
                       </div>
                       <div className="text-center">
-                        <p className="text-[7px] font-black text-slate-400 uppercase tracking-widest leading-none">Util %</p>
+                        <p className="text-[7px] font-black text-slate-455 uppercase tracking-widest leading-none">Occupancy %</p>
                         <p className={cn(
                           "text-[10px] font-black mt-1 leading-none",
-                          isCritical ? "text-rose-600" : calculatedStatus === 'warning' ? "text-amber-600" : "text-slate-800"
+                          isEmpty ? "text-slate-500 font-bold" : isCriticalStock ? "text-rose-600" : calculatedStatus === 'warning' ? "text-amber-600" : "text-slate-800"
                         )}>
-                          {Math.round((qtyVal / capVal) * 100)}%
+                          {rack.occupancy_percentage}%
                         </p>
                       </div>
                     </div>
@@ -790,6 +951,23 @@ export default function RackView() {
           </div>
         </div>
       )}
+
+      {/* Inline animations for dangerous stock alerts */}
+      <style>{`
+        @keyframes pulseRed {
+          0%, 100% {
+            border-color: rgba(244, 63, 94, 0.4);
+            box-shadow: 0 0 10px rgba(244, 63, 94, 0.1);
+          }
+          50% {
+            border-color: rgba(244, 63, 94, 1);
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.35);
+          }
+        }
+        .animate-pulse-red {
+          animation: pulseRed 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+      `}</style>
     </div>
   );
 }

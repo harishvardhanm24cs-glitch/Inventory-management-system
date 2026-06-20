@@ -11,7 +11,7 @@ router.get('/', protect, anyRole, async (req, res, next) => {
     const [alerts] = await db.query(
       `SELECT a.id, a.message, a.alert_status, a.created_at, m.material_name, m.barcode, m.batch_number 
        FROM alerts a 
-       JOIN materials m ON a.material_id = m.id 
+       LEFT JOIN materials m ON a.material_id = m.id 
        ORDER BY a.created_at DESC`
     );
     

@@ -19,7 +19,8 @@ import {
     History,
     FileText,
     Loader2,
-    Focus
+    Focus,
+    Clock
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import toast from 'react-hot-toast';
@@ -33,6 +34,7 @@ interface ScannedData {
     manufacturing_date?: string;
     rack_code?: string;
     barcode_id?: string;
+    timestamp?: string;
 }
 
 const Scanner: React.FC = () => {
@@ -46,11 +48,11 @@ const Scanner: React.FC = () => {
     const [status, setStatus] = useState<'connecting' | 'scanning' | 'success' | 'error' | 'permission_denied' | 'syncing'>('connecting');
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [scanCount, setScanCount] = useState<number>(0);
-    const [scanHistory, setScanHistory] = useState<(ScannedData & { timestamp: Date })[]>([]);
+    const [scanHistory, setScanHistory] = useState<ScannedData[]>([]);
     const [lastScannedBarcode, setLastScannedBarcode] = useState<string>('');
     const [isPaused, setIsPaused] = useState<boolean>(false);
     const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced' | 'failed'>('idle');
-    const { refreshData } = useInventory();
+    const { refreshData, materials, racks } = useInventory();
 
     // Start camera stream
     const startCamera = async () => {
@@ -167,14 +169,14 @@ const Scanner: React.FC = () => {
 
         try {
             const parsed = JSON.parse(text);
-            console.log("parsed JSON", parsed);
+            console.log("[DEBUG] decoded QR:", parsed);
 
             // Extract fields checking both registry schemes
             const material_name = parsed.material_name || parsed.paint_name;
             const weight = parsed.weight !== undefined ? parsed.weight : (parsed.quantity || parsed.stock || 0);
             const batch_number = parsed.batch_number || parsed.batch || 'N/A';
             const manufacturing_date = parsed.manufacturing_date || parsed.manufacture_date || 'N/A';
-            const rack_code = parsed.rack_code || parsed.location || 'N/A';
+            const rack_code = parsed.rack_code || parsed.location || null;
             const barcode_id = parsed.barcode_id || parsed.sku_id || parsed.barcode || 'N/A';
 
             if (!material_name) {
@@ -186,41 +188,110 @@ const Scanner: React.FC = () => {
                 weight,
                 batch_number,
                 manufacturing_date,
-                rack_code,
+                rack_code: rack_code || 'Auto-Assigning...',
                 barcode_id
             };
 
             setStatus('syncing');
             setSyncStatus('syncing');
 
-            // Call backend API /api/scanner/auto-store
-            const res = await api.autoStoreScanner({
-                material_name,
-                quantity: weight,
-                batch_number: batch_number !== 'N/A' ? batch_number : null,
-                manufacturing_date: manufacturing_date !== 'N/A' ? manufacturing_date : null,
-                rack_code,
-                barcode_id
-            });
-
-            setScannedData(payload);
-
-            if (res && res.rack_updated === false) {
-                // Duplicate scan window check failed on backend (duplicate ignored)
-                setSyncStatus('idle');
-                setStatus('success');
-                toast.success(res.message || "Scanned successfully (duplicate ignored)");
-            } else {
-                setSyncStatus('synced');
-                setStatus('success');
-                toast.success("Inventory Synced Successfully");
+            // Find matching material locally to get the material_id
+            let matchedMaterial = materials.find(m => 
+                (barcode_id && barcode_id !== 'N/A' && m.barcode === barcode_id) || 
+                ((m.name || '').toLowerCase() === (material_name || '').toLowerCase())
+            );
+            
+            if (!matchedMaterial) {
+                console.log("Material not found in local context, refetching materials...");
+                await refreshData();
+                const refreshedMats = await api.getMaterials();
+                
+                // Logs for Audit Tasks
+                console.log("[DEBUG] materials API response:", refreshedMats);
+                console.log("[DEBUG] refreshedMats value:", refreshedMats);
+                
+                // Ensure refreshedMats is always an array before using .find()
+                let matsArray: any[] = [];
+                if (Array.isArray(refreshedMats)) {
+                    matsArray = refreshedMats;
+                } else if (refreshedMats && refreshedMats.success === true && Array.isArray(refreshedMats.data)) {
+                    matsArray = refreshedMats.data;
+                } else if (refreshedMats && Array.isArray(refreshedMats.materials)) {
+                    matsArray = refreshedMats.materials;
+                } else if (refreshedMats && Array.isArray(refreshedMats.data)) {
+                    matsArray = refreshedMats.data;
+                }
+                
+                matchedMaterial = matsArray.find((m: any) => 
+                    (barcode_id && barcode_id !== 'N/A' && m.barcode === barcode_id) || 
+                    ((m.name || '').toLowerCase() === (material_name || '').toLowerCase())
+                );
             }
 
+            console.log("[DEBUG] database lookup result:", matchedMaterial);
+
+            const quantity = parseFloat(String(weight)) || 0;
+
+            // Call backend API /api/scanner/auto-store to handle the scanned barcode,
+            // lookup in qr_codes, auto-creating material if needed, and assigning the rack
+            const res = await api.autoStore({
+                barcode_id,
+                material_name,
+                quantity,
+                rack_code: rack_code || undefined,
+                batch_number: batch_number !== 'N/A' ? batch_number : undefined,
+                manufacturing_date: manufacturing_date !== 'N/A' ? manufacturing_date : undefined
+            });
+
+            console.log("[DEBUG] Final Inventory Insert (API Response):", res);
+
+            const assignedRackCode = (res && (res.assigned_rack || res.rack_code)) || rack_code || 'N/A';
+            const scanTimestamp = res && res.timestamp ? new Date(res.timestamp).toLocaleString() : new Date().toLocaleString();
+            const updatedPayload: ScannedData = {
+                ...payload,
+                rack_code: assignedRackCode,
+                timestamp: scanTimestamp
+            };
+
+            setScannedData(updatedPayload);
+
+            setSyncStatus('synced');
+            setStatus('success');
+            
+            // Show toast: Material Assigned To Rack A1
+            toast.success(`Material Assigned To Rack ${assignedRackCode}`);
+
             setScanCount(prev => prev + 1);
-            setScanHistory(prev => [{ ...payload, timestamp: new Date() }, ...prev]);
+            setScanHistory(prev => [updatedPayload, ...prev]);
             
             // Automatically refresh global layout data (Rack View, Materials, Dashboard)
             await refreshData();
+
+            // Phase 4 Step 4: Log material movements to Digital Twin feed
+            const finalRack = `Rack ${assignedRackCode}`;
+            await api.createMovement({
+                barcode_id,
+                material_name,
+                source_location: 'Scanner',
+                destination_location: 'Receiving Zone',
+                movement_type: 'INWARD',
+            });
+            await api.createMovement({
+                barcode_id,
+                material_name,
+                source_location: 'Receiving Zone',
+                destination_location: finalRack,
+                movement_type: 'INWARD',
+            });
+
+            // Dispatch custom event to notify other components to refresh
+            window.dispatchEvent(new CustomEvent('rack-inventory-update'));
+
+            // Refresh Digital Twin movement feed immediately
+            if (typeof (window as any).refreshDigitalTwin === 'function') {
+                (window as any).refreshDigitalTwin();
+            }
+
             console.log("scan completed");
 
         } catch (err: any) {
@@ -525,15 +596,51 @@ const Scanner: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    {/* Rack Location */}
-                                    <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center gap-3">
-                                        <div className="p-2.5 bg-white border border-slate-100 rounded-lg text-slate-500">
-                                            <Layers size={16} />
+                                    {/* Rack Location & Live Occupancy Bar */}
+                                    <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col justify-between col-span-1 md:col-span-2 gap-3">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="p-2.5 bg-white border border-slate-100 rounded-lg text-slate-500">
+                                                    <Layers size={16} />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none">Target Rack</p>
+                                                    <p className="text-sm font-extrabold text-slate-900 mt-1 uppercase">Rack {scannedData.rack_code}</p>
+                                                </div>
+                                            </div>
+                                            {(() => {
+                                                const assignedRack = racks.find(r => r.rack_code === scannedData.rack_code);
+                                                if (!assignedRack) return null;
+                                                return (
+                                                    <span className="text-xs font-black text-primary">
+                                                        {assignedRack.occupancy_percentage}%
+                                                    </span>
+                                                );
+                                            })()}
                                         </div>
-                                        <div>
-                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none">Target Rack</p>
-                                            <p className="text-sm font-extrabold text-slate-900 mt-1 uppercase">{scannedData.rack_code}</p>
-                                        </div>
+                                        {(() => {
+                                            const assignedRack = racks.find(r => r.rack_code === scannedData.rack_code);
+                                            if (!assignedRack) return null;
+                                            const progressWidth = Math.min(assignedRack.occupancy_percentage, 100);
+                                            const barColorClass = assignedRack.occupancy_percentage > 80 
+                                                 ? "bg-rose-500" 
+                                                 : assignedRack.occupancy_percentage > 40 
+                                                     ? "bg-amber-500" 
+                                                     : "bg-emerald-500";
+                                            return (
+                                                <div className="w-full mt-2">
+                                                    <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden shadow-inner">
+                                                        <div
+                                                            className={cn("h-full rounded-full transition-all duration-500", barColorClass)}
+                                                            style={{ width: `${progressWidth}%` }}
+                                                        />
+                                                    </div>
+                                                    <p className="text-[8px] text-slate-400 font-bold mt-1">
+                                                        Current Stock: {assignedRack.current_stock} KG / Capacity: {assignedRack.capacity} KG
+                                                    </p>
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
 
                                     {/* Barcode ID */}
@@ -546,6 +653,17 @@ const Scanner: React.FC = () => {
                                             <p className="text-sm font-extrabold text-slate-900 mt-1 truncate uppercase">{scannedData.barcode_id}</p>
                                         </div>
                                     </div>
+
+                                    {/* Scan Timestamp */}
+                                    <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center gap-3">
+                                        <div className="p-2.5 bg-white border border-slate-100 rounded-lg text-slate-500">
+                                            <Clock size={16} />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none">Scan Timestamp</p>
+                                            <p className="text-sm font-extrabold text-slate-900 mt-1 truncate">{scannedData.timestamp || new Date().toLocaleString()}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ) : status === 'error' ? (
@@ -555,11 +673,15 @@ const Scanner: React.FC = () => {
                                         <AlertTriangle size={20} />
                                     </div>
                                     <div>
-                                        <h3 className="font-black text-slate-900 text-base">Invalid QR Code Format</h3>
-                                        <p className="text-[9px] text-amber-600 font-bold uppercase tracking-wider">Parsing/Validation Failure</p>
+                                        <h3 className="font-black text-slate-900 text-base">
+                                            {errorMessage === "This QR has already been processed." ? "Duplicate Scan Warning" : "Invalid QR Code Format"}
+                                        </h3>
+                                        <p className="text-[9px] text-amber-600 font-bold uppercase tracking-wider">
+                                            {errorMessage === "This QR has already been processed." ? "Already Processed" : "Parsing/Validation Failure"}
+                                        </p>
                                     </div>
                                 </div>
-                                <p className="text-xs text-slate-600 font-medium leading-relaxed bg-white/50 border border-amber-100/50 p-4 rounded-xl mb-6">
+                                <p className="text-xs text-slate-650 font-bold leading-relaxed bg-white/50 border border-amber-100/50 p-4 rounded-xl mb-6">
                                     {errorMessage}
                                 </p>
                                 <div className="flex gap-4">
@@ -604,7 +726,9 @@ const Scanner: React.FC = () => {
                                         <div className="text-right">
                                             <p className="text-xs font-black text-slate-900">{historyItem.weight} KG</p>
                                             <p className="text-[8px] text-slate-400 font-bold mt-0.5">
-                                                {new Date(historyItem.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                                {historyItem.timestamp 
+                                                    ? new Date(historyItem.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) 
+                                                    : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                                             </p>
                                         </div>
                                     </div>

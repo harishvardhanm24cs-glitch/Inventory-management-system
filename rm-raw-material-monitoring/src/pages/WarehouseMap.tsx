@@ -12,17 +12,27 @@ interface Material {
     location?: string;
 }
 
-const ZONES = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'UNASSIGNED'];
-
 export default function WarehouseMap() {
     const [materials, setMaterials] = useState<Material[]>([]);
+    const [racks, setRacks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [draggingId, setDraggingId] = useState<string | null>(null);
 
     const fetchMaterials = async () => {
         try {
-            const data = await api.getMaterials();
-            setMaterials(data);
+            const [materialsData, racksData] = await Promise.all([
+                api.getMaterials(),
+                api.getRacks()
+            ]);
+            setMaterials(materialsData);
+
+            let rawRacks: any[] = [];
+            if (racksData && racksData.racks) {
+                rawRacks = racksData.racks;
+            } else if (Array.isArray(racksData)) {
+                rawRacks = racksData;
+            }
+            setRacks(rawRacks);
         } catch (error) {
             console.error(error);
             toast.error("Failed to load map data");
@@ -34,6 +44,50 @@ export default function WarehouseMap() {
     useEffect(() => {
         fetchMaterials();
     }, []);
+
+    const parseRackCode = (code: string) => {
+        if (!code) return { row: '', col: 0 };
+        const match = code.trim().toUpperCase().match(/^([A-Z]+)(\d+)$/);
+        if (!match) return { row: code, col: 0 };
+        return { row: match[1], col: parseInt(match[2], 10) };
+    };
+
+    const compareRackCodes = (aStr: string, bStr: string) => {
+        const a = parseRackCode(aStr);
+        const b = parseRackCode(bStr);
+        if (a.row.length !== b.row.length) {
+            return a.row.length - b.row.length;
+        }
+        if (a.row !== b.row) {
+            return a.row.localeCompare(b.row);
+        }
+        return a.col - b.col;
+    };
+
+    const ZONES = React.useMemo(() => {
+        const zoneSet = new Set<string>();
+
+        racks.forEach(r => {
+            if (r.rack_code) {
+                const code = r.rack_code.toUpperCase().trim();
+                if (code !== 'UNASSIGNED') {
+                    zoneSet.add(code);
+                }
+            }
+        });
+
+        materials.forEach(m => {
+            if (m.location) {
+                const loc = m.location.toUpperCase().trim();
+                if (loc !== 'UNASSIGNED') {
+                    zoneSet.add(loc);
+                }
+            }
+        });
+
+        const activeZones = Array.from(zoneSet).sort(compareRackCodes);
+        return [...activeZones, 'UNASSIGNED'];
+    }, [racks, materials]);
 
     const handleDragStart = (e: React.DragEvent, id: string) => {
         e.dataTransfer.setData('materialId', id);
@@ -66,6 +120,7 @@ export default function WarehouseMap() {
         try {
             await api.updateLocation(materialId, { location: targetZone });
             toast.success(`Moved to ${targetZone}`);
+            fetchMaterials();
         } catch (err) {
             console.error(err);
             toast.error("Failed to move material");
@@ -79,7 +134,7 @@ export default function WarehouseMap() {
         if (zone === 'UNASSIGNED') {
             acc[zone] = materials.filter(m => {
                 const loc = m.location?.toUpperCase();
-                return !loc || !ZONES.includes(loc);
+                return !loc || loc === 'UNASSIGNED' || !ZONES.includes(loc);
             });
         } else {
             acc[zone] = materials.filter(m => m.location?.toUpperCase() === zone);
