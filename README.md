@@ -133,10 +133,6 @@ Here are the key interfaces of the Paint RM Monitor:
 
 The Paint RM Monitor system architecture is designed for real-time synchronization, edge scanning reliability, and analytical intelligence.
 
-<p align="center">
-  <img src="./system%20architecture.png" alt="System Architecture Diagram" width="800px" />
-</p>
-
 The following Mermaid diagram outlines the clean separation of concerns and database trigger synchronizations driving the system:
 
 ```mermaid
