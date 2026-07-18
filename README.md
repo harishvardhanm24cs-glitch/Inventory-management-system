@@ -106,30 +106,36 @@ Traditional raw material warehouses suffer from **"blind zones"**—operators la
 
 ---
 
-## 📸 Interface Showcases (Placeholders)
+## 📸 Interface Showcases
+
+Here are the key interfaces of the Paint RM Monitor:
 
 <table>
   <tr>
-    <td><strong>📊 Main Analytics Dashboard</strong></td>
+    <td><strong>🌐 Frontend Portal UI</strong></td>
     <td><strong>🌐 Warehouse Digital Twin</strong></td>
   </tr>
   <tr>
-    <td><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=500&q=80" alt="Dashboard View" width="400px"/></td>
-    <td><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=500&q=80" alt="Digital Twin View" width="400px"/></td>
+    <td><img src="./frontend.png" alt="Frontend Portal View" width="400px"/></td>
+    <td><img src="./Digital%20twin.png" alt="Digital Twin View" width="400px"/></td>
   </tr>
   <tr>
-    <td><strong>📷 Edge QR Scanner Console</strong></td>
-    <td><strong>🚥 Rack Capacity Mapping</strong></td>
+    <td colspan="2" align="center"><strong>🔌 Backend & Database Services</strong></td>
   </tr>
   <tr>
-    <td><img src="https://images.unsplash.com/photo-1595079676339-1534801ad6cf?auto=format&fit=crop&w=500&q=80" alt="Scanner Console" width="400px"/></td>
-    <td><img src="https://images.unsplash.com/photo-1587293852726-70cdb56c2866?auto=format&fit=crop&w=500&q=80" alt="Racks Grid View" width="400px"/></td>
+    <td colspan="2" align="center"><img src="./Backend.png" alt="Backend Console / Database Schema" width="600px"/></td>
   </tr>
 </table>
 
 ---
 
 ## 🏗 System Architecture
+
+The Paint RM Monitor system architecture is designed for real-time synchronization, edge scanning reliability, and analytical intelligence.
+
+<p align="center">
+  <img src="./system%20architecture.png" alt="System Architecture Diagram" width="800px" />
+</p>
 
 The following Mermaid diagram outlines the clean separation of concerns and database trigger synchronizations driving the system:
 
@@ -289,6 +295,20 @@ atendence-main/
 ---
 
 ## 🔄 System Workflows
+
+### 🏭 Warehouse Operational Flow
+Below is the physical warehouse operational flow schema representing the raw material journey:
+
+<p align="center">
+  <img src="./whare%20house%20operational%20flow.png" alt="Warehouse Operational Flow" width="800px" />
+</p>
+
+### 🔄 Complete Data Flow
+The sequence of data updates, validation triggers, and analytics compilation:
+
+<p align="center">
+  <img src="./complete%20data%20flow.png" alt="Complete Data Flow" width="800px" />
+</p>
 
 ### 📥 Inward Inventory & Dynamic Slot Allocation
 ```mermaid

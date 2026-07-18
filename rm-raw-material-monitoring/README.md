@@ -1,73 +1,51 @@
-# React + TypeScript + Vite
+# 🎨 Paint RM Monitor: Frontend Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The frontend client of the Paint RM Monitor is a modern, responsive single-page web application built with **React 19**, **TypeScript**, and **Vite**. It features a glassmorphic interface, dark/light theme options, a real-time 3D warehouse digital twin, an edge-based QR scanner console, and visual telemetry dashboards.
 
-Currently, two official plugins are available:
+<p align="center">
+  <img src="../frontend.png" alt="Paint RM Monitor Frontend Client" width="800px"/>
+</p>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Key Modules & Interfaces
 
-## React Compiler
+### 🌐 3D Warehouse Digital Twin
+Provides an interactive spatial grid mapping the physical racks, current capacities, safety thresholds, and real-time color codes sync'd directly with DB triggers.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+<p align="center">
+  <img src="../Digital%20twin.png" alt="Warehouse Digital Twin" width="700px"/>
+</p>
 
-## Expanding the ESLint configuration
+### 📊 Analytics Telemetry Dashboard
+Uses **Recharts** to render live daily transaction frequency, inventory depletion risks, and rack utilization ratios.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 📷 Camera QR Scanner Console
+Fully responsive camera view utilizing local **jsQR** client decoding for instant, zero-latency scanning of material batches.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🛠 Tech Stack & Dependencies
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **React 19 & TypeScript**: Component-driven architecture with static safety.
+- **Tailwind CSS 4.0**: Futuristic neon grid interfaces, glassmorphic widgets, and state transitions.
+- **Vite**: Ultra-fast bundler and hot-module replacement dev server.
+- **Recharts**: Data visualization layers.
+- **jsQR**: Web-camera scanning pipeline running locally.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 💻 Development & Setup
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Prerequisites
+- Node.js (v18.x or v20.x recommended)
+- npm (v9.x+)
+
+### Installation
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the hot-reloading development server:
+   ```bash
+   npm run dev
+   ```
+3. Open the client in your browser at `http://localhost:5173`.
