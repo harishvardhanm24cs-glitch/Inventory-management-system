@@ -1,0 +1,18 @@
+{
+  "dataset_name": "test_ml_warehouse_dataset",
+  "version": "v1-1784984845085",
+  "created_at": "2026-07-25T13:07:25.085Z",
+  "cleaning_stats": {
+    "inventory_duplicates_removed": 0,
+    "transactions_duplicates_removed": 0,
+    "racks_duplicates_removed": 0,
+    "alerts_duplicates_removed": 0,
+    "total_records_processed": 0
+  },
+  "data": {
+    "inventory": [],
+    "transactions": [],
+    "racks": [],
+    "alerts": []
+  }
+}

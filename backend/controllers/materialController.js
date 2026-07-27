@@ -880,3 +880,133 @@ export const getMaterialPredictions = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * Get comprehensive material consumption analytics & velocity classification
+ * GET /api/materials/consumption-analytics
+ */
+export const getConsumptionAnalytics = async (req, res, next) => {
+  try {
+    const { dateRange = '30d' } = req.query;
+
+    let daysInterval = 30;
+    if (dateRange === '7d') daysInterval = 7;
+    else if (dateRange === '90d') daysInterval = 90;
+    else if (dateRange === '1y') daysInterval = 365;
+
+    // 1. Most Consumed & Velocity Rankings
+    const [consumptionRows] = await db.query(
+      `SELECT 
+         m.id,
+         m.material_name,
+         m.barcode,
+         m.quantity AS current_stock,
+         m.threshold_limit,
+         m.unit,
+         COALESCE(SUM(CASE WHEN LOWER(t.transaction_type) = 'outward' THEN t.quantity ELSE 0 END), 0) AS total_consumed,
+         COUNT(CASE WHEN LOWER(t.transaction_type) = 'outward' THEN t.id ELSE NULL END) AS transaction_count,
+         MAX(CASE WHEN LOWER(t.transaction_type) = 'outward' THEN t.created_at ELSE NULL END) AS last_outward_date
+       FROM materials m
+       LEFT JOIN transactions t ON m.id = t.material_id AND t.created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+       GROUP BY m.id, m.material_name, m.barcode, m.quantity, m.threshold_limit, m.unit
+       ORDER BY total_consumed DESC`,
+      [daysInterval]
+    );
+
+    const formattedMaterials = consumptionRows.map(row => {
+      const totalConsumed = parseFloat(row.total_consumed) || 0;
+      const txCount = parseInt(row.transaction_count, 10) || 0;
+      const dailyVelocity = parseFloat((totalConsumed / daysInterval).toFixed(2));
+
+      let velocityCategory = 'Healthy Movement';
+      if (totalConsumed === 0 || txCount <= 1) {
+        velocityCategory = 'Slow Moving';
+      } else if (txCount >= 3 || dailyVelocity >= 10) {
+        velocityCategory = 'Fast Moving';
+      }
+
+      return {
+        id: String(row.id),
+        name: row.material_name,
+        barcode: row.barcode,
+        currentStock: parseFloat(row.current_stock) || 0,
+        threshold: parseFloat(row.threshold_limit) || 0,
+        unit: row.unit || 'KG',
+        totalConsumed,
+        transactionCount: txCount,
+        dailyVelocity,
+        velocityCategory,
+        lastOutwardDate: row.last_outward_date ? new Date(row.last_outward_date).toISOString().split('T')[0] : 'No Recent Movement'
+      };
+    });
+
+    const mostConsumed = [...formattedMaterials].sort((a, b) => b.totalConsumed - a.totalConsumed);
+    const leastConsumed = [...formattedMaterials].sort((a, b) => a.totalConsumed - b.totalConsumed);
+    const fastMoving = formattedMaterials.filter(m => m.velocityCategory === 'Fast Moving');
+    const slowMoving = formattedMaterials.filter(m => m.velocityCategory === 'Slow Moving');
+
+    // 2. Daily Consumption
+    const [dailyRows] = await db.query(
+      `SELECT DATE_FORMAT(created_at, '%Y-%m-%d') AS date,
+              SUM(quantity) AS consumed
+       FROM transactions
+       WHERE LOWER(transaction_type) = 'outward' AND created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+       GROUP BY DATE(created_at)
+       ORDER BY date ASC`,
+      [daysInterval]
+    );
+
+    const dailyConsumption = dailyRows.map(r => ({
+      date: r.date,
+      consumed: parseFloat(r.consumed) || 0
+    }));
+
+    // 3. Weekly Consumption
+    const [weeklyRows] = await db.query(
+      `SELECT YEARWEEK(created_at, 1) AS yw,
+              CONCAT('Week ', WEEK(created_at, 1)) AS label,
+              SUM(quantity) AS consumed
+       FROM transactions
+       WHERE LOWER(transaction_type) = 'outward' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 8 WEEK)
+       GROUP BY yw, label
+       ORDER BY yw ASC`
+    );
+
+    const weeklyConsumption = weeklyRows.map(r => ({
+      week: r.label,
+      consumed: parseFloat(r.consumed) || 0
+    }));
+
+    // 4. Monthly Consumption
+    const [monthlyRows] = await db.query(
+      `SELECT DATE_FORMAT(created_at, '%b %Y') AS month,
+              SUM(quantity) AS consumed
+       FROM transactions
+       WHERE LOWER(transaction_type) = 'outward' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+       GROUP BY DATE_FORMAT(created_at, '%Y-%m'), month
+       ORDER BY DATE_FORMAT(created_at, '%Y-%m') ASC`
+    );
+
+    const monthlyConsumption = monthlyRows.map(r => ({
+      month: r.month,
+      consumed: parseFloat(r.consumed) || 0
+    }));
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        allMaterials: formattedMaterials,
+        mostConsumed,
+        leastConsumed,
+        fastMoving,
+        slowMoving,
+        dailyConsumption,
+        weeklyConsumption,
+        monthlyConsumption
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

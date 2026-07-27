@@ -875,16 +875,61 @@ export const getWarehouseSummaryReport = async (req, res, next) => {
  */
 export const getTransactionsReport = async (req, res, next) => {
   try {
-    const [transactions] = await db.query(
-      `SELECT t.id, t.transaction_type, t.quantity, t.created_at, m.material_name, m.barcode, u.name AS user_name
-       FROM transactions t
-       LEFT JOIN materials m ON t.material_id = m.id
-       LEFT JOIN users u ON t.user_id = u.id
-       ORDER BY t.created_at DESC`
-    );
+    const { startDate, endDate, material, worker, rack, transactionType, format = 'pdf' } = req.query;
 
-    const inwardCount = transactions.filter(t => t.transaction_type === 'inward').length;
+    let queryStr = `
+      SELECT t.id, t.transaction_type, t.quantity, t.created_at, m.material_name, m.barcode, u.name AS user_name, COALESCE(r.rack_code, 'N/A') AS rack_code
+      FROM transactions t
+      LEFT JOIN materials m ON t.material_id = m.id
+      LEFT JOIN users u ON t.user_id = u.id
+      LEFT JOIN racks r ON m.material_name = r.material_name
+      WHERE 1=1
+    `;
+    const params = [];
+
+    if (material) {
+      queryStr += ' AND m.material_name LIKE ?';
+      params.push(`%${material}%`);
+    }
+    if (worker) {
+      queryStr += ' AND u.name LIKE ?';
+      params.push(`%${worker}%`);
+    }
+    if (rack) {
+      queryStr += ' AND r.rack_code LIKE ?';
+      params.push(`%${rack}%`);
+    }
+    if (transactionType && transactionType !== 'all') {
+      queryStr += ' AND LOWER(t.transaction_type) = ?';
+      params.push(transactionType.toLowerCase());
+    }
+    if (startDate && endDate) {
+      queryStr += ' AND t.created_at BETWEEN ? AND ?';
+      params.push(startDate, endDate);
+    }
+
+    queryStr += ' ORDER BY t.created_at DESC';
+
+    const [transactions] = await db.query(queryStr, params);
+
+    const inwardCount = transactions.filter(t => String(t.transaction_type).toLowerCase() === 'inward').length;
     const outwardCount = transactions.length - inwardCount;
+
+    if (format === 'csv' || format === 'excel') {
+      const headers = ['TX ID', 'Material Name', 'Barcode SKU', 'Type', 'Quantity', 'Operator Worker', 'Rack', 'Timestamp'];
+      const rows = transactions.map(t => [
+        String(t.id),
+        t.material_name || 'N/A',
+        t.barcode || 'N/A',
+        String(t.transaction_type).toUpperCase(),
+        parseFloat(t.quantity).toFixed(2),
+        t.user_name || 'System',
+        t.rack_code,
+        new Date(t.created_at).toLocaleString()
+      ]);
+      const csv = convertToCSV(headers, rows);
+      return serveAndSaveCSV(csv, 'transactions_report', req, res, format === 'excel');
+    }
 
     const doc = new PDFDocument({ size: 'LETTER', margin: 60 });
     drawHeader(doc, 'Material Transactions Audit Log');
@@ -901,7 +946,7 @@ export const getTransactionsReport = async (req, res, next) => {
       String(t.id),
       t.material_name || 'N/A',
       t.barcode || 'N/A',
-      t.transaction_type.toUpperCase(),
+      String(t.transaction_type).toUpperCase(),
       parseFloat(t.quantity).toFixed(2),
       t.user_name || 'System',
       new Date(t.created_at).toLocaleString()

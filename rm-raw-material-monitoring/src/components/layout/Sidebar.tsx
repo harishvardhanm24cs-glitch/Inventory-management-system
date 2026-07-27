@@ -33,7 +33,8 @@ import {
     QrCode,
     Clipboard,
     Brain,
-    FileText
+    FileText,
+    Percent
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { type UserRole } from '../../types';
@@ -60,6 +61,7 @@ const navItems: NavItem[] = [
     { path: '/inventory', icon: Box, label: 'Materials' },
     { path: '/batches', icon: Clock, label: 'Batch Records' },
     { path: '/warehouse', icon: Layout, label: 'Digital Twin' },
+    { path: '/warehouse-utilization', icon: Percent, label: 'Utilization HUD' },
     { path: '/map', icon: Map, label: 'Rack View' },
     { path: '/production-check', icon: ShieldCheck, label: 'Quality Check', roles: ['admin', 'manager', 'store'] },
     { path: '/iot-console', icon: Cpu, label: 'Bridge Hub', roles: ['admin', 'store'] },
@@ -70,6 +72,9 @@ const navItems: NavItem[] = [
     { path: '/qr-history', icon: History, label: 'QR History' },
     { path: '/qr-traceability', icon: Search, label: 'QR Traceability' },
     { path: '/analytics', icon: TrendingUp, label: 'Intelligence', roles: ['engineer', 'manager', 'store'] },
+    { path: '/consumption-analytics', icon: Activity, label: 'Consumption Hub' },
+    { path: '/inventory-intelligence', icon: Brain, label: 'Stock Health' },
+    { path: '/recommendations', icon: Brain, label: 'Smart Advisor' },
     { path: '/ai-insights', icon: Brain, label: 'AI Insights' },
     { path: '/manager-dashboard', icon: Activity, label: 'Manager Stats', roles: ['admin', 'manager'] },
     { path: '/reports', icon: FileText, label: 'Reports' },

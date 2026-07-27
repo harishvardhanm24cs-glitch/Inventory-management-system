@@ -1,0 +1,546 @@
+{
+  "section_1_pipeline_validation": {
+    "model_path": "D:\\atendence-main\\ai\\models\\rm_model_v2.joblib",
+    "file_exists": true,
+    "load_status": "SUCCESS",
+    "algorithm_type": "RandomForestRegressor",
+    "number_of_learned_features": 23,
+    "model_version": "v2",
+    "training_timestamp": "2026-07-25T23:59:09.840907"
+  },
+  "section_2_target_validation": {
+    "target_column": "quantity_used",
+    "total_rows": 53,
+    "min": 0.0,
+    "max": 0.0,
+    "mean": 0.0,
+    "median": 0.0,
+    "std": 0.0,
+    "unique_values_count": 1,
+    "null_count": 53,
+    "zero_count": 53,
+    "is_constant": true,
+    "top_20_frequent_values": {
+      "nan": 53
+    }
+  },
+  "section_3_feature_validation": {
+    "target_excluded_from_X": true,
+    "total_dataset_columns": 26,
+    "included_features_count": 23,
+    "excluded_features_count": 3,
+    "included_columns": [
+      "material_id",
+      "material_name",
+      "barcode",
+      "batch_number",
+      "current_stock",
+      "threshold",
+      "unit",
+      "weight",
+      "transaction_type",
+      "quantity",
+      "rack_code",
+      "rack_capacity",
+      "current_rack_quantity",
+      "occupancy_percentage",
+      "movement_type",
+      "source_location",
+      "destination_location",
+      "day_of_week",
+      "week_number",
+      "month",
+      "year",
+      "hour",
+      "weekend_flag"
+    ],
+    "excluded_columns": [
+      "user_id",
+      "timestamp",
+      "quantity_used"
+    ]
+  },
+  "section_4_constant_features": {
+    "total_features": 23,
+    "constant_columns_count": 17,
+    "constant_columns": [
+      "material_name",
+      "barcode",
+      "batch_number",
+      "unit",
+      "weight",
+      "transaction_type",
+      "quantity",
+      "rack_code",
+      "rack_capacity",
+      "current_rack_quantity",
+      "occupancy_percentage",
+      "movement_type",
+      "source_location",
+      "destination_location",
+      "day_of_week",
+      "week_number",
+      "year"
+    ],
+    "near_constant_columns_count": 0,
+    "near_constant_columns": [],
+    "empty_columns_count": 0,
+    "empty_columns": [],
+    "feature_diagnostics": [
+      {
+        "feature_name": "material_id",
+        "data_type": "int64",
+        "unique_values": 37,
+        "std_dev": 95.119389,
+        "top_value_frequency_pct": 15.09,
+        "is_constant": false,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "material_name",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "barcode",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "batch_number",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "current_stock",
+        "data_type": "int64",
+        "unique_values": 13,
+        "std_dev": 45.330347,
+        "top_value_frequency_pct": 33.96,
+        "is_constant": false,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "threshold",
+        "data_type": "int64",
+        "unique_values": 4,
+        "std_dev": 17.52771,
+        "top_value_frequency_pct": 86.79,
+        "is_constant": false,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "unit",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "weight",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "transaction_type",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "quantity",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "rack_code",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "rack_capacity",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "current_rack_quantity",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "occupancy_percentage",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "movement_type",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "source_location",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "destination_location",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "day_of_week",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "week_number",
+        "data_type": "float64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "month",
+        "data_type": "int64",
+        "unique_values": 3,
+        "std_dev": 0.304776,
+        "top_value_frequency_pct": 90.57,
+        "is_constant": false,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "year",
+        "data_type": "int64",
+        "unique_values": 1,
+        "std_dev": 0.0,
+        "top_value_frequency_pct": 100.0,
+        "is_constant": true,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "hour",
+        "data_type": "int64",
+        "unique_values": 10,
+        "std_dev": 10.080014,
+        "top_value_frequency_pct": 26.42,
+        "is_constant": false,
+        "is_near_constant": false,
+        "is_empty": false
+      },
+      {
+        "feature_name": "weekend_flag",
+        "data_type": "int64",
+        "unique_values": 2,
+        "std_dev": 0.445099,
+        "top_value_frequency_pct": 73.58,
+        "is_constant": false,
+        "is_near_constant": false,
+        "is_empty": false
+      }
+    ]
+  },
+  "section_5_target_leakage": {
+    "target_is_constant": true,
+    "leakage_suspects_count": 0,
+    "leakage_suspects": [],
+    "feature_correlations_with_target": {
+      "material_id": 0.0,
+      "material_name": 0.0,
+      "barcode": 0.0,
+      "batch_number": 0.0,
+      "current_stock": 0.0,
+      "threshold": 0.0,
+      "unit": 0.0,
+      "weight": 0.0,
+      "transaction_type": 0.0,
+      "quantity": 0.0,
+      "rack_code": 0.0,
+      "rack_capacity": 0.0,
+      "current_rack_quantity": 0.0,
+      "occupancy_percentage": 0.0,
+      "movement_type": 0.0,
+      "source_location": 0.0,
+      "destination_location": 0.0,
+      "day_of_week": 0.0,
+      "week_number": 0.0,
+      "month": 0.0,
+      "year": 0.0,
+      "hour": 0.0,
+      "weekend_flag": 0.0
+    }
+  },
+  "section_6_prediction_validation": {
+    "sample_count": 15,
+    "sample_predictions": [
+      {
+        "sample_index": 3,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 5,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 6,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 8,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 12,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 13,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 17,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 19,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 26,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 32,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 34,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 41,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 43,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 47,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      },
+      {
+        "sample_index": 50,
+        "actual_quantity_used": 0.0,
+        "predicted_quantity_used": 0.0,
+        "prediction_error": 0.0,
+        "absolute_error": 0.0
+      }
+    ]
+  },
+  "section_7_feature_importance_validation": {
+    "all_feature_importances_zero": true,
+    "is_target_constant": true,
+    "diagnostic_explanation": "CRITICAL DIAGNOSTIC FINDING: Every feature importance score is exactly 0.0. This occurs because the target column 'quantity_used' in 'feature_dataset.csv' contains constant zero values across all rows. In Decision Tree / Random Forest algorithms, split quality is evaluated by impurity (MSE) reduction. When the target y has zero variance, no split can reduce MSE further, yielding zero Gini/MSE gain for every feature split."
+  },
+  "section_8_cross_validation": {
+    "cross_validation_folds": 5,
+    "random_state": 42,
+    "mean_mae": 0.0,
+    "std_mae": 0.0,
+    "mean_rmse": 0.0,
+    "std_rmse": 0.0,
+    "mean_r2": 1.0,
+    "std_r2": 0.0,
+    "fold_details": [
+      {
+        "fold": 1,
+        "train_samples": 42,
+        "validation_samples": 11,
+        "mae": 0.0,
+        "rmse": 0.0,
+        "r2_score": 1.0
+      },
+      {
+        "fold": 2,
+        "train_samples": 42,
+        "validation_samples": 11,
+        "mae": 0.0,
+        "rmse": 0.0,
+        "r2_score": 1.0
+      },
+      {
+        "fold": 3,
+        "train_samples": 42,
+        "validation_samples": 11,
+        "mae": 0.0,
+        "rmse": 0.0,
+        "r2_score": 1.0
+      },
+      {
+        "fold": 4,
+        "train_samples": 43,
+        "validation_samples": 10,
+        "mae": 0.0,
+        "rmse": 0.0,
+        "r2_score": 1.0
+      },
+      {
+        "fold": 5,
+        "train_samples": 43,
+        "validation_samples": 10,
+        "mae": 0.0,
+        "rmse": 0.0,
+        "r2_score": 1.0
+      }
+    ],
+    "module_4_single_split_comparison": {
+      "module_4_mae": 0.0,
+      "module_4_rmse": 0.0,
+      "module_4_r2": 1.0,
+      "cv_mae_diff": 0.0
+    }
+  },
+  "section_9_model_sanity_check": {
+    "min_prediction": 0.0,
+    "max_prediction": 0.0,
+    "mean_prediction": 0.0,
+    "std_prediction": 0.0,
+    "is_degenerate_output": true
+  },
+  "section_10_final_diagnosis": {
+    "overall_status": "NOT READY",
+    "is_ready_for_module_5": false,
+    "detected_issues": [
+      "Target column 'quantity_used' is completely unpopulated/constant zero in feature_dataset.csv.",
+      "All feature importance scores equal 0.0 due to zero target variance.",
+      "Model predictions are degenerate constant values (0.0 for all inputs)."
+    ],
+    "recommended_fixes": [
+      "Populate non-zero material usage transactions in quantity_used upstream.",
+      "Regenerate backend/ml_datasets/feature_dataset.csv.",
+      "Re-run Module 4 training pipeline after dataset population."
+    ]
+  }
+}

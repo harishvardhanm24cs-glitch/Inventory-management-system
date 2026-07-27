@@ -1,0 +1,92 @@
+{
+  "audit_metadata": {
+    "title": "END-TO-END WAREHOUSE SYNCHRONIZATION AUDIT REPORT",
+    "timestamp": "2026-07-27T23:22:26+05:30",
+    "environment": "Production / QA Audit",
+    "unlimited_inventory_mode": true
+  },
+  "test_material": {
+    "material_name": "Cherry Red",
+    "barcode_id": "CR002",
+    "material_id": 297,
+    "target_rack": "E3",
+    "unit": "KG",
+    "initial_stock": 4500.00,
+    "scan_1_quantity": 100.00,
+    "scan_2_quantity": 100.00,
+    "expected_total_quantity": 4700.00,
+    "actual_total_quantity": 4700.00,
+    "status": "PASS"
+  },
+  "stage_results": {
+    "qr_scan_handler": {
+      "file": "backend/controllers/scannerController.js",
+      "function": "autoStore",
+      "status": "WARNING",
+      "details": "Inward scan updates material/rack stock properly, but leaves qr_codes.status as 'unused'."
+    },
+    "transactions_table": {
+      "file": "backend/controllers/scannerController.js",
+      "function": "autoStore",
+      "status": "PASS",
+      "details": "Transactions logged correctly with material_id, transaction_type='inward', quantity, user_id."
+    },
+    "materials_table": {
+      "file": "backend/controllers/scannerController.js",
+      "function": "autoStore",
+      "status": "PASS",
+      "details": "Material inventory stock incremented accurately from 4500.00 to 4700.00 KG."
+    },
+    "racks_table": {
+      "file": "backend/controllers/scannerController.js",
+      "function": "autoStore",
+      "status": "PASS",
+      "details": "Rack capacity incremented accurately from 4500.00 to 4700.00 KG."
+    },
+    "rack_inventory_table": {
+      "file": "backend/config/db.js",
+      "function": "after_rack_update (MySQL Trigger)",
+      "status": "PASS",
+      "details": "Trigger automatically synced racks changes to rack_inventory current_capacity."
+    },
+    "occupancy_calculation": {
+      "file": "backend/config/db.js",
+      "function": "after_rack_update (MySQL Trigger)",
+      "status": "PASS",
+      "details": "Occupancy percentage formula (quantity / max_capacity * 100) evaluated to 0.00% under 999999999 KG max capacity limit."
+    },
+    "digital_twin_api": {
+      "file": "backend/controllers/digitalTwinController.js",
+      "function": "getDigitalTwinData",
+      "status": "WARNING",
+      "details": "Rack capacity matches database, but nested materials list returns empty due to JOIN qr_codes WHERE status='used'."
+    },
+    "rack_view_api": {
+      "file": "backend/controllers/rackController.js / rackInventoryController.js",
+      "function": "getAllRacks / getRackInventory",
+      "status": "PASS",
+      "details": "Rack View APIs return accurate current_stock and occupancy percentages matching database state."
+    },
+    "frontend_rendering": {
+      "file": "rm-raw-material-monitoring/src/pages/WarehouseTwin.tsx & RackView.tsx",
+      "function": "WarehouseTwin / RackView",
+      "status": "PASS",
+      "details": "React UI renders rack capacity, occupancy gauges, and live movement feeds cleanly."
+    }
+  },
+  "overall_summary": {
+    "synchronization_status": "PASS (Capacity Sync) / WARNING (QR Status Sync)",
+    "primary_failure_point": "QR Code Status Lifecycle & Digital Twin Material Lookup",
+    "affected_files": [
+      "backend/controllers/scannerController.js",
+      "backend/controllers/digitalTwinController.js"
+    ],
+    "affected_functions": [
+      "autoStore",
+      "getDigitalTwinData"
+    ],
+    "root_cause": "autoStore does not update qr_codes.status to 'used', causing Digital Twin JOIN query to return empty materials array for the rack.",
+    "recommended_fix": "In autoStore, add UPDATE qr_codes SET status='used', rack_code=? WHERE barcode_id=? to maintain QR lifecycle consistency.",
+    "confidence_level": "100%"
+  }
+}

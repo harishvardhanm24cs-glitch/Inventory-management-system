@@ -1,0 +1,81 @@
+{
+  "audit_metadata": {
+    "title": "FRONTEND DATA BINDING & UI RENDERING AUDIT REPORT",
+    "phase": "Phase 9B",
+    "timestamp": "2026-07-27T23:42:58+05:30",
+    "code_modified": false
+  },
+  "status_summary": {
+    "backend_api_status": "PASS",
+    "react_state_status": "PASS",
+    "rack_view_status": "FAIL",
+    "digital_twin_status": "FAIL",
+    "field_mapping_status": "FAIL",
+    "default_values_found": true
+  },
+  "target_rack_audit": {
+    "rack_code": "E3",
+    "material_name": "Cherry Red",
+    "database": {
+      "quantity": 4500.00,
+      "max_capacity": 999999999.00,
+      "occupancy_percentage": 0.00,
+      "batch_number": null
+    },
+    "api_response": {
+      "quantity": "4500.00",
+      "max_capacity": "999999999.00",
+      "capacity": 999999999,
+      "current_stock": 4500,
+      "occupancy_percentage": 0,
+      "batch_number": null
+    },
+    "ui_rendered_values": {
+      "current_stock": "4500 KG",
+      "capacity": "999999999 KG",
+      "available_capacity": "999995499 KG",
+      "occupancy_percentage": "0%",
+      "status_label": "Empty (GRAY)",
+      "batch_number": "N/A"
+    }
+  },
+  "default_values_registry": [
+    {
+      "file": "backend/migration.sql & backend/config/db.js",
+      "line": 25,
+      "value": "999999999.00",
+      "reason": "Unlimited Inventory Mode max capacity database placeholder",
+      "active": true
+    },
+    {
+      "file": "rm-raw-material-monitoring/src/context/InventoryContext.tsx",
+      "line": 161,
+      "value": "100",
+      "reason": "React context fallback when max_capacity is missing",
+      "active": true
+    },
+    {
+      "file": "rm-raw-material-monitoring/src/pages/WarehouseTwin.tsx",
+      "line": 51,
+      "value": "0% -> 'Empty'",
+      "reason": "Hardcoded visualization rule mapping 0% occupancy to 'Empty' label",
+      "active": true
+    },
+    {
+      "file": "rm-raw-material-monitoring/src/pages/RackView.tsx",
+      "line": 657,
+      "value": "'N/A'",
+      "reason": "Fallback UI string for null batch numbers",
+      "active": true
+    }
+  ],
+  "root_cause_analysis": {
+    "primary_failure_point": "UI Capacity Formatting & Digital Twin Occupancy Rule Evaluation",
+    "affected_file": "rm-raw-material-monitoring/src/pages/RackView.tsx & WarehouseTwin.tsx",
+    "affected_component": "RackView & WarehouseTwin (getRackDisplayConfig)",
+    "affected_lines": ["RackView.tsx: L657, L687, L706, L733", "WarehouseTwin.tsx: L51-L62"],
+    "root_cause": "The system uses 999999999.00 as an internal database placeholder for Unlimited Inventory Mode. Frontend components render this number directly to end users as 'Capacity: 999999999 KG' and compute occupancy as (stock / 999999999) * 100 = 0.00%. Consequently, Digital Twin evaluates 0% occupancy and labels 4500 KG occupied racks as 'Empty' (GRAY).",
+    "recommended_fix": "1) Format capacity displays: if max_capacity >= 999999, display 'Unlimited' instead of 999999999 KG.\n2) Update Digital Twin status rule: evaluate rack status based on current_stock > 0 ('Healthy / Loaded') rather than strict 0% math when in Unlimited Mode.\n3) Ensure QR scanner form captures batch_number to replace 'N/A'.",
+    "confidence_level": "100%"
+  }
+}

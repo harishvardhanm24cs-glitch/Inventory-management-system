@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Layers, Plus, Trash2, Edit, AlertTriangle, CheckCircle, Info, Database, Percent, ShieldCheck, ArrowDownRight, ArrowUpRight, Bell, Inbox } from 'lucide-react';
+import { Layers, Plus, Trash2, Edit, AlertTriangle, Database, Percent, ShieldCheck, ArrowDownRight, ArrowUpRight, Bell, Inbox, RefreshCw, Wifi } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import api from '../services/api';
 import { Button } from '../components/ui/Button';
@@ -8,9 +8,24 @@ import EmptyState from '../components/ui/EmptyState';
 import { cn } from '../lib/utils';
 import { useInventory } from '../context/InventoryContext';
 import type { Rack } from '../context/InventoryContext';
+import { useRackSync } from '../hooks/useRackSync';
+import { rackVisualizationRules } from '../utils/rackVisualizationRules';
 
 export default function RackView() {
-  const { racks, refreshData, loading, warehouseStats, lastUpdated } = useInventory();
+  const { racks: contextRacks, refreshData, loading, warehouseStats, lastUpdated } = useInventory();
+
+  // ── Real-time sync via existing rack-inventory-update CustomEvent ──────────
+  const {
+    racks: syncedRacks,
+    isSyncing,
+    lastSyncedAt,
+    affectedRackCode
+  } = useRackSync(300);
+
+  // Merge: use synced racks when available (hook fetches on mount + every event),
+  // fall back to InventoryContext racks during initial render before first sync.
+  const racks: Rack[] = syncedRacks.length > 0 ? syncedRacks : contextRacks;
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedRack, setSelectedRack] = useState<Rack | null>(null);
@@ -28,29 +43,41 @@ export default function RackView() {
   const [maxCapacity, setMaxCapacity] = useState('100');
   const [thresholdLimit, setThresholdLimit] = useState('10');
 
-  // Flash animation trigger on racks update
+  // ── Flash animation: triggered by quantity changes OR direct hook affectedRackCode ──
   useEffect(() => {
     if (!racks || racks.length === 0) return;
 
     const flashes: Record<string, 'up' | 'down'> = {};
     let hasChanges = false;
-    const isFirstLoad = Object.keys(prevQuantitiesRef.current).length === 0;
+    const isFirstLoad = Object.keys(prevQuantitiesRef.current!).length === 0;
 
     racks.forEach(rack => {
       const currentQty = parseFloat(String(rack.quantity)) || 0;
       if (!isFirstLoad) {
-        const prevQty = prevQuantitiesRef.current[rack.rack_code];
+        const prevQty = prevQuantitiesRef.current![rack.rack_code];
         if (prevQty !== undefined && prevQty !== currentQty) {
           flashes[rack.rack_code] = currentQty > prevQty ? 'up' : 'down';
           hasChanges = true;
         }
       }
-      prevQuantitiesRef.current[rack.rack_code] = currentQty;
+      prevQuantitiesRef.current![rack.rack_code] = currentQty;
     });
+
+    // Also flash the rack reported by the sync hook even if qty didn't change
+    // (edge case: same qty but status colour changed)
+    if (affectedRackCode && !flashes[affectedRackCode]) {
+      const targetRack = racks.find(r => r.rack_code === affectedRackCode);
+      if (targetRack) {
+        const prevQty = prevQuantitiesRef.current![affectedRackCode] ?? 0;
+        const currentQty = parseFloat(String(targetRack.quantity)) || 0;
+        flashes[affectedRackCode] = currentQty >= prevQty ? 'up' : 'down';
+        hasChanges = true;
+      }
+    }
 
     if (hasChanges) {
       setFlashingRacks(prev => ({ ...prev, ...flashes }));
-      // Clear flashes after 1.5 seconds
+      // Clear flashes after 2 seconds
       setTimeout(() => {
         setFlashingRacks(prev => {
           const updated = { ...prev };
@@ -59,9 +86,9 @@ export default function RackView() {
           });
           return updated;
         });
-      }, 1500);
+      }, 2000);
     }
-  }, [racks]);
+  }, [racks, affectedRackCode]);
 
   const handleOpenAddModal = () => {
     setRackCode('');
@@ -491,15 +518,33 @@ export default function RackView() {
               </button>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            {lastUpdated && (
+          <div className="flex items-center gap-3">
+            {/* Last updated timestamp — prefers the sync hook's timestamp for freshness */}
+            {(lastSyncedAt || lastUpdated) && (
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                Last Updated: {lastUpdated}
+                Last Sync:{' '}
+                {lastSyncedAt
+                  ? new Date(lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                  : lastUpdated}
               </span>
             )}
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-              Auto-Sync Status Enabled
-            </span>
+
+            {/* Live Sync indicator badge — pulses while fetch is in-flight */}
+            <div
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-wider transition-all duration-300',
+                isSyncing
+                  ? 'bg-blue-50 border-blue-200 text-blue-600 shadow-[0_0_10px_rgba(59,130,246,0.15)]'
+                  : 'bg-emerald-50 border-emerald-100 text-emerald-600'
+              )}
+            >
+              {isSyncing ? (
+                <RefreshCw size={10} className="animate-spin" />
+              ) : (
+                <Wifi size={10} />
+              )}
+              {isSyncing ? 'Syncing…' : 'Live Sync On'}
+            </div>
           </div>
         </div>
 
@@ -520,44 +565,27 @@ export default function RackView() {
               const capVal = parseFloat(String(rack.max_capacity)) || 100;
               const limitVal = parseFloat(String(rack.threshold_limit)) || 10;
 
-              // Frontend-driven status computation to enforce visual thresholds
-              const calculatedStatus = qtyVal === 0 ? 'empty' :
-                                       qtyVal < limitVal ? 'critical' :
-                                       qtyVal <= limitVal * 1.2 ? 'warning' : 'healthy';
-
-              const colors = getStatusColor(calculatedStatus);
-              const occStyles = getOccupancyColorStyles(rack.status_color);
-              const isEmpty = calculatedStatus === 'empty';
-              const isCriticalStock = qtyVal > 0 && qtyVal <= limitVal;
+              // Evaluated using central decoupled visualization rule engine
+              const vConfig = rackVisualizationRules.evaluate(rack);
+              const isEmpty = vConfig.state === 'EMPTY';
+              const isCriticalStock = vConfig.state === 'CRITICAL_STOCK' || (qtyVal > 0 && qtyVal <= limitVal);
               const flashDirection = flashingRacks[rack.rack_code];
-
-              const cardBg = isEmpty ? "bg-slate-50/50" :
-                             isCriticalStock ? "bg-rose-50/15" :
-                             rack.status_color === 'RED' ? "bg-rose-50/10" :
-                             rack.status_color === 'YELLOW' ? "bg-amber-50/5" : "bg-white";
-
-              const cardGlow = isEmpty ? "hover:shadow-slate-500/10 hover:border-slate-400" :
-                               isCriticalStock ? "hover:shadow-rose-500/30 hover:border-rose-500" :
-                               rack.status_color === 'RED' ? "hover:shadow-rose-500/20 hover:border-rose-400" :
-                               rack.status_color === 'YELLOW' ? "hover:shadow-amber-500/10 hover:border-amber-450" : "hover:shadow-emerald-500/10 hover:border-emerald-450";
 
               return (
                 <div
                   key={rack.id}
                   className={cn(
                     "border p-5 rounded-2xl shadow-sm transition-all duration-500 hover:scale-[1.02] flex flex-col justify-between group relative overflow-hidden",
-                    isEmpty ? "border-dashed border-slate-300 shadow-[0_0_15px_rgba(148,163,184,0.08)]" : 
-                    isCriticalStock ? "animate-pulse-red border-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.15)] z-10" : 
-                    occStyles.border,
-                    cardBg,
-                    cardGlow,
-                    rack.status_color === 'RED' && "ring-2 ring-rose-500/20",
+                    vConfig.cardBg,
+                    vConfig.cardBorder,
+                    vConfig.cardGlow,
+                    vConfig.isPulse && "animate-pulse-red z-10",
                     flashDirection === 'up' && "ring-4 ring-emerald-500/50 shadow-lg shadow-emerald-500/30 scale-[1.04] bg-emerald-50/10 border-emerald-400 z-10",
                     flashDirection === 'down' && "ring-4 ring-rose-500/50 shadow-lg shadow-rose-500/30 scale-[1.04] bg-rose-50/10 border-rose-400 z-10"
                   )}
                 >
                   {/* Status Indicator Bar at top */}
-                  <div className={cn("absolute top-0 left-0 right-0 h-1.5", isEmpty ? "bg-slate-300" : occStyles.bar)} />
+                  <div className={cn("absolute top-0 left-0 right-0 h-1.5", vConfig.barColor)} />
 
                   {/* Flash Update indicator */}
                   {flashDirection && (
@@ -590,16 +618,16 @@ export default function RackView() {
 
                         <span className={cn(
                           "px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-[0.08em] border flex items-center gap-1.5",
-                          isEmpty ? "bg-slate-100 text-slate-500 border-slate-200 font-bold" : 
-                          isCriticalStock ? "bg-rose-100 text-rose-700 border-rose-300 font-extrabold animate-pulse" :
-                          occStyles.badge
+                          vConfig.badgeBg,
+                          vConfig.badgeText,
+                          vConfig.badgeBorder
                         )}>
                           {isCriticalStock ? (
                             <AlertTriangle size={10} className="text-rose-700 animate-bounce" />
                           ) : (
-                            <div className={cn("w-1.5 h-1.5 rounded-full", isEmpty ? "bg-slate-400" : occStyles.bullet, isEmpty ? "" : occStyles.pulse)} />
+                            <div className={cn("w-1.5 h-1.5 rounded-full", vConfig.dotColor)} />
                           )}
-                          {isEmpty ? "Empty Rack" : isCriticalStock ? "CRITICAL STOCK" : rack.status_color}
+                          {vConfig.label}
                         </span>
                       </div>
                     </div>
@@ -657,7 +685,7 @@ export default function RackView() {
                           "text-xs font-black",
                           isCriticalStock ? "text-rose-600" : "text-slate-805"
                         )}>
-                          {rack.occupancy_percentage}%
+                          {capVal >= 999999 ? "Unlimited" : `${rack.occupancy_percentage}%`}
                         </span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden shadow-inner">
@@ -671,8 +699,8 @@ export default function RackView() {
                       <div className="flex justify-between items-center mt-1.5">
                         <p className="text-[10px] text-slate-455 font-bold">
                           {isEmpty 
-                            ? `Available Capacity: ${rack.capacity ?? capVal} KG` 
-                            : `Current Stock: ${rack.current_stock ?? qtyVal} KG / Capacity: ${rack.capacity ?? capVal} KG`
+                            ? `Available Capacity: ${capVal >= 999999 ? 'Unlimited' : `${rack.capacity ?? capVal} KG`}` 
+                            : `Current Stock: ${rack.current_stock ?? qtyVal} KG / Capacity: ${capVal >= 999999 ? 'Unlimited' : `${rack.capacity ?? capVal} KG`}`
                           }
                         </p>
                         {isCriticalStock && (
@@ -691,24 +719,24 @@ export default function RackView() {
                         </p>
                         <p className={cn(
                           "text-[10px] font-black mt-1 leading-none",
-                          isEmpty ? "text-slate-500" : isCriticalStock ? "text-rose-600" : calculatedStatus === 'warning' ? "text-amber-600" : "text-slate-800"
+                          isEmpty ? "text-slate-500" : isCriticalStock ? "text-rose-600" : "text-slate-800"
                         )}>
-                          {isEmpty ? `${rack.capacity ?? capVal} KG` : `${rack.current_stock ?? qtyVal} KG`}
+                          {isEmpty ? (capVal >= 999999 ? 'Unlimited' : `${rack.capacity ?? capVal} KG`) : `${rack.current_stock ?? qtyVal} KG`}
                         </p>
                       </div>
                       <div className="text-center border-x border-slate-200">
                         <p className="text-[7px] font-black text-slate-455 uppercase tracking-widest leading-none">Capacity</p>
                         <p className="text-[10px] font-black text-slate-700 mt-1 leading-none">
-                          {rack.capacity ?? capVal} KG
+                          {capVal >= 999999 ? 'Unlimited' : `${rack.capacity ?? capVal} KG`}
                         </p>
                       </div>
                       <div className="text-center">
                         <p className="text-[7px] font-black text-slate-455 uppercase tracking-widest leading-none">Occupancy %</p>
                         <p className={cn(
                           "text-[10px] font-black mt-1 leading-none",
-                          isEmpty ? "text-slate-500 font-bold" : isCriticalStock ? "text-rose-600" : calculatedStatus === 'warning' ? "text-amber-600" : "text-slate-800"
+                          isEmpty ? "text-slate-500 font-bold" : isCriticalStock ? "text-rose-600" : "text-slate-800"
                         )}>
-                          {rack.occupancy_percentage}%
+                          {capVal >= 999999 ? 'Unlimited' : `${rack.occupancy_percentage}%`}
                         </p>
                       </div>
                     </div>

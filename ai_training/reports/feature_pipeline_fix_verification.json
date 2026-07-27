@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-07-26T00:32:46.047727",
+  "file_modified": "backend/services/featureEngineeringPipelineService.js",
+  "function_modified": "runFeaturePipeline()",
+  "target_column": "quantity_used",
+  "verification_status": "PASSED",
+  "export_details": {
+    "csv_path": "D:\\atendence-main\\backend\\ml_datasets\\feature_dataset.csv",
+    "number_of_rows_exported": 65,
+    "number_of_columns_exported": 26,
+    "column_exists_in_csv": true,
+    "contains_undefined_string": false,
+    "is_empty_column": false
+  },
+  "quantity_used_statistics": {
+    "total_rows": 65,
+    "null_count": 0,
+    "zero_count": 49,
+    "non_zero_count": 16,
+    "min": 0.0,
+    "max": 1000.0,
+    "mean": 25.1462
+  }
+}

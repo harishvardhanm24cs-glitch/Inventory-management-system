@@ -7,7 +7,8 @@ import {
   deleteMaterial,
   adjustStock,
   searchMaterials,
-  getMaterialPredictions
+  getMaterialPredictions,
+  getConsumptionAnalytics
 } from '../controllers/materialController.js';
 import { protect, managerOnly, anyRole } from '../middleware/authMiddleware.js';
 
@@ -16,6 +17,10 @@ const router = express.Router();
 // Get all materials
 // GET /api/materials
 router.get('/', getAllMaterials);
+
+// Get consumption analytics
+// GET /api/materials/consumption-analytics
+router.get('/consumption-analytics', protect, anyRole, getConsumptionAnalytics);
 
 // Get AI stock predictions
 // GET /api/materials/predictions

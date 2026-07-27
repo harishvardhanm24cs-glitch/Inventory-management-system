@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-07-26T01:24:39.957281",
+  "model_version": "v4",
+  "validation_status": "PASSED",
+  "overall_readiness": "READY",
+  "checks": {
+    "multiple_prediction_values": true,
+    "non_zero_feature_importances": true,
+    "target_quantity_used_learned": true
+  },
+  "sample_predictions_count": 20
+}

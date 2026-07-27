@@ -1,0 +1,12 @@
+{
+  "registry_name": "Feature Importance Evaluation Template",
+  "status": "UNTRAINED_TEMPLATE",
+  "version": "v1.0.0",
+  "created_date": "2026-07-25T19:53:23.357Z",
+  "last_modified": "2026-07-25T19:53:23.357Z",
+  "note": "This file contains placeholders for model evaluation metrics. Calculated values will be populated after model training.",
+  "feature_importance": {},
+  "permutation_importance": {},
+  "shap_values": {},
+  "feature_ranking": []
+}

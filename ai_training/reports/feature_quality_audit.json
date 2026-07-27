@@ -1,0 +1,120 @@
+{
+  "timestamp": "2026-07-26T01:30:37.482623",
+  "dataset_summary": {
+    "total_rows": 96,
+    "total_columns": 26,
+    "target_column": "quantity_used"
+  },
+  "overall_quality_score": 32.8,
+  "overall_dataset_grade": "FAIR",
+  "constant_features": [
+    "unit",
+    "weight",
+    "quantity",
+    "user_id",
+    "timestamp",
+    "rack_capacity",
+    "current_rack_quantity",
+    "occupancy_percentage",
+    "source_location",
+    "destination_location",
+    "day_of_week",
+    "week_number",
+    "year"
+  ],
+  "near_constant_features": [],
+  "identifier_audit": [
+    {
+      "feature_name": "material_id",
+      "unique_values": 44,
+      "recommended_action": "Keep & Encode",
+      "rationale": "Entity ID provides high predictive grouping signal."
+    },
+    {
+      "feature_name": "barcode",
+      "unique_values": 44,
+      "recommended_action": "Exclude / High Cardinality Text",
+      "rationale": "High cardinality text string; redundant with material_id."
+    },
+    {
+      "feature_name": "batch_number",
+      "unique_values": 15,
+      "recommended_action": "Exclude / High Cardinality Text",
+      "rationale": "High cardinality text string; redundant with material_id."
+    },
+    {
+      "feature_name": "rack_code",
+      "unique_values": 15,
+      "recommended_action": "Keep & Encode",
+      "rationale": "Entity ID provides high predictive grouping signal."
+    }
+  ],
+  "top_10_best_features": [
+    "material_id",
+    "hour",
+    "current_stock",
+    "month",
+    "weekend_flag",
+    "threshold",
+    "movement_type",
+    "transaction_type",
+    "material_name",
+    "rack_code"
+  ],
+  "top_10_weakest_features": [
+    "weight",
+    "user_id",
+    "occupancy_percentage",
+    "current_rack_quantity",
+    "rack_capacity",
+    "timestamp",
+    "week_number",
+    "day_of_week",
+    "destination_location",
+    "source_location"
+  ],
+  "recommendations": {
+    "features_to_keep": [
+      "material_id",
+      "hour",
+      "current_stock",
+      "month",
+      "weekend_flag",
+      "threshold"
+    ],
+    "features_to_remove": [
+      "unit",
+      "weight",
+      "quantity",
+      "user_id",
+      "timestamp",
+      "rack_capacity",
+      "current_rack_quantity",
+      "occupancy_percentage",
+      "source_location",
+      "destination_location",
+      "day_of_week",
+      "week_number",
+      "year",
+      "barcode",
+      "batch_number"
+    ],
+    "features_to_encode": [
+      "transaction_type",
+      "movement_type",
+      "material_name",
+      "rack_code"
+    ],
+    "features_to_normalize": [
+      "current_stock",
+      "threshold",
+      "quantity",
+      "weight"
+    ],
+    "new_features_to_create": [
+      "rolling_7d_consumption",
+      "days_since_last_transaction",
+      "stock_to_threshold_ratio"
+    ]
+  }
+}

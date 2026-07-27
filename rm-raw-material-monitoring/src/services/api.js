@@ -571,6 +571,30 @@ export const getDashboardStats = async () => {
   }
 };
 
+export const getWarehouseAnalytics = async (params) => {
+  console.log('[API Call] GET /dashboard/analytics with params:', params);
+  try {
+    const response = await API.get('/dashboard/analytics', { params });
+    console.log('API success');
+    return response.data;
+  } catch (error) {
+    console.error('getWarehouseAnalytics failure', error.message);
+    throw error;
+  }
+};
+
+export const getConsumptionAnalytics = async (dateRange = '30d') => {
+  console.log('[API Call] GET /materials/consumption-analytics with dateRange:', dateRange);
+  try {
+    const response = await API.get('/materials/consumption-analytics', { params: { dateRange } });
+    console.log('API success');
+    return response.data;
+  } catch (error) {
+    console.error('getConsumptionAnalytics failure', error.message);
+    throw error;
+  }
+};
+
 export const getQrHistoryList = async (params) => {
   console.log('[API Call] GET /qr/history with params:', params);
   try {
@@ -683,7 +707,393 @@ export const createMovement = async (data) => {
   }
 };
 
-// ─── DEFAULT EXPORT ────────────────────────────────────────────────────────────
+// ─── MODULE 1, 2, 3 AI & INTELLIGENCE ENDPOINTS ──────────────────────────────────────
+
+export const getPredictionEngineOverview = async () => {
+  try {
+    const res = await API.get('/ai/prediction-engine/overview');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getPredictionEngineOverview failure', err.message);
+    throw err;
+  }
+};
+
+export const getPredictionDemand = async () => {
+  try {
+    const res = await API.get('/ai/prediction-engine/demand');
+    return res.data ? res.data.data || res.data : [];
+  } catch (err) {
+    console.error('getPredictionDemand failure', err.message);
+    throw err;
+  }
+};
+
+export const getPredictionDepletion = async () => {
+  try {
+    const res = await API.get('/ai/prediction-engine/depletion');
+    return res.data ? res.data.data || res.data : [];
+  } catch (err) {
+    console.error('getPredictionDepletion failure', err.message);
+    throw err;
+  }
+};
+
+export const getPredictionRackUtilization = async () => {
+  try {
+    const res = await API.get('/ai/prediction-engine/rack-utilization');
+    return res.data ? res.data.data || res.data : [];
+  } catch (err) {
+    console.error('getPredictionRackUtilization failure', err.message);
+    throw err;
+  }
+};
+
+export const getPredictionWarehouseRisk = async () => {
+  try {
+    const res = await API.get('/ai/prediction-engine/warehouse-risk');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getPredictionWarehouseRisk failure', err.message);
+    throw err;
+  }
+};
+
+export const getPredictionConsumptionTrend = async () => {
+  try {
+    const res = await API.get('/ai/prediction-engine/consumption-trend');
+    return res.data ? res.data.data || res.data : [];
+  } catch (err) {
+    console.error('getPredictionConsumptionTrend failure', err.message);
+    throw err;
+  }
+};
+
+export const getPredictiveRecommendations = async () => {
+  try {
+    const res = await API.get('/ai/prediction-engine/recommendations');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getPredictiveRecommendations failure', err.message);
+    throw err;
+  }
+};
+
+export const mlPipelineRun = async (datasetName = 'warehouse_ml_dataset') => {
+  try {
+    const res = await API.post('/ai/ml-pipeline/run', { dataset_name: datasetName });
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('mlPipelineRun failure', err.message);
+    throw err;
+  }
+};
+
+export const mlPipelineStatus = async () => {
+  try {
+    const res = await API.get('/ai/ml-pipeline/status');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('mlPipelineStatus failure', err.message);
+    return null;
+  }
+};
+
+export const mlPipelineDatasets = async () => {
+  try {
+    const res = await API.get('/ai/ml-pipeline/datasets');
+    return res.data ? res.data.data || res.data : [];
+  } catch (err) {
+    console.error('mlPipelineDatasets failure', err.message);
+    return [];
+  }
+};
+
+export const mlPipelineExport = async (framework) => {
+  try {
+    const res = await API.get(`/ai/ml-pipeline/export/${framework}`);
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('mlPipelineExport failure', err.message);
+    return null;
+  }
+};
+
+export const getFeatures = async () => {
+  try {
+    const res = await API.get('/ai/features');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getFeatures failure', err.message);
+    return null;
+  }
+};
+
+export const getMaterialFeatures = async () => {
+  try {
+    const res = await API.get('/ai/features/materials');
+    return res.data ? res.data.data || res.data : [];
+  } catch (err) {
+    console.error('getMaterialFeatures failure', err.message);
+    return [];
+  }
+};
+
+export const getWarehouseFeatures = async () => {
+  try {
+    const res = await API.get('/ai/features/warehouse');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getWarehouseFeatures failure', err.message);
+    return null;
+  }
+};
+
+export const getFeatureCatalog = async () => {
+  try {
+    const res = await API.get('/ai/features/catalog');
+    return res.data ? res.data.data || res.data : [];
+  } catch (err) {
+    console.error('getFeatureCatalog failure', err.message);
+    return [];
+  }
+};
+
+// --- Module 4: Model Management ---
+export const getModels = async () => {
+  try {
+    const res = await API.get('/ai/models');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getModels failure', err.message);
+    return null;
+  }
+};
+
+export const registerModel = async (payload) => {
+  try {
+    const res = await API.post('/ai/models/register', payload);
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('registerModel failure', err.message);
+    throw err;
+  }
+};
+
+export const switchModel = async (modelId) => {
+  try {
+    const res = await API.post('/ai/models/switch', { model_id: modelId });
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('switchModel failure', err.message);
+    throw err;
+  }
+};
+
+export const loadModel = async (modelId) => {
+  try {
+    const res = await API.post('/ai/models/load', { model_id: modelId });
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('loadModel failure', err.message);
+    throw err;
+  }
+};
+
+export const getModelPerformance = async () => {
+  try {
+    const res = await API.get('/ai/models/performance');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getModelPerformance failure', err.message);
+    return null;
+  }
+};
+
+// --- Module 5: AI Recommendation Engine ---
+export const getRecommendationsEngine = async () => {
+  try {
+    const res = await API.get('/ai/recommendations/engine');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getRecommendationsEngine failure', err.message);
+    return null;
+  }
+};
+
+export const getRecommendationsByCategory = async (category) => {
+  try {
+    const res = await API.get(`/ai/recommendations/category/${category}`);
+    return res.data ? res.data.data || res.data : [];
+  } catch (err) {
+    console.error('getRecommendationsByCategory failure', err.message);
+    return [];
+  }
+};
+
+export const switchRecommendationStrategy = async (strategyName) => {
+  try {
+    const res = await API.post('/ai/recommendations/strategy', { strategy_name: strategyName });
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('switchRecommendationStrategy failure', err.message);
+    throw err;
+  }
+};
+
+// --- Module 6: Explainable AI (XAI) ---
+export const explainMaterial = async (materialId) => {
+  try {
+    const res = await API.get(`/ai/xai/explain/material/${materialId}`);
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('explainMaterial failure', err.message);
+    return null;
+  }
+};
+
+export const explainRack = async (rackCode) => {
+  try {
+    const res = await API.get(`/ai/xai/explain/rack/${rackCode}`);
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('explainRack failure', err.message);
+    return null;
+  }
+};
+
+export const getXaiDashboard = async () => {
+  try {
+    const res = await API.get('/ai/xai/dashboard');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getXaiDashboard failure', err.message);
+    return null;
+  }
+};
+
+export const getXaiDigitalTwin = async () => {
+  try {
+    const res = await API.get('/ai/xai/digital-twin');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getXaiDigitalTwin failure', err.message);
+    return null;
+  }
+};
+
+export const getXaiReports = async () => {
+  try {
+    const res = await API.get('/ai/xai/reports');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getXaiReports failure', err.message);
+    return null;
+  }
+};
+
+export const getXaiManagerPortal = async () => {
+  try {
+    const res = await API.get('/ai/xai/manager-portal');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getXaiManagerPortal failure', err.message);
+    return null;
+  }
+};
+
+// --- Module 7: AI Monitoring ---
+export const getAiHealth = async () => {
+  try {
+    const res = await API.get('/ai/monitoring/health');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getAiHealth failure', err.message);
+    return null;
+  }
+};
+
+export const getAiMetrics = async () => {
+  try {
+    const res = await API.get('/ai/monitoring/metrics');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('getAiMetrics failure', err.message);
+    return null;
+  }
+};
+
+export const resetAiMetrics = async () => {
+  try {
+    const res = await API.post('/ai/monitoring/reset');
+    return res.data ? res.data.data || res.data : null;
+  } catch (err) {
+    console.error('resetAiMetrics failure', err.message);
+    throw err;
+  }
+};
+
+export const getLowStockIntelligence = async () => {
+  try {
+    const res = await API.get('/ai/low-stock-intelligence');
+    return res.data;
+  } catch (err) {
+    console.error('getLowStockIntelligence failure', err.message);
+    throw err;
+  }
+};
+
+export const getConsumptionIntelligence = async () => {
+  try {
+    const res = await API.get('/ai/consumption-intelligence');
+    return res.data;
+  } catch (err) {
+    console.error('getConsumptionIntelligence failure', err.message);
+    throw err;
+  }
+};
+
+export const getDeadStockIntelligence = async (params) => {
+  try {
+    const res = await API.get('/ai/dead-stock-intelligence', { params });
+    return res.data;
+  } catch (err) {
+    console.error('getDeadStockIntelligence failure', err.message);
+    throw err;
+  }
+};
+
+export const getRackOptimizationIntelligence = async () => {
+  try {
+    const res = await API.get('/ai/rack-optimization-intelligence');
+    return res.data;
+  } catch (err) {
+    console.error('getRackOptimizationIntelligence failure', err.message);
+    throw err;
+  }
+};
+
+export const getSmartAlerts = async () => {
+  try {
+    const res = await API.get('/ai/smart-alerts');
+    return res.data;
+  } catch (err) {
+    console.error('getSmartAlerts failure', err.message);
+    throw err;
+  }
+};
+
+export const getWarehouseHealthScore = async () => {
+  try {
+    const res = await API.get('/ai/warehouse-health-score');
+    return res.data;
+  } catch (err) {
+    console.error('getWarehouseHealthScore failure', err.message);
+    throw err;
+  }
+};
+
+// ─── DEFAULT & NAMED EXPORTS ───────────────────────────────────────────────────
 
 const api = {
   updateStock,
@@ -734,8 +1144,63 @@ const api = {
   getRackMaterials,
   getMovementsRecent,
   createMovement,
+  getWarehouseAnalytics,
+  getConsumptionAnalytics,
+  // Prediction Engine
+  getPredictionEngineOverview,
+  getPredictionDemand,
+  getPredictionDepletion,
+  getPredictionRackUtilization,
+  getPredictionWarehouseRisk,
+  getPredictionConsumptionTrend,
+  getPredictiveRecommendations,
+  // ML Pipeline
+  mlPipelineRun,
+  mlPipelineStatus,
+  mlPipelineDatasets,
+  mlPipelineExport,
+  // Feature Engineering
+  getFeatures,
+  getMaterialFeatures,
+  getWarehouseFeatures,
+  getFeatureCatalog,
+  // Generic HTTP helpers
+  get: (url, config) => API.get(url, config),
+  post: (url, data, config) => API.post(url, data, config),
+  put: (url, data, config) => API.put(url, data, config),
+  delete: (url, config) => API.delete(url, config),
+  // Model Management
+  getModels,
+  registerModel,
+  switchModel,
+  loadModel,
+  getModelPerformance,
+  // Recommendation Engine
+  getRecommendationsEngine,
+  getRecommendationsByCategory,
+  switchRecommendationStrategy,
+  // Explainable AI
+  explainMaterial,
+  explainRack,
+  getXaiDashboard,
+  getXaiDigitalTwin,
+  getXaiReports,
+  getXaiManagerPortal,
+  // AI Monitoring
+  getAiHealth,
+  getAiMetrics,
+  resetAiMetrics,
+  // Intelligence
+  getLowStockIntelligence,
+  getConsumptionIntelligence,
+  getDeadStockIntelligence,
+  getRackOptimizationIntelligence,
+  getSmartAlerts,
+  getWarehouseHealthScore
 };
 
+export const apiService = api;
 export default api;
+
 
 

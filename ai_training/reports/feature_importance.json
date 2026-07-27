@@ -1,0 +1,117 @@
+[
+  {
+    "feature_name": "material_id",
+    "importance": 0.44116459560292215,
+    "rank": 1
+  },
+  {
+    "feature_name": "hour",
+    "importance": 0.27679933764501136,
+    "rank": 2
+  },
+  {
+    "feature_name": "current_stock",
+    "importance": 0.2319779512501173,
+    "rank": 3
+  },
+  {
+    "feature_name": "weekend_flag",
+    "importance": 0.028534811319624393,
+    "rank": 4
+  },
+  {
+    "feature_name": "month",
+    "importance": 0.02017846907629339,
+    "rank": 5
+  },
+  {
+    "feature_name": "threshold",
+    "importance": 0.0013448351060313917,
+    "rank": 6
+  },
+  {
+    "feature_name": "barcode",
+    "importance": 0.0,
+    "rank": 7
+  },
+  {
+    "feature_name": "unit",
+    "importance": 0.0,
+    "rank": 8
+  },
+  {
+    "feature_name": "batch_number",
+    "importance": 0.0,
+    "rank": 9
+  },
+  {
+    "feature_name": "material_name",
+    "importance": 0.0,
+    "rank": 10
+  },
+  {
+    "feature_name": "weight",
+    "importance": 0.0,
+    "rank": 11
+  },
+  {
+    "feature_name": "rack_capacity",
+    "importance": 0.0,
+    "rank": 12
+  },
+  {
+    "feature_name": "transaction_type",
+    "importance": 0.0,
+    "rank": 13
+  },
+  {
+    "feature_name": "quantity",
+    "importance": 0.0,
+    "rank": 14
+  },
+  {
+    "feature_name": "rack_code",
+    "importance": 0.0,
+    "rank": 15
+  },
+  {
+    "feature_name": "movement_type",
+    "importance": 0.0,
+    "rank": 16
+  },
+  {
+    "feature_name": "occupancy_percentage",
+    "importance": 0.0,
+    "rank": 17
+  },
+  {
+    "feature_name": "current_rack_quantity",
+    "importance": 0.0,
+    "rank": 18
+  },
+  {
+    "feature_name": "source_location",
+    "importance": 0.0,
+    "rank": 19
+  },
+  {
+    "feature_name": "week_number",
+    "importance": 0.0,
+    "rank": 20
+  },
+  {
+    "feature_name": "day_of_week",
+    "importance": 0.0,
+    "rank": 21
+  },
+  {
+    "feature_name": "destination_location",
+    "importance": 0.0,
+    "rank": 22
+  },
+  {
+    "feature_name": "year",
+    "importance": 0.0,
+    "rank": 23
+  }
+]

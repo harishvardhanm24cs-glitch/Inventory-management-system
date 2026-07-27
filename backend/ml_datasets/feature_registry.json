@@ -1,0 +1,3312 @@
+{
+  "registry_name": "RM Monitor Central AI Feature Registry",
+  "version": "v1.0.0",
+  "author": "Antigravity AI Platform",
+  "created_date": "2026-07-25T19:53:23.357Z",
+  "last_modified": "2026-07-25T19:53:23.357Z",
+  "total_registered_features": 75,
+  "features": [
+    {
+      "feature_name": "material_id",
+      "description": "Engineered warehouse telemetry feature 'material_id' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "material_id"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "material_id"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'material_id' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "material_name",
+      "description": "Engineered warehouse telemetry feature 'material_name' for AI model training and real-time inference.",
+      "data_type": "Categorical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "material_name"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "material_name"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'material_name' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "barcode",
+      "description": "Engineered warehouse telemetry feature 'barcode' for AI model training and real-time inference.",
+      "data_type": "Categorical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "barcode"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "barcode"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'barcode' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "batch_number",
+      "description": "Engineered warehouse telemetry feature 'batch_number' for AI model training and real-time inference.",
+      "data_type": "Categorical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "batch_number"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "batch_number"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'batch_number' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "transaction_type",
+      "description": "Engineered warehouse telemetry feature 'transaction_type' for AI model training and real-time inference.",
+      "data_type": "Categorical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "transaction_type"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "transaction_type"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'transaction_type' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "movement_type",
+      "description": "Engineered warehouse telemetry feature 'movement_type' for AI model training and real-time inference.",
+      "data_type": "Categorical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "movement_type"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "movement_type"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'movement_type' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "rack_code",
+      "description": "Engineered warehouse telemetry feature 'rack_code' for AI model training and real-time inference.",
+      "data_type": "Categorical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "rack_code"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "rack_code"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'rack_code' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "quantity_used",
+      "description": "Engineered warehouse telemetry feature 'quantity_used' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "quantity_used"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "quantity_used"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'quantity_used' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "current_stock",
+      "description": "Engineered warehouse telemetry feature 'current_stock' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "current_stock"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "current_stock"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'current_stock' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Critical",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "threshold",
+      "description": "Engineered warehouse telemetry feature 'threshold' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "threshold"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "threshold"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'threshold' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Critical",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "stock_difference",
+      "description": "Engineered warehouse telemetry feature 'stock_difference' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "current_stock",
+        "threshold_limit"
+      ],
+      "formula": "Current Stock - Threshold",
+      "dependencies": [
+        "stock_difference"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'stock_difference' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Critical",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "stock_percentage",
+      "description": "Engineered warehouse telemetry feature 'stock_percentage' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "current_stock",
+        "threshold_limit"
+      ],
+      "formula": "(Current Stock / Threshold) * 100",
+      "dependencies": [
+        "stock_percentage"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'stock_percentage' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "remaining_capacity",
+      "description": "Engineered warehouse telemetry feature 'remaining_capacity' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "racks",
+        "materials"
+      ],
+      "source_columns": [
+        "remaining_capacity"
+      ],
+      "formula": "Max Rack Capacity - Current Stock",
+      "dependencies": [
+        "remaining_capacity"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'remaining_capacity' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "material_weight",
+      "description": "Engineered warehouse telemetry feature 'material_weight' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "material_weight"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "material_weight"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'material_weight' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "daily_transactions",
+      "description": "Engineered warehouse telemetry feature 'daily_transactions' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "daily_transactions"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "daily_transactions"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'daily_transactions' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "weekly_transactions",
+      "description": "Engineered warehouse telemetry feature 'weekly_transactions' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "weekly_transactions"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "weekly_transactions"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'weekly_transactions' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "monthly_transactions",
+      "description": "Engineered warehouse telemetry feature 'monthly_transactions' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "monthly_transactions"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "monthly_transactions"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'monthly_transactions' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "avg_transaction_quantity",
+      "description": "Engineered warehouse telemetry feature 'avg_transaction_quantity' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "avg_transaction_quantity"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "avg_transaction_quantity"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'avg_transaction_quantity' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "total_inward",
+      "description": "Engineered warehouse telemetry feature 'total_inward' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "total_inward"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "total_inward"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'total_inward' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "total_outward",
+      "description": "Engineered warehouse telemetry feature 'total_outward' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "total_outward"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "total_outward"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'total_outward' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "net_inventory_change",
+      "description": "Engineered warehouse telemetry feature 'net_inventory_change' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "net_inventory_change"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "net_inventory_change"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'net_inventory_change' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "daily_consumption",
+      "description": "Engineered warehouse telemetry feature 'daily_consumption' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "daily_consumption"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "daily_consumption"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'daily_consumption' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "weekly_consumption",
+      "description": "Engineered warehouse telemetry feature 'weekly_consumption' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "weekly_consumption"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "weekly_consumption"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'weekly_consumption' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "monthly_consumption",
+      "description": "Engineered warehouse telemetry feature 'monthly_consumption' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "monthly_consumption"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "monthly_consumption"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'monthly_consumption' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "avg_daily_consumption",
+      "description": "Engineered warehouse telemetry feature 'avg_daily_consumption' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "avg_daily_consumption"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "avg_daily_consumption"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'avg_daily_consumption' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "avg_weekly_consumption",
+      "description": "Engineered warehouse telemetry feature 'avg_weekly_consumption' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "avg_weekly_consumption"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "avg_weekly_consumption"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'avg_weekly_consumption' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "avg_monthly_consumption",
+      "description": "Engineered warehouse telemetry feature 'avg_monthly_consumption' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "avg_monthly_consumption"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "avg_monthly_consumption"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'avg_monthly_consumption' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "consumption_trend",
+      "description": "Engineered warehouse telemetry feature 'consumption_trend' for AI model training and real-time inference.",
+      "data_type": "Categorical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "consumption_trend"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "consumption_trend"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'consumption_trend' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "rack_occupancy_pct",
+      "description": "Engineered warehouse telemetry feature 'rack_occupancy_pct' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "rack_occupancy_pct"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "rack_occupancy_pct"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'rack_occupancy_pct' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "remaining_rack_capacity",
+      "description": "Engineered warehouse telemetry feature 'remaining_rack_capacity' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "remaining_rack_capacity"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "remaining_rack_capacity"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'remaining_rack_capacity' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "rack_utilization_score",
+      "description": "Engineered warehouse telemetry feature 'rack_utilization_score' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "rack_utilization_score"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "rack_utilization_score"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'rack_utilization_score' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "rack_load_ratio",
+      "description": "Engineered warehouse telemetry feature 'rack_load_ratio' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "rack_load_ratio"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "rack_load_ratio"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'rack_load_ratio' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "movement_count",
+      "description": "Engineered warehouse telemetry feature 'movement_count' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "movement_count"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "movement_count"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'movement_count' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "inward_count",
+      "description": "Engineered warehouse telemetry feature 'inward_count' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "inward_count"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "inward_count"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'inward_count' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "outward_count",
+      "description": "Engineered warehouse telemetry feature 'outward_count' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "outward_count"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "outward_count"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'outward_count' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "transfer_count",
+      "description": "Engineered warehouse telemetry feature 'transfer_count' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "transfer_count"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "transfer_count"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'transfer_count' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "movement_frequency",
+      "description": "Engineered warehouse telemetry feature 'movement_frequency' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "movement_frequency"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "movement_frequency"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'movement_frequency' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "hour",
+      "description": "Engineered warehouse telemetry feature 'hour' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "hour"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "hour"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'hour' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Low",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "day",
+      "description": "Engineered warehouse telemetry feature 'day' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "day"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "day"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'day' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Low",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "week",
+      "description": "Engineered warehouse telemetry feature 'week' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "week"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "week"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'week' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Low",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "month",
+      "description": "Engineered warehouse telemetry feature 'month' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "month"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "month"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'month' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Low",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "quarter",
+      "description": "Engineered warehouse telemetry feature 'quarter' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "quarter"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "quarter"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'quarter' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Low",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "year",
+      "description": "Engineered warehouse telemetry feature 'year' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "year"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "year"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'year' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Low",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "weekend_flag",
+      "description": "Engineered warehouse telemetry feature 'weekend_flag' for AI model training and real-time inference.",
+      "data_type": "Boolean",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "weekend_flag"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "weekend_flag"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'weekend_flag' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Low",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "business_hour_flag",
+      "description": "Engineered warehouse telemetry feature 'business_hour_flag' for AI model training and real-time inference.",
+      "data_type": "Boolean",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "business_hour_flag"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "business_hour_flag"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'business_hour_flag' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Low",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "rolling_7d_consumption",
+      "description": "Engineered warehouse telemetry feature 'rolling_7d_consumption' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "rolling_7d_consumption"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "rolling_7d_consumption"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'rolling_7d_consumption' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "rolling_14d_consumption",
+      "description": "Engineered warehouse telemetry feature 'rolling_14d_consumption' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "rolling_14d_consumption"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "rolling_14d_consumption"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'rolling_14d_consumption' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "rolling_30d_consumption",
+      "description": "Engineered warehouse telemetry feature 'rolling_30d_consumption' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "rolling_30d_consumption"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "rolling_30d_consumption"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'rolling_30d_consumption' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "rolling_stock_avg",
+      "description": "Engineered warehouse telemetry feature 'rolling_stock_avg' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "rolling_stock_avg"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "rolling_stock_avg"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'rolling_stock_avg' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "rolling_movement_avg",
+      "description": "Engineered warehouse telemetry feature 'rolling_movement_avg' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "rolling_movement_avg"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "rolling_movement_avg"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'rolling_movement_avg' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "inventory_turnover",
+      "description": "Engineered warehouse telemetry feature 'inventory_turnover' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "inventory_turnover"
+      ],
+      "formula": "(Avg Daily Consumption * 365) / Current Stock",
+      "dependencies": [
+        "inventory_turnover"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'inventory_turnover' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "days_since_last_movement",
+      "description": "Engineered warehouse telemetry feature 'days_since_last_movement' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "days_since_last_movement"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "days_since_last_movement"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'days_since_last_movement' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "days_since_last_scan",
+      "description": "Engineered warehouse telemetry feature 'days_since_last_scan' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "days_since_last_scan"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "days_since_last_scan"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'days_since_last_scan' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "inventory_health_score",
+      "description": "Engineered warehouse telemetry feature 'inventory_health_score' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "inventory_health_score"
+      ],
+      "formula": "100 - (Low Stock Risk * 30) - (Out of Stock Risk * 50)",
+      "dependencies": [
+        "inventory_health_score"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "[0, 100]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'inventory_health_score' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Critical",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "rack_health_score",
+      "description": "Engineered warehouse telemetry feature 'rack_health_score' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "racks",
+        "rack_inventory"
+      ],
+      "source_columns": [
+        "rack_health_score"
+      ],
+      "formula": "100 - (High Occupancy Risk * 25)",
+      "dependencies": [
+        "rack_health_score"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "[0, 100]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'rack_health_score' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Critical",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "material_activity_score",
+      "description": "Engineered warehouse telemetry feature 'material_activity_score' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "material_activity_score"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "material_activity_score"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'material_activity_score' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "warehouse_activity_score",
+      "description": "Engineered warehouse telemetry feature 'warehouse_activity_score' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "warehouse_activity_score"
+      ],
+      "formula": "Direct Observation / Raw Value",
+      "dependencies": [
+        "warehouse_activity_score"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "Unbounded",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'warehouse_activity_score' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Medium",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "threshold_risk_score",
+      "description": "Engineered warehouse telemetry feature 'threshold_risk_score' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "threshold_risk_score"
+      ],
+      "formula": "Stock Level vs Safety Threshold Risk Rules",
+      "dependencies": [
+        "threshold_risk_score"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "[10.0, 95.0]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'threshold_risk_score' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Critical",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "low_stock_indicator",
+      "description": "Engineered warehouse telemetry feature 'low_stock_indicator' for AI model training and real-time inference.",
+      "data_type": "Boolean",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "low_stock_indicator"
+      ],
+      "formula": "Binary Threshold Violation Test",
+      "dependencies": [
+        "low_stock_indicator"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "[0, 1]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'low_stock_indicator' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Critical",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "critical_stock_indicator",
+      "description": "Engineered warehouse telemetry feature 'critical_stock_indicator' for AI model training and real-time inference.",
+      "data_type": "Boolean",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "critical_stock_indicator"
+      ],
+      "formula": "Binary Threshold Violation Test",
+      "dependencies": [
+        "critical_stock_indicator"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "None",
+      "possible_value_range": "[0, 1]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'critical_stock_indicator' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "Critical",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "norm_current_stock",
+      "description": "Engineered warehouse telemetry feature 'norm_current_stock' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "norm_current_stock"
+      ],
+      "formula": "Min-Max Normalization: (x - min) / (max - min)",
+      "dependencies": [
+        "norm_current_stock"
+      ],
+      "normalization_applied": "Min-Max Scaling (0.0 to 1.0)",
+      "encoding_applied": "None",
+      "possible_value_range": "[0.0, 1.0]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'norm_current_stock' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "norm_threshold",
+      "description": "Engineered warehouse telemetry feature 'norm_threshold' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "norm_threshold"
+      ],
+      "formula": "Min-Max Normalization: (x - min) / (max - min)",
+      "dependencies": [
+        "norm_threshold"
+      ],
+      "normalization_applied": "Min-Max Scaling (0.0 to 1.0)",
+      "encoding_applied": "None",
+      "possible_value_range": "[0.0, 1.0]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'norm_threshold' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "norm_quantity",
+      "description": "Engineered warehouse telemetry feature 'norm_quantity' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "norm_quantity"
+      ],
+      "formula": "Min-Max Normalization: (x - min) / (max - min)",
+      "dependencies": [
+        "norm_quantity"
+      ],
+      "normalization_applied": "Min-Max Scaling (0.0 to 1.0)",
+      "encoding_applied": "None",
+      "possible_value_range": "[0.0, 1.0]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'norm_quantity' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "norm_weight",
+      "description": "Engineered warehouse telemetry feature 'norm_weight' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "norm_weight"
+      ],
+      "formula": "Min-Max Normalization: (x - min) / (max - min)",
+      "dependencies": [
+        "norm_weight"
+      ],
+      "normalization_applied": "Min-Max Scaling (0.0 to 1.0)",
+      "encoding_applied": "None",
+      "possible_value_range": "[0.0, 1.0]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'norm_weight' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "norm_occupancy",
+      "description": "Engineered warehouse telemetry feature 'norm_occupancy' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "norm_occupancy"
+      ],
+      "formula": "Min-Max Normalization: (x - min) / (max - min)",
+      "dependencies": [
+        "norm_occupancy"
+      ],
+      "normalization_applied": "Min-Max Scaling (0.0 to 1.0)",
+      "encoding_applied": "None",
+      "possible_value_range": "[0.0, 1.0]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'norm_occupancy' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "norm_capacity",
+      "description": "Engineered warehouse telemetry feature 'norm_capacity' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "norm_capacity"
+      ],
+      "formula": "Min-Max Normalization: (x - min) / (max - min)",
+      "dependencies": [
+        "norm_capacity"
+      ],
+      "normalization_applied": "Min-Max Scaling (0.0 to 1.0)",
+      "encoding_applied": "None",
+      "possible_value_range": "[0.0, 1.0]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'norm_capacity' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "encoded_transaction_type",
+      "description": "Engineered warehouse telemetry feature 'encoded_transaction_type' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "encoded_transaction_type"
+      ],
+      "formula": "Categorical Vector Transformation",
+      "dependencies": [
+        "encoded_transaction_type"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "Label Integer Encoding",
+      "possible_value_range": "[0, N]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'encoded_transaction_type' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "encoded_movement_type",
+      "description": "Engineered warehouse telemetry feature 'encoded_movement_type' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "encoded_movement_type"
+      ],
+      "formula": "Categorical Vector Transformation",
+      "dependencies": [
+        "encoded_movement_type"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "Label Integer Encoding",
+      "possible_value_range": "[0, N]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'encoded_movement_type' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "encoded_material_name",
+      "description": "Engineered warehouse telemetry feature 'encoded_material_name' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "encoded_material_name"
+      ],
+      "formula": "Categorical Vector Transformation",
+      "dependencies": [
+        "encoded_material_name"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "Label Integer Encoding",
+      "possible_value_range": "[0, N]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'encoded_material_name' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "encoded_rack_code",
+      "description": "Engineered warehouse telemetry feature 'encoded_rack_code' for AI model training and real-time inference.",
+      "data_type": "Numerical",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "encoded_rack_code"
+      ],
+      "formula": "Categorical Vector Transformation",
+      "dependencies": [
+        "encoded_rack_code"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "Label Integer Encoding",
+      "possible_value_range": "[0, N]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'encoded_rack_code' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "ohe_tx_Inward",
+      "description": "Engineered warehouse telemetry feature 'ohe_tx_Inward' for AI model training and real-time inference.",
+      "data_type": "Boolean",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "ohe_tx_Inward"
+      ],
+      "formula": "Categorical Vector Transformation",
+      "dependencies": [
+        "ohe_tx_Inward"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "One-Hot Encoding",
+      "possible_value_range": "[0, 1]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'ohe_tx_Inward' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "ohe_tx_Outward",
+      "description": "Engineered warehouse telemetry feature 'ohe_tx_Outward' for AI model training and real-time inference.",
+      "data_type": "Boolean",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "ohe_tx_Outward"
+      ],
+      "formula": "Categorical Vector Transformation",
+      "dependencies": [
+        "ohe_tx_Outward"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "One-Hot Encoding",
+      "possible_value_range": "[0, 1]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'ohe_tx_Outward' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "ohe_mov_INWARD",
+      "description": "Engineered warehouse telemetry feature 'ohe_mov_INWARD' for AI model training and real-time inference.",
+      "data_type": "Boolean",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "ohe_mov_INWARD"
+      ],
+      "formula": "Categorical Vector Transformation",
+      "dependencies": [
+        "ohe_mov_INWARD"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "One-Hot Encoding",
+      "possible_value_range": "[0, 1]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'ohe_mov_INWARD' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "ohe_mov_OUTWARD",
+      "description": "Engineered warehouse telemetry feature 'ohe_mov_OUTWARD' for AI model training and real-time inference.",
+      "data_type": "Boolean",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "ohe_mov_OUTWARD"
+      ],
+      "formula": "Categorical Vector Transformation",
+      "dependencies": [
+        "ohe_mov_OUTWARD"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "One-Hot Encoding",
+      "possible_value_range": "[0, 1]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'ohe_mov_OUTWARD' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    },
+    {
+      "feature_name": "ohe_mov_TRANSFER",
+      "description": "Engineered warehouse telemetry feature 'ohe_mov_TRANSFER' for AI model training and real-time inference.",
+      "data_type": "Boolean",
+      "source_tables": [
+        "materials",
+        "transactions"
+      ],
+      "source_columns": [
+        "ohe_mov_TRANSFER"
+      ],
+      "formula": "Categorical Vector Transformation",
+      "dependencies": [
+        "ohe_mov_TRANSFER"
+      ],
+      "normalization_applied": "None",
+      "encoding_applied": "One-Hot Encoding",
+      "possible_value_range": "[0, 1]",
+      "missing_value_strategy": "Impute Default Baseline",
+      "validation_rules": [
+        "Non-NaN",
+        "Type Checked",
+        "Finite"
+      ],
+      "business_meaning": "Quantifies warehouse operational metric 'ohe_mov_TRANSFER' to drive inventory intelligence and predictive analytics.",
+      "importance_category": "High",
+      "supported_ai_tasks": [
+        "Stock Depletion Prediction",
+        "Consumption Forecasting",
+        "Warehouse Health Prediction",
+        "Rack Utilization Prediction",
+        "Material Movement Prediction",
+        "Inventory Optimization",
+        "Digital Twin Intelligence",
+        "Recommendation Engine",
+        "Dashboard Analytics"
+      ],
+      "model_compatibility": [
+        "Scikit-Learn",
+        "TensorFlow",
+        "PyTorch",
+        "ONNX"
+      ]
+    }
+  ]
+}

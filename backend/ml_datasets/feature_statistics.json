@@ -1,0 +1,9 @@
+{
+  "total_materials_indexed": 44,
+  "total_dataset_records": 96,
+  "critical_stock_alerts_count": 32,
+  "low_stock_alerts_count": 34,
+  "avg_inventory_health_score": 72.7,
+  "avg_rack_health_score": 100,
+  "avg_threshold_risk_score": 41.6
+}

@@ -1,0 +1,96 @@
+{
+  "timestamp": "2026-07-26T01:24:39.957281",
+  "model_version": "v4",
+  "model_path": "D:\\atendence-main\\ai\\models\\rm_model_v4.joblib",
+  "algorithm": "RandomForestRegressor",
+  "hyperparameters": {
+    "n_estimators": 100,
+    "random_state": 42,
+    "n_jobs": -1,
+    "criterion": "squared_error"
+  },
+  "dataset_summary": {
+    "csv_path": "D:\\atendence-main\\backend\\ml_datasets\\feature_dataset.csv",
+    "file_exists": true,
+    "row_count": 96,
+    "column_count": 26,
+    "target_column": "quantity_used",
+    "null_count": 0,
+    "zero_count": 76,
+    "non_zero_count": 20,
+    "min": 0.0,
+    "max": 1000.0,
+    "mean": 18.276
+  },
+  "sample_counts": {
+    "training_samples": 76,
+    "testing_samples": 20
+  },
+  "performance_metrics": {
+    "mae": 11.247,
+    "rmse": 24.8487,
+    "r2_score": -5.5515,
+    "training_time_seconds": 0.1295,
+    "prediction_time_seconds": 0.027421
+  },
+  "cross_validation_5fold": {
+    "mean_mae": 31.1679,
+    "std_mae": 23.2834,
+    "mean_rmse": 93.8857,
+    "std_rmse": 84.8103,
+    "mean_r2": -27.9827,
+    "std_r2": 49.9343
+  },
+  "top_10_features": [
+    {
+      "feature_name": "material_id",
+      "importance": 0.44116459560292215,
+      "rank": 1
+    },
+    {
+      "feature_name": "hour",
+      "importance": 0.27679933764501136,
+      "rank": 2
+    },
+    {
+      "feature_name": "current_stock",
+      "importance": 0.2319779512501173,
+      "rank": 3
+    },
+    {
+      "feature_name": "weekend_flag",
+      "importance": 0.028534811319624393,
+      "rank": 4
+    },
+    {
+      "feature_name": "month",
+      "importance": 0.02017846907629339,
+      "rank": 5
+    },
+    {
+      "feature_name": "threshold",
+      "importance": 0.0013448351060313917,
+      "rank": 6
+    },
+    {
+      "feature_name": "barcode",
+      "importance": 0.0,
+      "rank": 7
+    },
+    {
+      "feature_name": "unit",
+      "importance": 0.0,
+      "rank": 8
+    },
+    {
+      "feature_name": "batch_number",
+      "importance": 0.0,
+      "rank": 9
+    },
+    {
+      "feature_name": "material_name",
+      "importance": 0.0,
+      "rank": 10
+    }
+  ]
+}

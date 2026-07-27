@@ -1,0 +1,54 @@
+{
+  "version": "v1.0.0",
+  "generated_at": "2026-07-25T19:53:23.357Z",
+  "normalization": {
+    "method": "Min-Max Scaling",
+    "target_range": [
+      0,
+      1
+    ],
+    "scaled_features": [
+      "norm_current_stock",
+      "norm_threshold",
+      "norm_quantity",
+      "norm_weight",
+      "norm_occupancy",
+      "norm_capacity"
+    ]
+  },
+  "encoding": {
+    "label_encoding_features": [
+      "encoded_transaction_type",
+      "encoded_movement_type",
+      "encoded_material_name",
+      "encoded_rack_code"
+    ],
+    "one_hot_encoding_features": [
+      "ohe_tx_Inward",
+      "ohe_tx_Outward",
+      "ohe_mov_INWARD",
+      "ohe_mov_OUTWARD",
+      "ohe_mov_TRANSFER"
+    ]
+  },
+  "missing_value_strategy": {
+    "material_name": "Impute 'Unknown Material'",
+    "barcode": "Generate 'BC-{id}'",
+    "batch_number": "Impute 'N/A'",
+    "unit": "Impute 'KG'",
+    "numeric": "Impute Zero or Default Baseline"
+  },
+  "duplicate_handling": {
+    "strategy": "Purge duplicates preserving earliest timestamp record",
+    "key_fields": [
+      "material_id",
+      "transaction_id",
+      "timestamp",
+      "quantity"
+    ]
+  },
+  "outlier_handling": {
+    "occupancy_percentage": "Clip between 0.0% and 100.0%",
+    "numeric_quantities": "Filter negative values (quantity >= 0)"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "platform": "RM Monitor AI Platform",
+  "version": "v1.0.0",
+  "active_model_id": "RM_MODEL_V4",
+  "last_updated": "2026-07-26T01:24:41.038587",
+  "registered_models": [
+    {
+      "model_id": "RM_MONITOR_RULES_ENGINE_V1",
+      "algorithm": "Heuristic Expert Rules Engine",
+      "version": "1.0.0",
+      "dataset_version": "v2026.07.25",
+      "status": "ACTIVE",
+      "evaluation_metrics": {
+        "accuracy": 0.965,
+        "precision": 0.952,
+        "recall": 0.971,
+        "f1_score": 0.961,
+        "rmse": 1.24
+      },
+      "framework": "Node.js Native AI Platform",
+      "deployment_timestamp": "2026-07-25T19:53:23.357Z"
+    },
+    {
+      "model_id": "RM_MODEL_V4",
+      "model_name": "RM Monitor Material Usage Regressor",
+      "algorithm": "RandomForestRegressor",
+      "training_timestamp": "2026-07-26T01:24:39.957281",
+      "dataset_used": "D:\\atendence-main\\backend\\ml_datasets\\feature_dataset.csv",
+      "number_of_features": 23,
+      "training_samples": 76,
+      "testing_samples": 20,
+      "performance_metrics": {
+        "mae": 11.247,
+        "rmse": 24.8487,
+        "r2_score": -5.5515,
+        "cv_mean_mae": 31.1679,
+        "cv_mean_rmse": 93.8857,
+        "cv_mean_r2": -27.9827
+      },
+      "model_version": "v4",
+      "model_path": "D:\\atendence-main\\ai\\models\\rm_model_v4.joblib",
+      "deployment_status": "READY"
+    }
+  ],
+  "deployment_history": [
+    "RM_MONITOR_RULES_ENGINE_V1",
+    "RM_MODEL_V4"
+  ]
+}

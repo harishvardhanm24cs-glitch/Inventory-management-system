@@ -1,0 +1,77 @@
+{
+  "pipeline_name": "RM Monitor Feature Engineering Pipeline",
+  "version": "v1.0.0",
+  "generated_at": "2026-07-25T19:53:23.356Z",
+  "execution_time_ms": 10,
+  "total_feature_rows": 96,
+  "feature_groups": {
+    "material_features": [
+      "current_stock",
+      "threshold",
+      "stock_difference",
+      "stock_percentage",
+      "remaining_capacity",
+      "material_weight"
+    ],
+    "transaction_features": [
+      "daily_transactions",
+      "weekly_transactions",
+      "monthly_transactions",
+      "avg_transaction_quantity",
+      "total_inward",
+      "total_outward",
+      "net_inventory_change"
+    ],
+    "consumption_features": [
+      "daily_consumption",
+      "weekly_consumption",
+      "monthly_consumption",
+      "avg_daily_consumption",
+      "avg_weekly_consumption",
+      "avg_monthly_consumption",
+      "consumption_trend"
+    ],
+    "rack_features": [
+      "rack_occupancy_pct",
+      "remaining_rack_capacity",
+      "rack_utilization_score",
+      "rack_load_ratio"
+    ],
+    "movement_features": [
+      "movement_count",
+      "inward_count",
+      "outward_count",
+      "transfer_count",
+      "movement_frequency"
+    ],
+    "time_features": [
+      "hour",
+      "day",
+      "week",
+      "month",
+      "quarter",
+      "year",
+      "weekend_flag",
+      "business_hour_flag"
+    ],
+    "historical_features": [
+      "rolling_7d_consumption",
+      "rolling_14d_consumption",
+      "rolling_30d_consumption",
+      "rolling_stock_avg",
+      "rolling_movement_avg"
+    ],
+    "derived_ai_features": [
+      "inventory_turnover",
+      "days_since_last_movement",
+      "days_since_last_scan",
+      "inventory_health_score",
+      "rack_health_score",
+      "material_activity_score",
+      "warehouse_activity_score",
+      "threshold_risk_score",
+      "low_stock_indicator",
+      "critical_stock_indicator"
+    ]
+  }
+}

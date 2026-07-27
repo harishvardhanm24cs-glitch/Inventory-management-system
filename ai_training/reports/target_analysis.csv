@@ -1,0 +1,2 @@
+target_column,total_rows,min,max,mean,median,std,unique_values_count,null_count,zero_count,is_constant
+quantity_used,53,0.0,0.0,0.0,0.0,0.0,1,53,53,True

@@ -36,37 +36,7 @@ export const autoStore = async (req, res, next) => {
 
     await connection.beginTransaction();
 
-    // 0.1. Defensive schema validation check
-    try {
-      const requiredRackCols = ['id', 'rack_code', 'quantity', 'max_capacity', 'material_name'];
-      const requiredInvCols = ['rack_code', 'current_capacity', 'max_capacity', 'occupancy_percentage', 'zone_name', 'material_name'];
 
-      const [rackCols] = await connection.query('SHOW COLUMNS FROM racks');
-      const [invCols] = await connection.query('SHOW COLUMNS FROM rack_inventory');
-
-      const actualRackCols = rackCols.map(c => c.Field);
-      const actualInvCols = invCols.map(c => c.Field);
-
-      const missingRackCols = requiredRackCols.filter(col => !actualRackCols.includes(col));
-      const missingInvCols = requiredInvCols.filter(col => !actualInvCols.includes(col));
-
-      if (missingRackCols.length > 0 || missingInvCols.length > 0) {
-        const errorMsg = `Database schema is invalid. Missing columns: racks -> [${missingRackCols.join(', ')}], rack_inventory -> [${missingInvCols.join(', ')}]`;
-        console.error(errorMsg);
-        await connection.rollback();
-        return res.status(500).json({
-          status: 'error',
-          message: errorMsg
-        });
-      }
-    } catch (schemaErr) {
-      console.error('Defensive schema validation failed:', schemaErr.message);
-      await connection.rollback();
-      return res.status(500).json({
-        status: 'error',
-        message: `Schema validation failed: ${schemaErr.message}`
-      });
-    }
 
     // 0. Lookup barcode_id in qr_codes table with FOR UPDATE locking
     console.log("Executing SQL: SELECT ... FROM qr_codes WHERE barcode_id = ?");
@@ -145,10 +115,10 @@ export const autoStore = async (req, res, next) => {
       });
     }
 
-    // 1. Fetch material by barcode (barcode_id)
-    console.log("Executing SQL: SELECT ... FROM materials WHERE barcode = ?");
+    // 1. Fetch material by barcode (barcode_id) with FOR UPDATE row locking
+    console.log("Executing SQL: SELECT ... FROM materials WHERE barcode = ? FOR UPDATE");
     const [existingMaterials] = await connection.query(
-      'SELECT id, quantity, threshold_limit, unit, material_name FROM materials WHERE barcode = ?',
+      'SELECT id, quantity, threshold_limit, unit, material_name FROM materials WHERE barcode = ? FOR UPDATE',
       [barcode_id]
     );
     console.log("Material lookup result (SQL query result):", existingMaterials);
@@ -176,19 +146,17 @@ export const autoStore = async (req, res, next) => {
       if (recentTx.length > 0) {
         console.warn(`[Scanner Sync] Duplicate scan blocked for barcode: ${barcode_id}`);
         await connection.rollback();
-        return res.status(200).json({
-          success: true,
+        return res.status(409).json({
+          success: false,
           status: 'duplicate',
-          rack_updated: false,
-          message: 'Duplicate scan ignored (already registered in the last 5 seconds)'
+          message: 'Duplicate scan rejected. Inventory not updated.'
         });
       }
 
-      // Update material (increment quantity)
-      const newQty = currentQty + scannedQty;
+      // Atomic inventory update: increment quantity via SQL calculation
       await connection.query(
-        'UPDATE materials SET quantity = ?, batch_number = ?, material_name = ? WHERE id = ?',
-        [newQty, batch_number || null, finalMaterialName, materialId]
+        'UPDATE materials SET quantity = quantity + ?, batch_number = COALESCE(?, batch_number), material_name = ? WHERE id = ?',
+        [scannedQty, batch_number || null, finalMaterialName, materialId]
       );
     } else {
       // Insert new material
@@ -238,7 +206,7 @@ export const autoStore = async (req, res, next) => {
 
     console.log("Executing SQL: SELECT ... FROM racks WHERE rack_code = ?", targetRackCode);
     const [existingRacks] = await connection.query(
-      'SELECT id, quantity, max_capacity, material_name FROM racks WHERE rack_code = ?',
+      'SELECT id, quantity, max_capacity, material_name FROM racks WHERE rack_code = ? FOR UPDATE',
       [targetRackCode]
     );
     console.log("Rack lookup result (SQL query result):", existingRacks);
@@ -251,28 +219,17 @@ export const autoStore = async (req, res, next) => {
       // Prevent duplicate assignment: conflict check if rack is assigned to a different material
       if (rackQty > 0 && rack.material_name && rack.material_name !== finalMaterialName) {
         console.log("Validation failure reason: Rack assigned to different material");
-        console.log("Missing field: none");
-        console.log("Lookup result: rack assigned to different material:", rack.material_name);
-        console.log("SQL query result:", existingRacks);
         await connection.rollback();
-        console.error('[VALIDATION ERROR] Rack assigned to different material', {
-          barcode_id: barcode_id || null,
-          material_name: finalMaterialName || null,
-          rack_code: targetRackCode || null,
-          quantity: scannedQty || null,
-          validation_failure_reason: `Rack ${targetRackCode} is already assigned to a different material: ${rack.material_name}`
-        });
         return res.status(400).json({
           status: 'error',
           message: `Rack ${targetRackCode} is already assigned to a different material: ${rack.material_name}`
         });
       }
       
-      const newRackQty = rackQty + scannedQty;
-      
+      // Atomic rack quantity update
       await connection.query(
-        'UPDATE racks SET material_name = ?, batch_number = ?, quantity = ? WHERE rack_code = ?',
-        [finalMaterialName, batch_number || null, newRackQty, targetRackCode]
+        'UPDATE racks SET material_name = ?, batch_number = COALESCE(?, batch_number), quantity = quantity + ? WHERE rack_code = ?',
+        [finalMaterialName, batch_number || null, scannedQty, targetRackCode]
       );
     } else {
       const maxCap = 999999999.00;
@@ -293,27 +250,17 @@ export const autoStore = async (req, res, next) => {
 
     console.log("Transaction created");
 
-    // 4. Record user & scan timestamp
+    // 4. Record user, rack code, batch number & mark QR status as 'used'
     await connection.query(
-      "UPDATE qr_codes SET scanned_at = CURRENT_TIMESTAMP, scanned_by = ? WHERE barcode_id = ?",
-      [req.user ? req.user.id : null, barcode_id]
+      "UPDATE qr_codes SET status = 'used', rack_code = ?, batch_number = COALESCE(?, batch_number), scanned_at = CURRENT_TIMESTAMP, scanned_by = ? WHERE barcode_id = ?",
+      [targetRackCode, batch_number || null, req.user ? req.user.id : null, barcode_id]
     );
 
     const [[qrCheck]] = await connection.query('SELECT status FROM qr_codes WHERE barcode_id = ?', [barcode_id]);
     const statusAfter = qrCheck ? qrCheck.status : 'N/A';
     console.log("status_after:", statusAfter);
 
-    // 4.5. Log QR history lifecycle events (SCANNED and INWARD)
-    await logQrHistory(connection, {
-      barcode_id,
-      material_name: finalMaterialName,
-      action: 'SCANNED',
-      rack_code: targetRackCode,
-      user_id: req.user ? req.user.id : null,
-      quantity: scannedQty,
-      remarks: 'QR code scanned at ingress'
-    });
-
+    // 4.5. Log single atomic INWARD lifecycle event directly to rack
     await logQrHistory(connection, {
       barcode_id,
       material_name: finalMaterialName,
@@ -321,7 +268,7 @@ export const autoStore = async (req, res, next) => {
       rack_code: targetRackCode,
       user_id: req.user ? req.user.id : null,
       quantity: scannedQty,
-      remarks: `Material inwarded to rack ${targetRackCode} (quantity: ${scannedQty})`
+      remarks: `Direct inward to rack ${targetRackCode} (quantity: ${scannedQty} KG)`
     });
 
     // Fetch transaction timestamp
@@ -456,7 +403,9 @@ export const outwardScan = async (req, res, next) => {
 
     const material = existingMaterials[0];
     const currentQty = parseFloat(material.quantity) || 0;
-    const outwardQty = parseFloat(qrRecord.units) || 0;
+    const outwardQty = req.body.quantity !== undefined && !isNaN(parseFloat(req.body.quantity))
+      ? parseFloat(req.body.quantity)
+      : (parseFloat(qrRecord.units) || 0);
 
     // Prevent: Negative stock in inventory
     if (currentQty < outwardQty) {
@@ -510,18 +459,24 @@ export const outwardScan = async (req, res, next) => {
           );
         } else {
           await connection.query(
-            'UPDATE racks SET quantity = ? WHERE rack_code = ?',
-            [newRackQty, targetRackCode]
+            'UPDATE racks SET quantity = quantity - ? WHERE rack_code = ?',
+            [outwardQty, targetRackCode]
           );
         }
       }
     }
 
-    // Reduce inventory quantity
+    // Atomic reduce inventory quantity
     const newMaterialQty = currentQty - outwardQty;
     await connection.query(
-      'UPDATE materials SET quantity = ? WHERE id = ?',
-      [newMaterialQty, material.id]
+      'UPDATE materials SET quantity = quantity - ? WHERE id = ?',
+      [outwardQty, material.id]
+    );
+
+    // Update QR code status to 'OUTWARD'
+    await connection.query(
+      "UPDATE qr_codes SET status = 'OUTWARD', scanned_at = CURRENT_TIMESTAMP WHERE barcode_id = ?",
+      [barcode_id]
     );
 
     // Create transaction record

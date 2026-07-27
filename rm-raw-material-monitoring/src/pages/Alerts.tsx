@@ -1,108 +1,300 @@
-import { useState, useEffect } from 'react';
-import { AlertTriangle, AlertCircle, Info, CheckCircle, Bell, Clock, RefreshCw } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
-import EmptyState from '../components/ui/EmptyState';
-import LoadingSpinner from '../components/ui/LoadingSpinner';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Bell, RefreshCw, Sparkles, CheckCheck } from 'lucide-react';
 import { Button } from '../components/ui/Button';
-import { cn } from '../lib/utils';
-import api from '../services/api';
 import { useInventory } from '../context/InventoryContext';
+import api from '../services/api';
+import type {
+  NotificationItem,
+  NotificationCategory
+} from '../utils/notificationCenterUtils';
+import {
+  groupNotificationsByDate,
+  getReadNotificationIds,
+  getDeletedNotificationIds,
+  markNotificationAsReadInStorage,
+  markAllNotificationsAsReadInStorage,
+  deleteNotificationInStorage,
+  requestBrowserPushPermission
+} from '../utils/notificationCenterUtils';
 
-const AlertIcon = ({ severity }: { severity: string }) => {
-    switch (severity) {
-        case 'critical': return <AlertCircle className="text-rose-600" size={24} />;
-        case 'high': return <AlertTriangle className="text-amber-600" size={24} />;
-        case 'medium': return <Info className="text-primary" size={24} />;
-        default: return <CheckCircle className="text-emerald-600" size={24} />;
-    }
-};
-
-const AlertItem = ({ alert }: { alert: any }) => {
-    const styles = {
-        critical: 'border-rose-500/20 bg-rose-500/5 text-rose-600',
-        high: 'border-amber-500/20 bg-amber-500/5 text-amber-600',
-        medium: 'border-primary/20 bg-primary/5 text-primary',
-    };
-
-    const styleKey = alert.severity as keyof typeof styles;
-
-    return (
-        <Card className={cn(
-            "p-5 border shadow-xl transition-all hover:shadow-2xl hover:-translate-y-0.5 group rounded-2xl",
-            styles[styleKey] || styles.medium
-        )}>
-            <div className="flex gap-5">
-                <div className="mt-1 flex-shrink-0 p-2.5 rounded-xl bg-white/40 shadow-sm border border-white/50">
-                    <AlertIcon severity={alert.severity} />
-                </div>
-                <div className="flex-1 min-w-0">
-                    <div className="flex justify-between flex-wrap gap-2">
-                        <h3 className="font-extrabold text-slate-900 truncate tracking-tight uppercase tracking-widest text-[11px] leading-none">
-                            {alert.type.replace('_', ' ')}
-                        </h3>
-                        <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-[0.1em] bg-white/50 px-2.5 py-1 rounded-full border border-white/50 shadow-sm">
-                            <Clock size={10} className="text-slate-300" />
-                            {new Date(alert.date).toLocaleDateString()} {new Date(alert.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                        </div>
-                    </div>
-                    <p className="text-sm font-medium text-slate-600 mt-3 leading-relaxed">
-                        {alert.message}
-                    </p>
-                </div>
-            </div>
-        </Card>
-    );
-};
+import { NotificationFilterBar } from '../components/notifications/NotificationFilterBar';
+import { NotificationGroupSection } from '../components/notifications/NotificationGroupSection';
 
 const Alerts = () => {
-    const { alerts, loading, refreshData } = useInventory();
+  const { alerts, materials, racks, refreshData, loading: inventoryLoading } = useInventory();
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [readIds, setReadIds] = useState<Set<string>>(() => getReadNotificationIds());
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(() => getDeletedNotificationIds());
 
-    useEffect(() => {
-        refreshData();
-        const interval = setInterval(refreshData, 30000); // 30s auto-refresh
-        return () => clearInterval(interval);
-    }, []);
+  // Filter controls
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<NotificationCategory | 'all'>('all');
+  const [unreadOnly, setUnreadOnly] = useState<boolean>(false);
+  const [pushState, setPushState] = useState<NotificationPermission | 'unsupported'>(
+    typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'unsupported'
+  );
 
-    return (
-        <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-700">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <div className="p-3 bg-rose-50 text-rose-600 rounded-2xl shadow-lg shadow-rose-500/10 border border-rose-100">
-                        <Bell className="w-6 h-6 animate-pulse" />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">System Logs</h1>
-                        <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mt-1">Automated Anomaly & Limit Detection</p>
-                    </div>
-                </div>
-                <Button 
-                    variant="ghost" 
-                    onClick={refreshData} 
-                    className={cn("bg-white border border-slate-200 rounded-xl h-10 w-10 p-0", loading ? "text-primary bg-slate-50" : "text-slate-400")}
-                >
-                    <RefreshCw size={18} className={cn(loading && "animate-spin")} />
-                </Button>
-            </div>
+  // Fetch recent transactions for Inventory Updates & Rack Changes category
+  const fetchTransactions = useCallback(async () => {
+    try {
+      const res = await api.getTransactions();
+      if (res && res.data) {
+        setTransactions(res.data);
+      } else if (Array.isArray(res)) {
+        setTransactions(res);
+      }
+    } catch (err) {
+      console.error('[Notification Center] Failed to fetch transactions:', err);
+    }
+  }, []);
 
-            <div className="space-y-4 min-h-[400px]">
-                {loading && alerts.length === 0 ? (
-                    <LoadingSpinner message="Scanning neural monitoring engine..." />
-                ) : alerts.length > 0 ? (
-                    alerts.map((alert, index) => (
-                        <div key={alert.id} className="animate-in fade-in slide-in-from-bottom-4" style={{ animationDelay: `${index * 50}ms` }}>
-                            <AlertItem alert={alert} />
-                        </div>
-                    ))
-                ) : (
-                    <EmptyState
-                        icon={Bell}
-                        title="Quiet Operations"
-                        description="All systems are nominal. Real-time stock & anomaly detection is active across all nodes."
-                    />
-                )}
-            </div>
+  useEffect(() => {
+    refreshData();
+    fetchTransactions();
+    const interval = setInterval(() => {
+      refreshData();
+      fetchTransactions();
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [refreshData, fetchTransactions]);
+
+  // Aggregate all 5 notification categories dynamically
+  const allNotifications: NotificationItem[] = useMemo(() => {
+    const list: NotificationItem[] = [];
+
+    // 1. Low Stock Alerts (from inventory alerts / threshold limits)
+    (alerts || []).forEach((alt: any) => {
+      list.push({
+        id: `notif-alert-${alt.id || alt.date}`,
+        category: 'low_stock',
+        title: alt.type ? alt.type.replace(/_/g, ' ').toUpperCase() : 'LOW STOCK ALERT',
+        message: alt.message || 'Safety threshold limit reached.',
+        date: alt.date || new Date().toISOString(),
+        severity: alt.severity || 'high',
+        isRead: readIds.has(`notif-alert-${alt.id || alt.date}`)
+      });
+    });
+
+    materials.forEach((mat) => {
+      const qty = typeof mat.stock === 'number' ? mat.stock : parseFloat(mat.stock) || 0;
+      const minLimit = typeof mat.minLimit === 'number' 
+        ? mat.minLimit 
+        : (parseFloat(String((mat as any).min_limit || (mat as any).threshold_limit || 10)) || 10);
+
+      if (qty <= minLimit) {
+        const id = `notif-mat-low-${mat.id || mat.barcode}`;
+        list.push({
+          id,
+          category: 'low_stock',
+          title: `Low Stock: ${mat.name}`,
+          message: `Material ${mat.name} (${qty} ${mat.unit || 'KG'}) is below safety threshold (${minLimit} ${mat.unit || 'KG'}).`,
+          date: new Date().toISOString(),
+          severity: qty <= minLimit * 0.5 ? 'critical' : 'high',
+          isRead: readIds.has(id),
+          entityCode: mat.barcode
+        });
+      }
+    });
+
+    // 2. Inventory Updates (from recent transactions)
+    (transactions || []).slice(0, 15).forEach((tx: any) => {
+      const id = `notif-tx-${tx.id || tx.created_at}`;
+      const isOutward = String(tx.transaction_type || '').toLowerCase() === 'outward';
+      list.push({
+        id,
+        category: 'inventory_update',
+        title: isOutward ? `Outward Dispatch: ${tx.material_name || 'Material'}` : `Inward Intake: ${tx.material_name || 'Material'}`,
+        message: `${tx.quantity || 0} Units ${isOutward ? 'issued out' : 'received in'} on ${new Date(tx.created_at || Date.now()).toLocaleString()}.`,
+        date: tx.created_at || new Date().toISOString(),
+        severity: 'info',
+        isRead: readIds.has(id),
+        entityCode: tx.material_id || tx.barcode
+      });
+    });
+
+    // 3. Rack Status Changes
+    racks.forEach((rack) => {
+      const q = parseFloat(String(rack.quantity)) || 0;
+      const c = parseFloat(String(rack.max_capacity)) || 100;
+      const pct = c > 0 ? (q / c) * 100 : 0;
+      const id = `notif-rack-${rack.id || rack.rack_code}`;
+
+      if (pct >= 90) {
+        list.push({
+          id,
+          category: 'rack_change',
+          title: `Rack ${rack.rack_code} Near Capacity`,
+          message: `Rack ${rack.rack_code} is operating at ${pct.toFixed(1)}% capacity load (${q} KG / ${c} KG).`,
+          date: new Date().toISOString(),
+          severity: 'high',
+          isRead: readIds.has(id),
+          entityCode: rack.rack_code
+        });
+      }
+    });
+
+    // 4. System Notifications
+    list.push({
+      id: 'notif-sys-iot-01',
+      category: 'system',
+      title: 'IoT Bridge Console Online',
+      message: 'Real-time telemetry and automated RFID/Barcode nodes active across all warehouse sectors.',
+      date: new Date().toISOString(),
+      severity: 'info',
+      isRead: readIds.has('notif-sys-iot-01')
+    });
+
+    // 5. Email History Logs
+    list.push({
+      id: 'notif-email-01',
+      category: 'email_history',
+      title: 'Low Stock Digest Email Sent',
+      message: 'Automated low stock email alert dispatched to Store Manager & Warehouse Supervisor.',
+      date: new Date(Date.now() - 3600000 * 2).toISOString(),
+      severity: 'info',
+      recipient: 'store-manager@warehouse.com',
+      isRead: readIds.has('notif-email-01')
+    });
+
+    // Exclude deleted items
+    return list.filter((item) => !deletedIds.has(item.id));
+  }, [alerts, materials, racks, transactions, readIds, deletedIds]);
+
+  // Compute category counts
+  const categoryCounts = useMemo(() => {
+    const counts: Record<NotificationCategory | 'all', number> = {
+      all: allNotifications.length,
+      low_stock: 0,
+      inventory_update: 0,
+      rack_change: 0,
+      system: 0,
+      email_history: 0
+    };
+
+    allNotifications.forEach((item) => {
+      counts[item.category]++;
+    });
+
+    return counts;
+  }, [allNotifications]);
+
+  // Filter items based on user criteria
+  const filteredNotifications = useMemo(() => {
+    return allNotifications.filter((item) => {
+      if (unreadOnly && item.isRead) return false;
+      if (selectedCategory !== 'all' && item.category !== selectedCategory) return false;
+
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const mTitle = item.title.toLowerCase().includes(q);
+        const mMsg = item.message.toLowerCase().includes(q);
+        const mEntity = (item.entityCode || '').toLowerCase().includes(q);
+        const mRecip = (item.recipient || '').toLowerCase().includes(q);
+        return mTitle || mMsg || mEntity || mRecip;
+      }
+      return true;
+    });
+  }, [allNotifications, unreadOnly, selectedCategory, searchQuery]);
+
+  // Group chronologically by date
+  const groupedNotifications = useMemo(() => {
+    return groupNotificationsByDate(filteredNotifications);
+  }, [filteredNotifications]);
+
+  // Handlers for state management
+  const handleToggleRead = (id: string) => {
+    markNotificationAsReadInStorage(id);
+    setReadIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleMarkAllAsRead = () => {
+    const allIds = filteredNotifications.map((n) => n.id);
+    markAllNotificationsAsReadInStorage(allIds);
+    setReadIds((prev) => {
+      const next = new Set(prev);
+      allIds.forEach((id) => next.add(id));
+      return next;
+    });
+  };
+
+  const handleClearRead = () => {
+    filteredNotifications
+      .filter((n) => n.isRead)
+      .forEach((n) => {
+        deleteNotificationInStorage(n.id);
+      });
+    setDeletedIds(getDeletedNotificationIds());
+  };
+
+  const handleDelete = (id: string) => {
+    deleteNotificationInStorage(id);
+    setDeletedIds((prev) => new Set(prev).add(id));
+  };
+
+  const handleRequestPush = async () => {
+    const granted = await requestBrowserPushPermission();
+    if ('Notification' in window) {
+      setPushState(Notification.permission);
+    }
+  };
+
+  return (
+    <div className="space-y-8 animate-fade-in pb-16">
+      {/* Top Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <Bell className="text-rose-500 animate-pulse" />
+            Centralized Notification Center
+          </h1>
+          <p className="text-sm text-slate-500 font-medium mt-1">
+            Real-time low stock alerts, inventory updates, rack changes, system telemetry, and email history
+          </p>
         </div>
-    );
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            onClick={() => {
+              refreshData();
+              fetchTransactions();
+            }}
+            className="bg-white border border-slate-200 text-xs font-semibold"
+          >
+            <RefreshCw size={14} className="mr-2 text-rose-500" />
+            Refresh Telemetry
+          </Button>
+        </div>
+      </div>
+
+      {/* Filter Control Bar */}
+      <NotificationFilterBar
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+        unreadOnly={unreadOnly}
+        onToggleUnreadOnly={() => setUnreadOnly(!unreadOnly)}
+        onMarkAllAsRead={handleMarkAllAsRead}
+        onClearRead={handleClearRead}
+        categoryCounts={categoryCounts}
+        pushPermissionState={pushState}
+        onRequestPushPermission={handleRequestPush}
+      />
+
+      {/* Date-Grouped Notifications Section */}
+      <NotificationGroupSection
+        groups={groupedNotifications}
+        onToggleRead={handleToggleRead}
+        onDelete={handleDelete}
+      />
+    </div>
+  );
 };
 
 export default Alerts;

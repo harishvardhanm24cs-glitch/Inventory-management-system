@@ -1,0 +1,63 @@
+{
+  "pipeline_name": "RM Monitor End-to-End AI Feature Pipeline",
+  "version": "v1.0.0",
+  "author": "Antigravity AI Platform",
+  "created_at": "2026-07-25T19:53:23.357Z",
+  "pipeline_steps": [
+    {
+      "step": 1,
+      "name": "Raw Warehouse Data Extraction",
+      "source": "MySQL Database",
+      "tables": [
+        "materials",
+        "transactions",
+        "racks",
+        "rack_inventory",
+        "alerts"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "Data Cleaning & Hygiene",
+      "service": "dataCleaningPipelineService",
+      "output": "clean_warehouse_dataset.json"
+    },
+    {
+      "step": 3,
+      "name": "Domain Feature Engineering",
+      "features_generated": "Material, Transaction, Consumption, Rack Telemetry, Movement Tracking, Time Dimensions"
+    },
+    {
+      "step": 4,
+      "name": "Rolling Moving Window Aggregations",
+      "windows": [
+        "7d",
+        "14d",
+        "30d"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "Composite AI Scores & Indicators",
+      "indicators": [
+        "inventory_health_score",
+        "rack_health_score",
+        "threshold_risk_score",
+        "critical_stock_indicator"
+      ]
+    },
+    {
+      "step": 6,
+      "name": "Dataset Export & Governance Synchronization",
+      "outputs": [
+        "feature_dataset.csv",
+        "feature_dataset.json",
+        "feature_registry.json",
+        "feature_importance_template.json",
+        "preprocessing_config.json",
+        "feature_pipeline.json",
+        "model_registry.json"
+      ]
+    }
+  ]
+}

@@ -193,6 +193,15 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     useEffect(() => {
         fetchData();
 
+        // Real-time event subscription for immediate inventory & KPI refresh on scan
+        const handleRackUpdate = () => {
+            const token = localStorage.getItem("token");
+            if (token) {
+                fetchData();
+            }
+        };
+        window.addEventListener('rack-inventory-update', handleRackUpdate);
+
         // Quiet background polling every 5 seconds
         const interval = setInterval(() => {
             const token = localStorage.getItem("token");
@@ -201,7 +210,10 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             }
         }, 5000);
 
-        return () => clearInterval(interval);
+        return () => {
+            window.removeEventListener('rack-inventory-update', handleRackUpdate);
+            clearInterval(interval);
+        };
     }, []);
 
     const refreshData = async () => {

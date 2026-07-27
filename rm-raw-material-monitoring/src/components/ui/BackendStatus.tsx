@@ -8,18 +8,19 @@ const BackendStatus: React.FC = () => {
     const checkHealth = async () => {
         try {
             const response = await fetch('/health');
+            if (!response.ok) {
+                setStatus('reconnecting');
+                (window as any).__DB_DIAGNOSTIC__ = 'Server Health Endpoint Error';
+                setLastChecked(new Date().toLocaleTimeString());
+                return;
+            }
             const data = await response.json();
             
-            if (data.status === 'OK') {
-                if (data.db === 'connected') {
-                    setStatus('online');
-                } else {
-                    setStatus('reconnecting');
-                    // Store the diagnostic message for others to use
-                    (window as any).__DB_DIAGNOSTIC__ = data.diagnostic || 'MySQL Offline';
-                }
+            if (data.status === 'OK' && data.db === 'connected') {
+                setStatus('online');
             } else {
                 setStatus('reconnecting');
+                (window as any).__DB_DIAGNOSTIC__ = data.diagnostic || data.message || 'MySQL Offline';
             }
         } catch (err) {
             setStatus('reconnecting');

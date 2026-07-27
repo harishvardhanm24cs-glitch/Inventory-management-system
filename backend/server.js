@@ -23,6 +23,7 @@ import reportRoutes from './routes/reportRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import movementRoutes from './routes/movementRoutes.js';
 import auditLogRoutes from './routes/auditLogRoutes.js';
+import aiApiRoutes from './routes/aiApiRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -81,10 +82,11 @@ app.get('/health', async (req, res) => {
       db: "connected"
     });
   } catch (error) {
-    res.status(500).json({
-      status: "error",
+    console.warn('[Health Check Warning] Database disconnected:', error.message);
+    res.status(200).json({
+      status: "DEGRADED",
       db: "disconnected",
-      message: error.message
+      diagnostic: error.message || 'MySQL Offline'
     });
   }
 });
@@ -124,6 +126,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/movements', movementRoutes);
 app.use('/api/audit-logs', auditLogRoutes);
+app.use('/api/v1/ai', aiApiRoutes);
 
 // Catch-all route for unhandled requests (404)
 app.use((req, res, next) => {

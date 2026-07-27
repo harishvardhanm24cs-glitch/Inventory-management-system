@@ -8,6 +8,9 @@ import api from '../services/api';
 import { cn } from '../lib/utils';
 import { Button } from '../components/ui/Button';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import { rackVisualizationRules } from '../utils/rackVisualizationRules';
+import { warehouseIntelligenceEngine as clientIntelligenceEngine } from '../services/warehouseIntelligenceEngine';
+import DigitalTwinPredictionOverlay from '../components/DigitalTwinPredictionOverlay';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 interface RackMaterial {
@@ -44,8 +47,9 @@ interface FlowAnimation {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
-const getRackDisplayConfig = (occ: number) => {
-  if (occ === 0) {
+const getRackDisplayConfig = (occ: number, currentCap = 0, maxCap = 100) => {
+  // Priority 2: If currentCap is 0, return Empty Rack config
+  if (currentCap === 0 && occ === 0) {
     return {
       card: 'bg-slate-50/60 border-slate-200 hover:border-slate-400',
       dot:  'bg-slate-350',
@@ -57,8 +61,13 @@ const getRackDisplayConfig = (occ: number) => {
       badgeColor: 'text-slate-500',
     };
   }
-  if (occ <= 40) {
-    const isCold = occ < 20;
+
+  // Priority 1 & 3: If currentCap > 0, Rack Status is OCCUPIED / Loaded
+  // For Unlimited Capacity mode (maxCap >= 999999), effective occupancy is based on active load
+  const effectiveOcc = (maxCap >= 999999 || occ === 0) && currentCap > 0 ? 25 : occ;
+
+  if (effectiveOcc <= 40) {
+    const isCold = effectiveOcc < 20;
     return {
       card: isCold
         ? 'bg-emerald-50/40 border-sky-400 hover:border-sky-500 border-2 shadow-[0_0_12px_rgba(56,189,248,0.25)]'
@@ -70,11 +79,11 @@ const getRackDisplayConfig = (occ: number) => {
         : 'bg-emerald-100 text-emerald-700 border-emerald-200',
       ring: 'ring-emerald-500',
       glow: isCold ? 'shadow-[0_0_15px_rgba(56,189,248,0.35)]' : 'shadow-emerald-500/20',
-      label: isCold ? '❄ COLD ZONE' : 'Healthy',
+      label: isCold ? '❄ COLD ZONE' : 'Occupied (Healthy)',
       badgeColor: isCold ? 'text-sky-600' : 'text-emerald-600',
     };
   }
-  if (occ <= 80) {
+  if (effectiveOcc <= 80) {
     return {
       card: 'bg-amber-50/60 border-amber-250 hover:border-amber-400',
       dot:  'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]',
@@ -87,7 +96,7 @@ const getRackDisplayConfig = (occ: number) => {
     };
   }
   // 81-100% is High Load
-  const isHot = occ > 85;
+  const isHot = effectiveOcc > 85;
   return {
     card: isHot
       ? 'bg-rose-50/60 border-red-600 hover:border-red-750 border-[3px] shadow-[0_0_15px_rgba(239,68,68,0.25)] animate-pulse'
@@ -475,6 +484,9 @@ const WarehouseTwin = () => {
     return saved !== null ? saved === 'true' : true;
   });
 
+  // Interactive highlighting state for Occupied vs Empty racks
+  const [rackHighlightMode, setRackHighlightMode] = useState<'all' | 'occupied' | 'empty'>('all');
+
   useEffect(() => {
     localStorage.setItem('wt_show_heatmap', String(showHeatmap));
   }, [showHeatmap]);
@@ -604,12 +616,12 @@ const WarehouseTwin = () => {
 
   const fetchRackOptimizations = useCallback(async () => {
     try {
-      const res = await api.getRackOptimizations();
-      if (Array.isArray(res)) {
-        setRackOptimizations(res);
+      const opts = await clientIntelligenceEngine.getRackOptimizations();
+      if (Array.isArray(opts)) {
+        setRackOptimizations(opts);
       }
     } catch (err) {
-      console.error('[WarehouseTwin] Failed to fetch rack optimizations:', err);
+      console.error('[WarehouseTwin] Failed to fetch rack optimizations via Intelligence Engine:', err);
     }
   }, []);
 
@@ -674,6 +686,53 @@ const WarehouseTwin = () => {
     return () => clearInterval(interval);
   }, [fetchRackInventory, fetchRackMaterials, fetchRecentMovements, drawerOpen, selectedRack]);
 
+  // Targeted single-rack refresh handler (preserves array references for unaffected racks)
+  const refreshSingleRack = useCallback(async (targetRackCode: string) => {
+    console.log(`[Digital Twin] Targeted single-rack refresh for ${targetRackCode}`);
+    try {
+      const res = await api.getRackInventory();
+      if (res && res.data && Array.isArray(res.data)) {
+        const updatedItem = res.data.find(
+          (r: any) => (r.rack_code || '').toUpperCase() === targetRackCode.toUpperCase()
+        );
+        if (updatedItem) {
+          setRacks(prevRacks => {
+            let found = false;
+            const updatedRacks = prevRacks.map(r => {
+              if ((r.rack_code || '').toUpperCase() === targetRackCode.toUpperCase()) {
+                found = true;
+                return updatedItem;
+              }
+              return r; // Retain exact object reference for unaffected racks
+            });
+            return found ? updatedRacks : [...prevRacks, updatedItem];
+          });
+        }
+      }
+
+      // Briefly highlight targeted rack DOM element
+      const el = rackRefs.current[targetRackCode.toUpperCase()] || rackRefs.current[targetRackCode];
+      if (el) {
+        el.classList.add('ring-4', 'ring-emerald-500', 'scale-[1.05]', 'z-20');
+        setTimeout(() => {
+          el.classList.remove('ring-4', 'ring-emerald-500', 'scale-[1.05]', 'z-20');
+        }, 2000);
+      }
+
+      if (selectedRack && selectedRack.rack_code.toUpperCase() === targetRackCode.toUpperCase()) {
+        fetchRackMaterials(targetRackCode, false);
+      }
+
+      fetchRecentMovements();
+      fetchWarehouseStats();
+      const now = new Date();
+      setLastRefresh(now.toLocaleTimeString('en-IN', { hour12: true }));
+      setPulseKey(k => k + 1);
+    } catch (err) {
+      console.error('[Digital Twin] Targeted rack refresh failed:', err);
+    }
+  }, [selectedRack, fetchRackMaterials, fetchRecentMovements, fetchWarehouseStats]);
+
   // Real-Time React state refresh handler (Phase 2 Step 6)
   const refreshDigitalTwin = useCallback(() => {
     console.log('[Digital Twin] Real-time state refresh invoked');
@@ -699,9 +758,15 @@ const WarehouseTwin = () => {
     // Expose globally
     (window as any).refreshDigitalTwin = refreshDigitalTwin;
 
-    // Listen to custom transactional update events
-    const handleUpdate = () => {
-      refreshDigitalTwin();
+    // Listen to custom transactional update events with targeted rack detail
+    const handleUpdate = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      const targetRackCode = detail && typeof detail.rackCode === 'string' ? detail.rackCode : null;
+      if (targetRackCode) {
+        refreshSingleRack(targetRackCode);
+      } else {
+        refreshDigitalTwin();
+      }
     };
     window.addEventListener('rack-inventory-update', handleUpdate);
 
@@ -709,7 +774,7 @@ const WarehouseTwin = () => {
       delete (window as any).refreshDigitalTwin;
       window.removeEventListener('rack-inventory-update', handleUpdate);
     };
-  }, [refreshDigitalTwin]);
+  }, [refreshDigitalTwin, refreshSingleRack]);
 
   // Phase 4 Step 3: Detect new movements and trigger flow animations
   useEffect(() => {
@@ -891,8 +956,8 @@ const WarehouseTwin = () => {
       let icon = Database;
 
       if (row === 'A') {
-        zone_name = 'RECEIVING ZONE';
-        label = 'Inbound • Receiving Bay';
+        zone_name = 'STORAGE ZONE (ROW A)';
+        label = 'Inbound Storage • Row A';
         color = 'text-blue-600';
         bg = 'bg-blue-50';
         border = 'border-blue-100';
@@ -998,8 +1063,18 @@ const WarehouseTwin = () => {
     const occ = rack.occupancy_percentage;
     const isSelected = selectedRack?.rack_code === rack.rack_code;
     const isHighTraffic = highTrafficRack?.rack_code === rack.rack_code;
-
     const isMatched = searchQuery.trim() ? searchResults.some((res: any) => res.rack_code === rack.rack_code) : false;
+
+    const isOccupied = occ > 0;
+    const isHighlightedOccupied = rackHighlightMode === 'occupied' && isOccupied;
+    const isHighlightedEmpty = rackHighlightMode === 'empty' && !isOccupied;
+    const isDimmed = (rackHighlightMode === 'occupied' && !isOccupied) || (rackHighlightMode === 'empty' && isOccupied);
+
+    const matNames = rack.materials && rack.materials.length > 0
+      ? rack.materials.map((m: any) => m.material_name).join(', ')
+      : ((rack as any).material_name || 'Empty Slot (Available)');
+
+    const tooltipText = `Rack ID: ${rack.rack_code} (#${rack.id || 'N/A'})\nMaterial: ${matNames}\nCurrent Qty: ${rack.current_capacity} KG\nCapacity: ${rack.max_capacity} KG\nStatus: ${rack.color_status || 'GRAY'} (${occ}%)\nLast Updated: ${formatDateTime(rack.last_updated || rack.last_scan)}`;
 
     const hScore = getRackHealthScore(rack);
     const hStatus = getHealthStatus(hScore);
@@ -1011,13 +1086,17 @@ const WarehouseTwin = () => {
           key={rack.rack_code}
           ref={el => { rackRefs.current[rack.rack_code] = el; }}
           onClick={() => handleRackClick(rack)}
+          title={tooltipText}
           className={cn(
             'relative flex flex-col items-center justify-center h-[120px] rounded-2xl border-2 cursor-pointer shadow-sm select-none',
-            'transition-all duration-300 hover:scale-[1.03] hover:shadow-md p-3',
+            'transition-all duration-300 hover:scale-[1.05] hover:shadow-xl hover:z-20 p-3',
             heat.bg,
             heat.bg.includes('text-slate-900') ? 'border-slate-350' : 'border-transparent',
-            isSelected && 'ring-4 ring-indigo-500 ring-offset-2 scale-[1.03] shadow-lg border-transparent',
-            isHighTraffic && !isSelected && !isMatched && 'ring-2 ring-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.5)] scale-[1.02] border-transparent',
+            isSelected && 'ring-4 ring-indigo-500 ring-offset-2 scale-[1.05] shadow-xl border-transparent z-20',
+            isHighlightedOccupied && 'ring-4 ring-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)] scale-[1.04] z-10',
+            isHighlightedEmpty && 'ring-4 ring-sky-500 shadow-[0_0_20px_rgba(56,189,248,0.5)] scale-[1.04] z-10',
+            isDimmed && 'opacity-35 filter grayscale-[40%]',
+            isHighTraffic && !isSelected && !isMatched && !isHighlightedOccupied && !isHighlightedEmpty && 'ring-2 ring-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.5)] scale-[1.02] border-transparent',
             isMatched && !isSelected && 'ring-4 ring-amber-500 scale-[1.04] shadow-[0_0_20px_rgba(245,158,11,0.8)] z-10 animate-pulse border-transparent'
           )}
         >
@@ -1040,25 +1119,29 @@ const WarehouseTwin = () => {
           </div>
 
           <div className="absolute bottom-2 text-[8px] font-bold uppercase tracking-wider opacity-75">
-            {rack.current_capacity} / {rack.max_capacity} KG
+            {rack.current_capacity} / {parseFloat(String(rack.max_capacity)) >= 999999 ? 'Unlimited' : `${rack.max_capacity} KG`}
           </div>
         </div>
       );
     }
 
     // Original view code
-    const cfg = getRackDisplayConfig(occ);
+    const cfg = getRackDisplayConfig(occ, parseFloat(String(rack.current_capacity)) || 0, parseFloat(String(rack.max_capacity)) || 100);
     return (
       <div
         key={rack.rack_code}
         ref={el => { rackRefs.current[rack.rack_code] = el; }}
         onClick={() => handleRackClick(rack)}
+        title={tooltipText}
         className={cn(
           'relative flex flex-col justify-between h-[120px] rounded-2xl border-2 cursor-pointer',
-          'transition-all duration-300 hover:scale-[1.03] hover:shadow-lg p-3',
+          'transition-all duration-300 hover:scale-[1.05] hover:shadow-xl hover:z-20 p-3',
           cfg.card,
-          isSelected && `ring-2 ${cfg.ring} scale-[1.03] shadow-lg ${cfg.glow} border-transparent`,
-          isHighTraffic && !isSelected && !isMatched && 'ring-2 ring-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.5)] scale-[1.02] border-transparent',
+          isSelected && `ring-4 ${cfg.ring} scale-[1.05] shadow-xl ${cfg.glow} border-transparent z-20`,
+          isHighlightedOccupied && 'ring-4 ring-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)] scale-[1.04] z-10',
+          isHighlightedEmpty && 'ring-4 ring-sky-500 shadow-[0_0_20px_rgba(56,189,248,0.5)] scale-[1.04] z-10',
+          isDimmed && 'opacity-35 filter grayscale-[40%]',
+          isHighTraffic && !isSelected && !isMatched && !isHighlightedOccupied && !isHighlightedEmpty && 'ring-2 ring-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.5)] scale-[1.02] border-transparent',
           isMatched && !isSelected && 'ring-4 ring-amber-500 scale-[1.04] shadow-[0_0_20px_rgba(245,158,11,0.8)] z-10 animate-pulse border-transparent'
         )}
       >
@@ -1087,7 +1170,7 @@ const WarehouseTwin = () => {
         {/* Occupancy data */}
         <div className="space-y-1.5">
           <div className="flex justify-between text-[9px] font-black uppercase tracking-wider text-slate-500">
-            <span>{rack.current_capacity} / {rack.max_capacity} KG</span>
+            <span>{rack.current_capacity} / {parseFloat(String(rack.max_capacity)) >= 999999 ? 'Unlimited' : `${rack.max_capacity} KG`}</span>
             <span className={cn(
               'font-black',
               cfg.badgeColor
@@ -1162,6 +1245,9 @@ const WarehouseTwin = () => {
           </Button>
         </div>
       </div>
+
+      {/* Module 1: AI Prediction Engine Spatial Overlay */}
+      <DigitalTwinPredictionOverlay />
 
       {/* ── High Traffic Alert Block (Phase 4 Step 7) ───────────────────────── */}
       {highTrafficRack && (
@@ -1439,6 +1525,40 @@ const WarehouseTwin = () => {
               </div>
 
               <div className="flex items-center gap-4 self-end sm:self-auto">
+                {/* Occupied / Empty Interactive Highlight Control */}
+                <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-sm">
+                  <button
+                    type="button"
+                    onClick={() => setRackHighlightMode('all')}
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all",
+                      rackHighlightMode === 'all' ? "bg-white text-slate-800 shadow-sm" : "text-slate-450 hover:text-slate-700"
+                    )}
+                  >
+                    All Racks
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRackHighlightMode('occupied')}
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all",
+                      rackHighlightMode === 'occupied' ? "bg-emerald-500 text-white shadow-sm font-black" : "text-slate-450 hover:text-slate-700"
+                    )}
+                  >
+                    Occupied ({racks.filter(r => r.occupancy_percentage > 0).length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRackHighlightMode('empty')}
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all",
+                      rackHighlightMode === 'empty' ? "bg-sky-500 text-white shadow-sm font-black" : "text-slate-450 hover:text-slate-700"
+                    )}
+                  >
+                    Empty ({racks.filter(r => r.occupancy_percentage === 0).length})
+                  </button>
+                </div>
+
                 {/* Heatmap Toggle Control */}
                 <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-sm">
                   <button
@@ -2065,20 +2185,27 @@ const WarehouseTwin = () => {
                   </div>
                 </div>
 
-                {/* Capacity info grid */}
+                {/* Capacity & Material info grid (10-Field Digital Twin Inspector) */}
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { icon: Database, label: 'Rack Code',        value: displayRack.rack_code,         mono: true  },
-                    { icon: MapPin,   label: 'Zone',             value: displayRack.zone_name,          mono: false },
-                    { icon: Layers,   label: 'Current Weight',   value: `${displayRack.current_capacity} KG`, mono: false },
-                    { icon: TrendingUp, label: 'Max Capacity',   value: `${displayRack.max_capacity} KG`,     mono: false },
-                  ].map(({ icon: Icon, label, value, mono }) => (
-                    <div key={label} className="bg-slate-50 border border-slate-100 rounded-xl p-3">
+                    { icon: Database,   label: 'Rack Code (ID)',   value: `${displayRack.rack_code} (#${displayRack.id || 'N/A'})`, mono: true, span: false  },
+                    { icon: MapPin,     label: 'Zone',             value: displayRack.zone_name || 'Storage Zone', mono: false, span: false },
+                    { icon: Package,    label: 'Stored Material',  value: (selectedRackDetails?.materials && selectedRackDetails.materials.length > 0)
+                                                                            ? selectedRackDetails.materials.map((m: any) => m.material_name).join(', ')
+                                                                            : ((displayRack as any).material_name || 'Empty Slot (Available)'), mono: false, span: true },
+                    { icon: ShieldCheck,label: 'Warehouse Status', value: `${cfg.label} (${displayRack.color_status || (occ === 0 ? 'GRAY' : occ > 85 ? 'RED' : 'GREEN')})`, mono: false, span: false },
+                    { icon: Activity,   label: 'Health Indicator', value: occ === 0 ? '⚪ Gray (Empty)' : occ > 85 || displayRack.color_status === 'RED' ? '🔴 Red (Critical)' : occ > 70 ? '🟡 Yellow (Monitor)' : '🟢 Green (Healthy)', mono: false, span: false },
+                    { icon: Layers,     label: 'Current Quantity', value: `${displayRack.current_capacity} KG`, mono: false, span: false },
+                    { icon: TrendingUp, label: 'Max Capacity',     value: `${displayRack.max_capacity} KG`,     mono: false, span: false },
+                    { icon: Clock,      label: 'Last Scan Time',   value: formatDateTime(displayRack.last_scan || displayRack.last_updated || displayRack.updated_at), mono: false, span: false },
+                    { icon: Clock,      label: 'Last Movement',    value: formatDateTime(displayRack.last_updated || displayRack.updated_at || displayRack.created_at), mono: false, span: false },
+                  ].map(({ icon: Icon, label, value, mono, span }) => (
+                    <div key={label} className={cn("bg-slate-50 border border-slate-100 rounded-xl p-3", span && "col-span-2 bg-blue-50/40 border-blue-100")}>
                       <div className="flex items-center gap-1.5 text-slate-400 mb-1.5">
-                        <Icon className="w-3.5 h-3.5" />
+                        <Icon className="w-3.5 h-3.5 text-slate-500" />
                         <span className="text-[8px] font-black uppercase tracking-widest">{label}</span>
                       </div>
-                      <p className={cn('text-sm font-black text-slate-800 break-all', mono && 'font-mono')}>
+                      <p className={cn('text-xs font-black text-slate-800 break-all', mono && 'font-mono')}>
                         {value}
                       </p>
                     </div>

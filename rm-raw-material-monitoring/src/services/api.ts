@@ -98,6 +98,12 @@ const mapPrediction = (p: any) => {
 
 // API Service Functions
 export const apiService = {
+    // --- Generic HTTP Methods ---
+    get: (url: string, config?: any): Promise<any> => apiClient.get(url, config),
+    post: (url: string, data?: any, config?: any): Promise<any> => apiClient.post(url, data, config),
+    put: (url: string, data?: any, config?: any): Promise<any> => apiClient.put(url, data, config),
+    delete: (url: string, config?: any): Promise<any> => apiClient.delete(url, config),
+
     // --- Health ---
     getHealth: async (): Promise<any> => {
         console.log('[API Call] GET /health');
@@ -368,6 +374,399 @@ export const apiService = {
             return res.data || [];
         } catch (err: any) {
             console.error('[API Failure] GET /ai/predictions failed:', err.message);
+            throw err;
+        }
+    },
+    // --- AI Prediction Engine (Module 1) ---
+    getPredictionEngineOverview: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/prediction-engine/overview');
+        try {
+            const res: any = await apiClient.get('/ai/prediction-engine/overview');
+            return res.data || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/prediction-engine/overview failed:', err.message);
+            throw err;
+        }
+    },
+    getPredictionDemand: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/prediction-engine/demand');
+        try {
+            const res: any = await apiClient.get('/ai/prediction-engine/demand');
+            return res.data || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/prediction-engine/demand failed:', err.message);
+            throw err;
+        }
+    },
+    getPredictionDepletion: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/prediction-engine/depletion');
+        try {
+            const res: any = await apiClient.get('/ai/prediction-engine/depletion');
+            return res.data || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/prediction-engine/depletion failed:', err.message);
+            throw err;
+        }
+    },
+    getPredictionRackUtilization: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/prediction-engine/rack-utilization');
+        try {
+            const res: any = await apiClient.get('/ai/prediction-engine/rack-utilization');
+            return res.data || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/prediction-engine/rack-utilization failed:', err.message);
+            throw err;
+        }
+    },
+    getPredictionWarehouseRisk: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/prediction-engine/warehouse-risk');
+        try {
+            const res: any = await apiClient.get('/ai/prediction-engine/warehouse-risk');
+            return res.data || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/prediction-engine/warehouse-risk failed:', err.message);
+            throw err;
+        }
+    },
+    getPredictionConsumptionTrend: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/prediction-engine/consumption-trend');
+        try {
+            const res: any = await apiClient.get('/ai/prediction-engine/consumption-trend');
+            return res.data || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/prediction-engine/consumption-trend failed:', err.message);
+            throw err;
+        }
+    },
+    getPredictiveRecommendations: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/prediction-engine/recommendations');
+        try {
+            const res: any = await apiClient.get('/ai/prediction-engine/recommendations');
+            return res.data || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/prediction-engine/recommendations failed:', err.message);
+            throw err;
+        }
+    },
+    // --- Module 2: Machine Learning Data Pipeline ---
+    mlPipelineRun: async (datasetName = 'warehouse_ml_dataset'): Promise<any> => {
+        console.log('[API Call] POST /ai/ml-pipeline/run');
+        try {
+            const res: any = await apiClient.post('/ai/ml-pipeline/run', { dataset_name: datasetName });
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/ml-pipeline/run failed:', err.message);
+            throw err;
+        }
+    },
+    mlPipelineStatus: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/ml-pipeline/status');
+        try {
+            const res: any = await apiClient.get('/ai/ml-pipeline/status');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/ml-pipeline/status failed:', err.message);
+            return null;
+        }
+    },
+    mlPipelineDatasets: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/ml-pipeline/datasets');
+        try {
+            const res: any = await apiClient.get('/ai/ml-pipeline/datasets');
+            return res.data || res || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/ml-pipeline/datasets failed:', err.message);
+            return [];
+        }
+    },
+    mlPipelineExport: async (framework: string): Promise<any> => {
+        console.log(`[API Call] GET /ai/ml-pipeline/export/${framework}`);
+        try {
+            const res: any = await apiClient.get(`/ai/ml-pipeline/export/${framework}`);
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error(`[API Failure] GET /ai/ml-pipeline/export/${framework} failed:`, err.message);
+            return null;
+        }
+    },
+    // --- Module 3: Feature Engineering ---
+    getFeatures: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/features');
+        try {
+            const res: any = await apiClient.get('/ai/features');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/features failed:', err.message);
+            return null;
+        }
+    },
+    getMaterialFeatures: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/features/materials');
+        try {
+            const res: any = await apiClient.get('/ai/features/materials');
+            return res.data || res || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/features/materials failed:', err.message);
+            return [];
+        }
+    },
+    getWarehouseFeatures: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/features/warehouse');
+        try {
+            const res: any = await apiClient.get('/ai/features/warehouse');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/features/warehouse failed:', err.message);
+            return null;
+        }
+    },
+    getFeatureCatalog: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/features/catalog');
+        try {
+            const res: any = await apiClient.get('/ai/features/catalog');
+            return res.data || res || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/features/catalog failed:', err.message);
+            return [];
+        }
+    },
+    // --- Module 4: Model Management ---
+    getModels: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/models');
+        try {
+            const res: any = await apiClient.get('/ai/models');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/models failed:', err.message);
+            return null;
+        }
+    },
+    registerModel: async (payload: any): Promise<any> => {
+        console.log('[API Call] POST /ai/models/register');
+        try {
+            const res: any = await apiClient.post('/ai/models/register', payload);
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/models/register failed:', err.message);
+            throw err;
+        }
+    },
+    switchModel: async (modelId: string): Promise<any> => {
+        console.log(`[API Call] POST /ai/models/switch with model_id: ${modelId}`);
+        try {
+            const res: any = await apiClient.post('/ai/models/switch', { model_id: modelId });
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error(`[API Failure] POST /ai/models/switch failed:`, err.message);
+            throw err;
+        }
+    },
+    loadModel: async (modelId?: string): Promise<any> => {
+        console.log(`[API Call] POST /ai/models/load with model_id: ${modelId}`);
+        try {
+            const res: any = await apiClient.post('/ai/models/load', { model_id: modelId });
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error(`[API Failure] POST /ai/models/load failed:`, err.message);
+            throw err;
+        }
+    },
+    getModelPerformance: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/models/performance');
+        try {
+            const res: any = await apiClient.get('/ai/models/performance');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/models/performance failed:', err.message);
+            return null;
+        }
+    },
+    // --- Module 5: AI Recommendation Engine ---
+    getRecommendationsEngine: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/recommendations/engine');
+        try {
+            const res: any = await apiClient.get('/ai/recommendations/engine');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/recommendations/engine failed:', err.message);
+            return null;
+        }
+    },
+    getRecommendationsByCategory: async (category: string): Promise<any> => {
+        console.log(`[API Call] GET /ai/recommendations/category/${category}`);
+        try {
+            const res: any = await apiClient.get(`/ai/recommendations/category/${category}`);
+            return res.data || res || [];
+        } catch (err: any) {
+            console.error(`[API Failure] GET /ai/recommendations/category/${category} failed:`, err.message);
+            return [];
+        }
+    },
+    switchRecommendationStrategy: async (strategyName: string): Promise<any> => {
+        console.log(`[API Call] POST /ai/recommendations/strategy with strategy_name: ${strategyName}`);
+        try {
+            const res: any = await apiClient.post('/ai/recommendations/strategy', { strategy_name: strategyName });
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/recommendations/strategy failed:', err.message);
+            throw err;
+        }
+    },
+    // --- Module 6: Explainable AI (XAI) ---
+    explainMaterial: async (materialId: string): Promise<any> => {
+        console.log(`[API Call] GET /ai/xai/explain/material/${materialId}`);
+        try {
+            const res: any = await apiClient.get(`/ai/xai/explain/material/${materialId}`);
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error(`[API Failure] GET /ai/xai/explain/material/${materialId} failed:`, err.message);
+            return null;
+        }
+    },
+    explainRack: async (rackCode: string): Promise<any> => {
+        console.log(`[API Call] GET /ai/xai/explain/rack/${rackCode}`);
+        try {
+            const res: any = await apiClient.get(`/ai/xai/explain/rack/${rackCode}`);
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error(`[API Failure] GET /ai/xai/explain/rack/${rackCode} failed:`, err.message);
+            return null;
+        }
+    },
+    getXaiDashboard: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/xai/dashboard');
+        try {
+            const res: any = await apiClient.get('/ai/xai/dashboard');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/xai/dashboard failed:', err.message);
+            return null;
+        }
+    },
+    getXaiDigitalTwin: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/xai/digital-twin');
+        try {
+            const res: any = await apiClient.get('/ai/xai/digital-twin');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/xai/digital-twin failed:', err.message);
+            return null;
+        }
+    },
+    getXaiReports: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/xai/reports');
+        try {
+            const res: any = await apiClient.get('/ai/xai/reports');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/xai/reports failed:', err.message);
+            return null;
+        }
+    },
+    getXaiManagerPortal: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/xai/manager-portal');
+        try {
+            const res: any = await apiClient.get('/ai/xai/manager-portal');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/xai/manager-portal failed:', err.message);
+            return null;
+        }
+    },
+    // --- Module 7: AI Monitoring ---
+    getAiHealth: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/monitoring/health');
+        try {
+            const res: any = await apiClient.get('/ai/monitoring/health');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/monitoring/health failed:', err.message);
+            return null;
+        }
+    },
+    getAiMetrics: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/monitoring/metrics');
+        try {
+            const res: any = await apiClient.get('/ai/monitoring/metrics');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/monitoring/metrics failed:', err.message);
+            return null;
+        }
+    },
+    resetAiMetrics: async (): Promise<any> => {
+        console.log('[API Call] POST /ai/monitoring/reset');
+        try {
+            const res: any = await apiClient.post('/ai/monitoring/reset');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/monitoring/reset failed:', err.message);
+            throw err;
+        }
+    },
+    getLowStockIntelligence: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/low-stock-intelligence');
+        try {
+            const res: any = await apiClient.get('/ai/low-stock-intelligence');
+            console.log('[API Success] GET /ai/low-stock-intelligence succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/low-stock-intelligence failed:', err.message);
+            throw err;
+        }
+    },
+    getConsumptionIntelligence: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/consumption-intelligence');
+        try {
+            const res: any = await apiClient.get('/ai/consumption-intelligence');
+            console.log('[API Success] GET /ai/consumption-intelligence succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/consumption-intelligence failed:', err.message);
+            throw err;
+        }
+    },
+    getDeadStockIntelligence: async (params?: any): Promise<any> => {
+        console.log('[API Call] GET /ai/dead-stock-intelligence', params);
+        try {
+            const res: any = await apiClient.get('/ai/dead-stock-intelligence', { params });
+            console.log('[API Success] GET /ai/dead-stock-intelligence succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/dead-stock-intelligence failed:', err.message);
+            throw err;
+        }
+    },
+    getRackOptimizationIntelligence: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/rack-optimization-intelligence');
+        try {
+            const res: any = await apiClient.get('/ai/rack-optimization-intelligence');
+            console.log('[API Success] GET /ai/rack-optimization-intelligence succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/rack-optimization-intelligence failed:', err.message);
+            throw err;
+        }
+    },
+    getSmartAlerts: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/smart-alerts');
+        try {
+            const res: any = await apiClient.get('/ai/smart-alerts');
+            console.log('[API Success] GET /ai/smart-alerts succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/smart-alerts failed:', err.message);
+            throw err;
+        }
+    },
+    getWarehouseHealthScore: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/warehouse-health-score');
+        try {
+            const res: any = await apiClient.get('/ai/warehouse-health-score');
+            console.log('[API Success] GET /ai/warehouse-health-score succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/warehouse-health-score failed:', err.message);
             throw err;
         }
     },
@@ -808,6 +1207,28 @@ export const apiService = {
             throw err;
         }
     },
+    getWarehouseAnalytics: async (params?: any): Promise<any> => {
+        console.log('[API Call] GET /dashboard/analytics with params:', params);
+        try {
+            const res = await apiClient.get('/dashboard/analytics', { params });
+            console.log('[API Success] GET /dashboard/analytics succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /dashboard/analytics failed:', err.message);
+            throw err;
+        }
+    },
+    getConsumptionAnalytics: async (dateRange: string = '30d'): Promise<any> => {
+        console.log('[API Call] GET /materials/consumption-analytics with dateRange:', dateRange);
+        try {
+            const res = await apiClient.get('/materials/consumption-analytics', { params: { dateRange } });
+            console.log('[API Success] GET /materials/consumption-analytics succeeded:', res);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /materials/consumption-analytics failed:', err.message);
+            throw err;
+        }
+    },
     getQrHistoryList: async (params?: { action?: string; limit?: number; page?: number }): Promise<any> => {
         console.log('[API Call] GET /qr/history with params:', params);
         try {
@@ -888,16 +1309,6 @@ export const apiService = {
     // Legacy Aliases
     addInventory: (data: any): Promise<any> => apiService.createMaterial(data),
     removeInventory: (data: any): Promise<any> => apiService.deleteMaterial(data.id),
-
-    // Axios Wrapper Compatibility Methods
-    get: async (url: string, config?: any): Promise<any> => {
-        const res = await apiClient.get(url, config);
-        return { data: res };
-    },
-    delete: async (url: string, config?: any): Promise<any> => {
-        const res = await apiClient.delete(url, config);
-        return { data: res };
-    },
     updateMaterialLimits: async (id: string, minLimit: number, criticalLimit: number): Promise<any> => {
         return apiService.updateLimits(id, minLimit, criticalLimit);
     },
@@ -910,5 +1321,8 @@ export const getRackOptimizations = apiService.getRackOptimizations;
 export const getRacks = apiService.getRacks;
 export const getAuditLogs = apiService.getAuditLogs;
 export const exportAuditLogs = apiService.exportAuditLogs;
+export const getDashboardStats = apiService.getDashboardStats;
+export const getWarehouseAnalytics = apiService.getWarehouseAnalytics;
+export const getConsumptionAnalytics = apiService.getConsumptionAnalytics;
 
 export default apiService;

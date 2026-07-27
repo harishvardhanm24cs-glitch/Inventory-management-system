@@ -88,3 +88,4 @@ export const authorize = (...roles) => {
 export const managerOnly = authorize('manager', 'admin');
 export const workerOnly = authorize('worker');
 export const anyRole = authorize('manager', 'worker', 'admin');
+export const adminOnly = authorize('admin', 'manager');

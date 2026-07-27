@@ -14,6 +14,8 @@ const LaptopScanner: React.FC<LaptopScannerProps> = ({ onScan, active }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const streamRef = useRef<MediaStream | null>(null);
     const intervalRef = useRef<any>(null);
+    const isProcessingRef = useRef<boolean>(false);
+    const lastScanRef = useRef<{ code: string; time: number }>({ code: '', time: 0 });
 
     const [status, setStatus] = useState<'connecting' | 'scanning' | 'decoding' | 'error' | 'permission_denied'>('connecting');
 
@@ -60,7 +62,7 @@ const LaptopScanner: React.FC<LaptopScannerProps> = ({ onScan, active }) => {
         return () => stopCamera();
     }, [active]);
 
-    // Interval scanning loop: 300ms
+    // Continuous interval scanning loop (300ms) without stream interruption
     useEffect(() => {
         if (status !== 'scanning' || !active) return;
 
@@ -68,7 +70,7 @@ const LaptopScanner: React.FC<LaptopScannerProps> = ({ onScan, active }) => {
             const video = videoRef.current;
             const canvas = canvasRef.current;
             
-            if (video && canvas && video.readyState === video.HAVE_ENOUGH_DATA) {
+            if (video && canvas && video.readyState === video.HAVE_ENOUGH_DATA && !isProcessingRef.current) {
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 
@@ -78,21 +80,25 @@ const LaptopScanner: React.FC<LaptopScannerProps> = ({ onScan, active }) => {
                     const decodedText = decodeFromCanvas(canvas);
                     
                     if (decodedText) {
-                        setStatus('decoding');
-                        const parsedData = parseQRData(decodedText);
-                        const payload = await onScan(parsedData);
-                        
-                        if (payload && payload.success) {
-                            stopCamera(); // Stop scanning on success
-                            
-                            // Auto-restart scanning after 3 seconds
-                            setTimeout(() => {
-                                if (active) {
-                                    startCamera();
-                                }
-                            }, 3000);
-                        } else {
-                            setStatus('scanning');
+                        const now = Date.now();
+                        const isDuplicate =
+                            decodedText === lastScanRef.current.code &&
+                            now - lastScanRef.current.time < 2500;
+
+                        if (!isDuplicate && !isProcessingRef.current) {
+                            isProcessingRef.current = true;
+                            lastScanRef.current = { code: decodedText, time: now };
+                            setStatus('decoding');
+
+                            const parsedData = parseQRData(decodedText);
+                            try {
+                                await onScan(parsedData);
+                            } catch (e) {
+                                console.error("[LaptopScanner] Scan processing error:", e);
+                            } finally {
+                                isProcessingRef.current = false;
+                                setStatus('scanning');
+                            }
                         }
                     }
                 }
@@ -108,7 +114,6 @@ const LaptopScanner: React.FC<LaptopScannerProps> = ({ onScan, active }) => {
 
     return (
         <div className="relative w-full aspect-video bg-[#0B0F1A] rounded-2xl overflow-hidden shadow-2xl group border border-cyan-500/20">
-            {/* Auto-focus simulation scale */}
             <video 
                 ref={videoRef}
                 playsInline
@@ -123,16 +128,13 @@ const LaptopScanner: React.FC<LaptopScannerProps> = ({ onScan, active }) => {
             {/* Industrial Target Overlay */}
             <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                 <div className="w-64 h-64 relative">
-                    {/* Cyber Brackets */}
                     <div className={cn("absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 transition-colors duration-300", status === 'scanning' ? "border-cyan-400" : "border-slate-600")} />
                     <div className={cn("absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 transition-colors duration-300", status === 'scanning' ? "border-cyan-400" : "border-slate-600")} />
                     <div className={cn("absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 transition-colors duration-300", status === 'scanning' ? "border-cyan-400" : "border-slate-600")} />
                     <div className={cn("absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 transition-colors duration-300", status === 'scanning' ? "border-cyan-400" : "border-slate-600")} />
                     
-                    {/* Inner Crosshair */}
                     <Focus className={cn("absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 transition-all duration-700", status === 'scanning' ? "text-cyan-500/50 scale-100" : "text-white/20 scale-50")} />
 
-                    {/* Laser Sweep */}
                     {status === 'scanning' && (
                         <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-400 shadow-[0_0_10px_#22d3ee] animate-[scan_2s_linear_infinite]" />
                     )}
@@ -165,7 +167,7 @@ const LaptopScanner: React.FC<LaptopScannerProps> = ({ onScan, active }) => {
                     )}
                     {status === 'scanning' && (
                         <div className="text-emerald-400 text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-2 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]">
-                            <Camera className="w-3 h-3" /> Matrix Active // Lock Target
+                            <Camera className="w-3 h-3" /> Continuous Stream Active
                         </div>
                     )}
                     {status === 'decoding' && (
@@ -173,17 +175,9 @@ const LaptopScanner: React.FC<LaptopScannerProps> = ({ onScan, active }) => {
                             <Loader2 className="w-3 h-3 animate-spin" /> Decrypting Payload...
                         </div>
                     )}
-                    
-                    {/* Sub helper */}
-                    {status === 'scanning' && (
-                        <div className="text-white/40 text-[8px] font-bold uppercase tracking-[0.4em] mt-1 ml-5">
-                            Hold target steady within frame
-                        </div>
-                    )}
                 </div>
             </div>
             
-            {/* Custom Scan Animation Injection */}
             <style>{`
                 @keyframes scan {
                     0% { top: 0%; opacity: 0; }

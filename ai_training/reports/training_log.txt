@@ -1,0 +1,45 @@
+[2026-07-25 23:59:09] ================================================================================
+[2026-07-25 23:59:09]    RM MONITOR - PHASE 8B MODULE 4 ML MODEL TRAINING PIPELINE
+[2026-07-25 23:59:09] ================================================================================
+[2026-07-25 23:59:09] 1. Loading & Validating Dataset from 'D:\atendence-main\backend\ml_datasets\feature_dataset.csv'...
+[2026-07-25 23:59:09]    • Raw rows: 65
+[2026-07-25 23:59:09]    • Removed duplicate rows: 12
+[2026-07-25 23:59:09]    • Final training rows: 53
+[2026-07-25 23:59:09]    • Target column target: 'quantity_used' (Verified Present)
+[2026-07-25 23:59:09] 
+2. Preprocessing & Feature Encoding...
+[2026-07-25 23:59:09]    • Total Input Features Selected: 23
+[2026-07-25 23:59:09] 
+3. Performing 80/20 Train/Test Split (random_state=42)...
+[2026-07-25 23:59:09] 
+4. Training RandomForestRegressor Model...
+[2026-07-25 23:59:09]    • Training Duration: 0.2057 seconds
+[2026-07-25 23:59:09] 
+5. Calculating Model Evaluation Metrics...
+[2026-07-25 23:59:09]    • MAE       : 0.0
+[2026-07-25 23:59:09]    • RMSE      : 0.0
+[2026-07-25 23:59:09]    • R² Score  : 1.0
+[2026-07-25 23:59:09] 
+6. Computing Feature Importance Ranking...
+[2026-07-25 23:59:09] 
+Top 10 Most Important Features:
+[2026-07-25 23:59:09] ------------------------------------------------------------
+[2026-07-25 23:59:09] Rank   | Feature Name                        | Importance  
+[2026-07-25 23:59:09] ------------------------------------------------------------
+[2026-07-25 23:59:09] 1      | material_id                         | 0.000000
+[2026-07-25 23:59:09] 2      | material_name                       | 0.000000
+[2026-07-25 23:59:09] 3      | barcode                             | 0.000000
+[2026-07-25 23:59:09] 4      | batch_number                        | 0.000000
+[2026-07-25 23:59:09] 5      | current_stock                       | 0.000000
+[2026-07-25 23:59:09] 6      | threshold                           | 0.000000
+[2026-07-25 23:59:09] 7      | unit                                | 0.000000
+[2026-07-25 23:59:09] 8      | weight                              | 0.000000
+[2026-07-25 23:59:09] 9      | transaction_type                    | 0.000000
+[2026-07-25 23:59:09] 10     | quantity                            | 0.000000
+[2026-07-25 23:59:09] ------------------------------------------------------------
+[2026-07-25 23:59:09] 
+7. Exporting Trained Model Artifact (Joblib)...
+[2026-07-25 23:59:09] 
+8. Updating Model Registry ('model_registry.json')...
+[2026-07-25 23:59:09] 
+9. Generating Output Reports...

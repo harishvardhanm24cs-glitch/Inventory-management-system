@@ -1,0 +1,392 @@
+{
+  "timestamp": "2026-07-25T23:56:59.674811",
+  "overall_status": "PASSED",
+  "project_structure": {
+    "datasets": {
+      "exists": true,
+      "path": "D:\\atendence-main\\ai_training\\datasets"
+    },
+    "preprocessing": {
+      "exists": true,
+      "path": "D:\\atendence-main\\ai_training\\preprocessing"
+    },
+    "feature_engineering": {
+      "exists": true,
+      "path": "D:\\atendence-main\\ai_training\\feature_engineering"
+    },
+    "training": {
+      "exists": true,
+      "path": "D:\\atendence-main\\ai_training\\training"
+    },
+    "evaluation": {
+      "exists": true,
+      "path": "D:\\atendence-main\\ai_training\\evaluation"
+    },
+    "reports": {
+      "exists": true,
+      "path": "D:\\atendence-main\\ai_training\\reports"
+    },
+    "models": {
+      "exists": true,
+      "path": "D:\\atendence-main\\ai_training\\models"
+    },
+    "utils": {
+      "exists": true,
+      "path": "D:\\atendence-main\\ai_training\\utils"
+    },
+    "config": {
+      "exists": true,
+      "path": "D:\\atendence-main\\ai_training\\config"
+    }
+  },
+  "dataset_files": {
+    "feature_dataset.csv": {
+      "exists": true,
+      "full_path": "D:\\atendence-main\\backend\\ml_datasets\\feature_dataset.csv",
+      "size_bytes": 6258,
+      "formatted_size": "6.11 KB",
+      "created_date": "2026-07-25T23:45:06.483510",
+      "last_modified_date": "2026-07-25T22:50:01.614445"
+    },
+    "feature_registry.json": {
+      "exists": true,
+      "full_path": "D:\\atendence-main\\backend\\ml_datasets\\feature_registry.json",
+      "size_bytes": 104848,
+      "formatted_size": "102.39 KB",
+      "created_date": "2026-07-25T23:45:06.498765",
+      "last_modified_date": "2026-07-25T22:50:01.619457"
+    },
+    "preprocessing_config.json": {
+      "exists": true,
+      "full_path": "D:\\atendence-main\\backend\\ml_datasets\\preprocessing_config.json",
+      "size_bytes": 1295,
+      "formatted_size": "1.26 KB",
+      "created_date": "2026-07-25T23:45:06.508293",
+      "last_modified_date": "2026-07-25T22:50:01.622464"
+    },
+    "feature_pipeline.json": {
+      "exists": true,
+      "full_path": "D:\\atendence-main\\backend\\ml_datasets\\feature_pipeline.json",
+      "size_bytes": 1547,
+      "formatted_size": "1.51 KB",
+      "created_date": "2026-07-25T23:45:06.495628",
+      "last_modified_date": "2026-07-25T22:50:01.624454"
+    }
+  },
+  "dataset_quality": {
+    "total_rows": 65,
+    "total_columns": 26,
+    "columns": [
+      "material_id",
+      "material_name",
+      "barcode",
+      "batch_number",
+      "current_stock",
+      "threshold",
+      "unit",
+      "weight",
+      "transaction_type",
+      "quantity",
+      "user_id",
+      "rack_code",
+      "timestamp",
+      "rack_capacity",
+      "current_rack_quantity",
+      "occupancy_percentage",
+      "movement_type",
+      "source_location",
+      "destination_location",
+      "quantity_used",
+      "day_of_week",
+      "week_number",
+      "month",
+      "year",
+      "hour",
+      "weekend_flag"
+    ],
+    "data_types": {
+      "material_id": "int64",
+      "material_name": "str",
+      "barcode": "str",
+      "batch_number": "str",
+      "current_stock": "int64",
+      "threshold": "int64",
+      "unit": "float64",
+      "weight": "float64",
+      "transaction_type": "str",
+      "quantity": "float64",
+      "user_id": "float64",
+      "rack_code": "str",
+      "timestamp": "float64",
+      "rack_capacity": "float64",
+      "current_rack_quantity": "float64",
+      "occupancy_percentage": "float64",
+      "movement_type": "str",
+      "source_location": "float64",
+      "destination_location": "float64",
+      "quantity_used": "float64",
+      "day_of_week": "float64",
+      "week_number": "float64",
+      "month": "int64",
+      "year": "int64",
+      "hour": "int64",
+      "weekend_flag": "int64"
+    },
+    "missing_values_per_column": {
+      "material_id": 0,
+      "material_name": 0,
+      "barcode": 0,
+      "batch_number": 33,
+      "current_stock": 0,
+      "threshold": 0,
+      "unit": 65,
+      "weight": 65,
+      "transaction_type": 0,
+      "quantity": 65,
+      "user_id": 65,
+      "rack_code": 0,
+      "timestamp": 65,
+      "rack_capacity": 65,
+      "current_rack_quantity": 65,
+      "occupancy_percentage": 65,
+      "movement_type": 0,
+      "source_location": 65,
+      "destination_location": 65,
+      "quantity_used": 65,
+      "day_of_week": 65,
+      "week_number": 65,
+      "month": 0,
+      "year": 0,
+      "hour": 0,
+      "weekend_flag": 0
+    },
+    "duplicate_rows_count": 12,
+    "numerical_features": [
+      "material_id",
+      "current_stock",
+      "threshold",
+      "unit",
+      "weight",
+      "quantity",
+      "user_id",
+      "timestamp",
+      "rack_capacity",
+      "current_rack_quantity",
+      "occupancy_percentage",
+      "source_location",
+      "destination_location",
+      "quantity_used",
+      "day_of_week",
+      "week_number",
+      "month",
+      "year",
+      "hour",
+      "weekend_flag"
+    ],
+    "numerical_count": 20,
+    "categorical_features": [
+      "material_name",
+      "barcode",
+      "batch_number",
+      "transaction_type",
+      "rack_code",
+      "movement_type"
+    ],
+    "categorical_count": 6,
+    "datetime_features": [
+      "timestamp"
+    ],
+    "datetime_count": 1,
+    "memory_usage": "16.53 KB",
+    "target_candidates": [
+      "current_stock",
+      "threshold",
+      "quantity",
+      "current_rack_quantity",
+      "occupancy_percentage",
+      "quantity_used"
+    ]
+  },
+  "feature_registry": {
+    "registry_name": "RM Monitor Central AI Feature Registry",
+    "total_registered_features": 74,
+    "dataset_columns_count": 26,
+    "dataset_coverage_percentage": 50.0,
+    "missing_features_in_dataset": [
+      "days_since_last_movement",
+      "avg_daily_consumption",
+      "ohe_mov_TRANSFER",
+      "threshold_risk_score",
+      "monthly_transactions",
+      "total_outward",
+      "consumption_trend",
+      "rack_occupancy_pct",
+      "rack_load_ratio",
+      "norm_occupancy",
+      "rolling_7d_consumption",
+      "material_activity_score",
+      "daily_transactions",
+      "business_hour_flag",
+      "norm_quantity",
+      "warehouse_activity_score",
+      "norm_weight",
+      "stock_percentage",
+      "norm_current_stock",
+      "inventory_turnover",
+      "ohe_mov_INWARD",
+      "movement_count",
+      "daily_consumption",
+      "weekly_transactions",
+      "outward_count",
+      "material_weight",
+      "avg_transaction_quantity",
+      "quarter",
+      "norm_capacity",
+      "encoded_material_name",
+      "avg_weekly_consumption",
+      "weekly_consumption",
+      "remaining_rack_capacity",
+      "ohe_mov_OUTWARD",
+      "ohe_tx_Outward",
+      "rolling_movement_avg",
+      "total_inward",
+      "rack_utilization_score",
+      "encoded_rack_code",
+      "avg_monthly_consumption",
+      "rolling_14d_consumption",
+      "inventory_health_score",
+      "movement_frequency",
+      "rolling_30d_consumption",
+      "rack_health_score",
+      "encoded_transaction_type",
+      "encoded_movement_type",
+      "critical_stock_indicator",
+      "remaining_capacity",
+      "day",
+      "rolling_stock_avg",
+      "inward_count",
+      "monthly_consumption",
+      "stock_difference",
+      "transfer_count",
+      "days_since_last_scan",
+      "week",
+      "low_stock_indicator",
+      "net_inventory_change",
+      "norm_threshold",
+      "ohe_tx_Inward"
+    ],
+    "unregistered_operational_columns": [
+      "destination_location",
+      "week_number",
+      "rack_capacity",
+      "weight",
+      "source_location",
+      "unit",
+      "current_rack_quantity",
+      "quantity_used",
+      "user_id",
+      "day_of_week",
+      "timestamp",
+      "occupancy_percentage",
+      "quantity"
+    ],
+    "data_type_mismatches": []
+  },
+  "preprocessing_config": {
+    "version": "v1.0.0",
+    "present_sections": [
+      "version",
+      "generated_at",
+      "normalization",
+      "encoding",
+      "missing_value_strategy",
+      "duplicate_handling",
+      "outlier_handling"
+    ],
+    "missing_sections": [],
+    "normalization_details": {
+      "method": "Min-Max Scaling",
+      "target_range": [
+        0,
+        1
+      ],
+      "scaled_features": [
+        "norm_current_stock",
+        "norm_threshold",
+        "norm_quantity",
+        "norm_weight",
+        "norm_occupancy",
+        "norm_capacity"
+      ]
+    },
+    "encoding_details": {
+      "label_encoding_features": [
+        "encoded_transaction_type",
+        "encoded_movement_type",
+        "encoded_material_name",
+        "encoded_rack_code"
+      ],
+      "one_hot_encoding_features": [
+        "ohe_tx_Inward",
+        "ohe_tx_Outward",
+        "ohe_mov_INWARD",
+        "ohe_mov_OUTWARD",
+        "ohe_mov_TRANSFER"
+      ]
+    },
+    "missing_value_strategy": {
+      "material_name": "Impute 'Unknown Material'",
+      "barcode": "Generate 'BC-{id}'",
+      "batch_number": "Impute 'N/A'",
+      "unit": "Impute 'KG'",
+      "numeric": "Impute Zero or Default Baseline"
+    },
+    "duplicate_handling": {
+      "strategy": "Purge duplicates preserving earliest timestamp record",
+      "key_fields": [
+        "material_id",
+        "transaction_id",
+        "timestamp",
+        "quantity"
+      ]
+    },
+    "outlier_handling": {
+      "occupancy_percentage": "Clip between 0.0% and 100.0%",
+      "numeric_quantities": "Filter negative values (quantity >= 0)"
+    }
+  },
+  "feature_pipeline": {
+    "pipeline_name": "RM Monitor End-to-End AI Feature Pipeline",
+    "version": "v1.0.0",
+    "total_steps": 6,
+    "execution_order": [
+      "Step 1: Raw Warehouse Data Extraction",
+      "Step 2: Data Cleaning & Hygiene",
+      "Step 3: Domain Feature Engineering",
+      "Step 4: Rolling Moving Window Aggregations",
+      "Step 5: Composite AI Scores & Indicators",
+      "Step 6: Dataset Export & Governance Synchronization"
+    ]
+  },
+  "python_environment": {
+    "python_version": "3.14.5",
+    "executable": "C:\\Users\\harsh vardhan\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "virtual_environment": "VERIFIED (D:\\atendence-main\\ai_training\\venv)",
+    "packages": {
+      "pd": "3.0.3",
+      "np": "2.4.6",
+      "scikit-learn": "1.9.0",
+      "joblib": "1.5.3",
+      "matplotlib": "3.11.0",
+      "xgboost": "3.3.0",
+      "tensorflow": "NOT INSTALLED (Optional Extension)",
+      "torch": "2.12.1+cpu"
+    }
+  },
+  "model_directory": {
+    "exists": true,
+    "path": "D:\\atendence-main\\ai\\models"
+  },
+  "issues": [],
+  "readiness_message": "Phase 8B Module 4 Ready"
+}

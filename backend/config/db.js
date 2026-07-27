@@ -372,7 +372,6 @@ const pool = mysql.createPool({
         quantity AS current_capacity, 
         IF(max_capacity > 0, (quantity / max_capacity) * 100, 0.00) AS occupancy_percentage,
         CASE 
-          WHEN rack_code REGEXP '^A[0-9]+' THEN 'Receiving'
           WHEN rack_code REGEXP '^C[0-9]+' THEN 'Dispatch'
           ELSE 'Storage'
         END AS zone_name,
@@ -397,9 +396,7 @@ const pool = mysql.createPool({
         DECLARE occ_pct DECIMAL(10,2);
         DECLARE zone_val VARCHAR(100);
         SET occ_pct = IF(NEW.max_capacity > 0, (NEW.quantity / NEW.max_capacity) * 100, 0.00);
-        IF NEW.rack_code REGEXP '^A[0-9]+' THEN
-          SET zone_val = 'Receiving';
-        ELSEIF NEW.rack_code REGEXP '^C[0-9]+' THEN
+        IF NEW.rack_code REGEXP '^C[0-9]+' THEN
           SET zone_val = 'Dispatch';
         ELSE
           SET zone_val = 'Storage';
@@ -424,9 +421,7 @@ const pool = mysql.createPool({
         DECLARE occ_pct DECIMAL(10,2);
         DECLARE zone_val VARCHAR(100);
         SET occ_pct = IF(NEW.max_capacity > 0, (NEW.quantity / NEW.max_capacity) * 100, 0.00);
-        IF NEW.rack_code REGEXP '^A[0-9]+' THEN
-          SET zone_val = 'Receiving';
-        ELSEIF NEW.rack_code REGEXP '^C[0-9]+' THEN
+        IF NEW.rack_code REGEXP '^C[0-9]+' THEN
           SET zone_val = 'Dispatch';
         ELSE
           SET zone_val = 'Storage';
