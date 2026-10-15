@@ -46,7 +46,7 @@ export const parseQRData = (data: string): QRResult => {
             isJson = true;
         } catch {
             try {
-                // Try parsing malformed JSON like `{materialId: 'RM002', quantity: 72}`
+                
                 const formatted = rawData
                     .replace(/'/g, '"')
                     .replace(/([a-zA-Z0-9_]+)\s*:/g, '"$1":');

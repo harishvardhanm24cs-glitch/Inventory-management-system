@@ -24,7 +24,7 @@ export const IntelligenceControlsBar: React.FC<IntelligenceControlsBarProps> = (
   return (
     <div className="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-4 backdrop-blur-md transition-all shadow-md">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        {/* Search Bar */}
+        
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
@@ -44,9 +44,9 @@ export const IntelligenceControlsBar: React.FC<IntelligenceControlsBarProps> = (
           )}
         </div>
 
-        {/* Category Tabs & Sorting Selector */}
+        
         <div className="flex flex-wrap items-center gap-3">
-          {/* Sort Selector */}
+          
           <div className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/80 px-3 py-2 text-xs text-slate-300">
             <ArrowUpDown className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
             <select
@@ -62,7 +62,7 @@ export const IntelligenceControlsBar: React.FC<IntelligenceControlsBarProps> = (
             </select>
           </div>
 
-          {/* Quick Filter Pill Buttons */}
+          
           <div className="flex items-center gap-1 rounded-xl border border-slate-800 bg-slate-950/60 p-1 text-xs">
             <button
               onClick={() => onCategoryChange('all')}

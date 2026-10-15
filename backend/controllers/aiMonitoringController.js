@@ -1,11 +1,5 @@
 import aiMonitoringService from '../services/aiMonitoringService.js';
 
-/**
- * aiMonitoringController.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 7: AI Monitoring System Controller Layer
- */
-
 export const getAiHealth = async (req, res, next) => {
   try {
     const healthSummary = await aiMonitoringService.getAiHealthSummary();

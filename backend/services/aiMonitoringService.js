@@ -1,25 +1,6 @@
 import modelManager from './modelManager.js';
 import featureEngineeringService from './featureEngineeringService.js';
 
-/**
- * aiMonitoringService.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 7: AI Monitoring System
- *
- * Objectives:
- * • Continuously monitors AI performance & operational reliability.
- * • Asynchronous, non-blocking telemetry logging (0ms added overhead to warehouse ops).
- * • Tracks 6 core dimensions:
- *   1. Prediction Accuracy (Accuracy %, MAE, F1 Score)
- *   2. Prediction Latency (Avg Latency ms, P95 Latency ms, Total Requests)
- *   3. Feature Availability (Readiness %, Missing Vector Ratio)
- *   4. Model Status (Active Model ID, Framework, Memory Loaded)
- *   5. Data Quality (Cleanliness Score %, Schema Integrity %, Deduplication Rate)
- *   6. Prediction Failures (Failure Count, Error Rate %, Fallback Triggers)
- *
- * Computes Overall AI Health Index (0-100%) & Status (HEALTHY, DEGRADED, CRITICAL).
- */
-
 export class AiMonitoringService {
   constructor() {
     this.metrics = {
@@ -37,9 +18,7 @@ export class AiMonitoringService {
     };
   }
 
-  /**
-   * Non-blocking async telemetry recorder for predictions
-   */
+  
   recordPredictionTelemetry({ latencyMs, success = true, modelId = 'statistical_ml_default' }) {
     setImmediate(() => {
       this.metrics.total_predictions += 1;
@@ -56,9 +35,7 @@ export class AiMonitoringService {
     });
   }
 
-  /**
-   * Record fallback event
-   */
+  
   recordFallbackTrigger(requestedModelId) {
     setImmediate(() => {
       this.metrics.fallback_triggers += 1;
@@ -66,9 +43,7 @@ export class AiMonitoringService {
     });
   }
 
-  /**
-   * Calculate Average Latency & P95 Latency ms
-   */
+  
   getLatencyMetrics() {
     const logs = this.metrics.latency_log;
     if (logs.length === 0) return { avg_latency_ms: 4.2, p95_latency_ms: 6.5 };
@@ -89,38 +64,36 @@ export class AiMonitoringService {
     };
   }
 
-  /**
-   * Synthesize Overall AI Health Index (0 - 100%) and 6 Metric Breakdown
-   */
+  
   async getAiHealthSummary() {
     const latency = this.getLatencyMetrics();
     const activeModel = modelManager.getActiveModel();
     const allModels = modelManager.listAllModels();
 
-    // 1. Prediction Accuracy Metric
+    
     const accuracyPct = Math.round(this.metrics.accuracy_score * 100);
 
-    // 2. Prediction Latency Metric
+    
     let latencyScore = 100;
     if (latency.avg_latency_ms > 50) latencyScore = 60;
     else if (latency.avg_latency_ms > 20) latencyScore = 80;
 
-    // 3. Feature Availability Metric
+    
     const featureAvailPct = this.metrics.feature_availability_pct;
 
-    // 4. Model Status Metric
+    
     const modelStatusScore = activeModel ? 100 : 50;
 
-    // 5. Data Quality Metric
+    
     const dataQualityPct = this.metrics.data_cleanliness_pct;
 
-    // 6. Prediction Failures Metric
+    
     const failureRatePct = this.metrics.total_predictions > 0
       ? parseFloat(((this.metrics.total_failures / this.metrics.total_predictions) * 100).toFixed(2))
       : 0.0;
     const successRatePct = Math.max(0, 100 - failureRatePct);
 
-    // Composite AI Health Index Calculation
+    
     const healthIndex = Math.round(
       (0.25 * accuracyPct) +
       (0.25 * latencyScore) +
@@ -134,8 +107,8 @@ export class AiMonitoringService {
     else if (healthIndex < 85) status = 'DEGRADED';
 
     return {
-      health_index: healthIndex, // 0 - 100
-      status,                     // HEALTHY | DEGRADED | CRITICAL
+      health_index: healthIndex, 
+      status,                     
       timestamp: new Date().toISOString(),
       non_interference_guarantee: true,
       metrics: {
@@ -174,9 +147,7 @@ export class AiMonitoringService {
     };
   }
 
-  /**
-   * Clear or reset monitoring telemetry metrics (Admin Action)
-   */
+  
   resetMetrics() {
     this.metrics.total_predictions = 0;
     this.metrics.total_failures = 0;

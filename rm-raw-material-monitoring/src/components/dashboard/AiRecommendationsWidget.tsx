@@ -42,10 +42,10 @@ export const AiRecommendationsWidget: React.FC = memo(() => {
 
   return (
     <div className="bg-slate-900/90 border border-slate-800/80 rounded-2xl p-6 shadow-2xl backdrop-blur-xl relative overflow-hidden group hover:border-indigo-500/30 transition-all duration-300">
-      {/* Background Glow Accent */}
+      
       <div className="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-indigo-500/20 transition-all duration-500" />
 
-      {/* Header */}
+      
       <div className="flex items-center justify-between mb-5 border-b border-slate-800/80 pb-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/20">

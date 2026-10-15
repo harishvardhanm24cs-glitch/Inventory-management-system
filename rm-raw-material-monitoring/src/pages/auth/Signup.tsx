@@ -5,7 +5,6 @@ import AuthLayout from '../../components/layout/AuthLayout';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
 
-
 const Signup = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -16,7 +15,7 @@ const Signup = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // 3. Validate fields before API call
+        
         if (!name.trim()) {
             toast.error("Name is required");
             return;
@@ -35,38 +34,38 @@ const Signup = () => {
 
         setIsLoading(true);
 
-        // 1. Ensure signup request body EXACTLY matches backend
+        
         const payload = {
             name,
             email,
             password
         };
 
-        // 4. Add console logs - signup payload
+        
         console.log("signup payload:", payload);
 
         try {
             const data = await api.registerUser(payload);
             
-            // 4. Add console logs - signup success
+            
             console.log("signup success:", data);
 
             toast.success("Account created successfully!");
             
-            // 6. On successful signup: Automatically redirect to Login page
+            
             navigate('/login');
         } catch (error: any) {
-            // 4. Add console logs - signup failure
+            
             console.error("signup failure:", error);
             
-            // 5. Show backend error message in UI
+            
             toast.error(error.message || "Failed to create account");
         } finally {
             if (mountedRef.current) setIsLoading(false);
         }
     };
 
-    // Use mounted checks
+    
     const mountedRef = React.useRef(true);
     React.useEffect(() => {
         return () => { mountedRef.current = false; };

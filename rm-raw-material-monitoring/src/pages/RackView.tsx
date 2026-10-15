@@ -14,7 +14,7 @@ import { rackVisualizationRules } from '../utils/rackVisualizationRules';
 export default function RackView() {
   const { racks: contextRacks, refreshData, loading, warehouseStats, lastUpdated } = useInventory();
 
-  // ── Real-time sync via existing rack-inventory-update CustomEvent ──────────
+  
   const {
     racks: syncedRacks,
     isSyncing,
@@ -22,8 +22,8 @@ export default function RackView() {
     affectedRackCode
   } = useRackSync(300);
 
-  // Merge: use synced racks when available (hook fetches on mount + every event),
-  // fall back to InventoryContext racks during initial render before first sync.
+  
+  
   const racks: Rack[] = syncedRacks.length > 0 ? syncedRacks : contextRacks;
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -31,11 +31,11 @@ export default function RackView() {
   const [selectedRack, setSelectedRack] = useState<Rack | null>(null);
   const [filterMode, setFilterMode] = useState<'all' | 'empty' | 'occupied'>('all');
 
-  // Flash animation states
+  
   const [flashingRacks, setFlashingRacks] = useState<Record<string, 'up' | 'down'>>({});
   const prevQuantitiesRef = useRef<Record<string, number>>({});
 
-  // Form states
+  
   const [rackCode, setRackCode] = useState('');
   const [materialName, setMaterialName] = useState('');
   const [batchNumber, setBatchNumber] = useState('');
@@ -43,7 +43,7 @@ export default function RackView() {
   const [maxCapacity, setMaxCapacity] = useState('100');
   const [thresholdLimit, setThresholdLimit] = useState('10');
 
-  // ── Flash animation: triggered by quantity changes OR direct hook affectedRackCode ──
+  
   useEffect(() => {
     if (!racks || racks.length === 0) return;
 
@@ -63,8 +63,8 @@ export default function RackView() {
       prevQuantitiesRef.current![rack.rack_code] = currentQty;
     });
 
-    // Also flash the rack reported by the sync hook even if qty didn't change
-    // (edge case: same qty but status colour changed)
+    
+    
     if (affectedRackCode && !flashes[affectedRackCode]) {
       const targetRack = racks.find(r => r.rack_code === affectedRackCode);
       if (targetRack) {
@@ -77,7 +77,7 @@ export default function RackView() {
 
     if (hasChanges) {
       setFlashingRacks(prev => ({ ...prev, ...flashes }));
-      // Clear flashes after 2 seconds
+      
       setTimeout(() => {
         setFlashingRacks(prev => {
           const updated = { ...prev };
@@ -176,14 +176,14 @@ export default function RackView() {
     }
   };
 
-  // Progress bar occupancy fill color mappings
+  
   const getProgressBarFill = (pct: number) => {
-    if (pct <= 40) return 'bg-emerald-500'; // 0-40% GREEN
-    if (pct <= 80) return 'bg-amber-500';   // 41-80% YELLOW
-    return 'bg-rose-600';                  // 81-100% RED
+    if (pct <= 40) return 'bg-emerald-500'; 
+    if (pct <= 80) return 'bg-amber-500';   
+    return 'bg-rose-600';                  
   };
 
-  // Status color mappings based on occupancy rules (GREEN/YELLOW/RED)
+  
   const getOccupancyColorStyles = (color: 'GREEN' | 'YELLOW' | 'RED') => {
     switch (color) {
       case 'GREEN':
@@ -214,7 +214,7 @@ export default function RackView() {
     }
   };
 
-  // Color mappings
+  
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'healthy':
@@ -261,7 +261,7 @@ export default function RackView() {
     }
   };
 
-  // Rack statistics computations
+  
   const totalRacks = racks.length;
   const emptyRacks = racks.filter(r => {
     const q = parseFloat(String(r.quantity)) || 0;
@@ -274,14 +274,14 @@ export default function RackView() {
     return q > 0 && q <= l;
   }).length;
   
-  // Calculate average fill efficiency
+  
   const totalQty = racks.reduce((sum, r) => sum + parseFloat(String(r.quantity)), 0);
   const totalCap = racks.reduce((sum, r) => sum + parseFloat(String(r.max_capacity)), 0);
   const fillEfficiency = totalCap > 0 ? parseFloat(((totalQty / totalCap) * 100).toFixed(1)) : 0.0;
 
   return (
     <div className="space-y-8 animate-fade-in text-slate-900 p-4 md:p-8">
-      {/* Header */}
+      
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wider border border-blue-100 w-fit mb-3">
@@ -302,7 +302,7 @@ export default function RackView() {
         </Button>
       </div>
 
-      {/* Warehouse Statistics Engine */}
+      
       {loading && !warehouseStats ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-pulse">
           {[...Array(8)].map((_, idx) => (
@@ -311,7 +311,7 @@ export default function RackView() {
         </div>
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
-          {/* Card 1: Total Racks */}
+          
           <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
             <div className="p-3 bg-blue-50 text-blue-500 rounded-xl">
               <Database size={22} />
@@ -322,7 +322,7 @@ export default function RackView() {
             </div>
           </div>
 
-          {/* Card 2: Occupied Racks */}
+          
           <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
             <div className="p-3 bg-indigo-50 text-indigo-500 rounded-xl">
               <ShieldCheck size={22} />
@@ -333,7 +333,7 @@ export default function RackView() {
             </div>
           </div>
 
-          {/* Card 3: Empty Racks */}
+          
           <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
             <div className="p-3 bg-slate-50 text-slate-500 rounded-xl">
               <Inbox size={22} />
@@ -344,7 +344,7 @@ export default function RackView() {
             </div>
           </div>
 
-          {/* Card 4: Warehouse Utilization % */}
+          
           <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
             <div className="p-3 bg-emerald-50 text-emerald-500 rounded-xl">
               <Percent size={22} />
@@ -367,7 +367,7 @@ export default function RackView() {
             </div>
           </div>
 
-          {/* Card 5: Critical Stock Count */}
+          
           <div className={cn(
             "border p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-all",
             (warehouseStats?.criticalCount ?? 0) > 0 ? "border-rose-200 bg-rose-50/10 shadow-[0_0_15px_rgba(244,63,94,0.02)]" : "bg-white border-slate-100"
@@ -390,7 +390,7 @@ export default function RackView() {
             </div>
           </div>
 
-          {/* Card 6: Low Stock Count */}
+          
           <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
             <div className="p-3 bg-amber-50 text-amber-500 rounded-xl">
               <Bell size={22} />
@@ -401,7 +401,7 @@ export default function RackView() {
             </div>
           </div>
 
-          {/* Card 7: Today's Inward Transactions */}
+          
           <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
             <div className="p-3 bg-emerald-50 text-emerald-500 rounded-xl">
               <ArrowDownRight size={22} />
@@ -529,7 +529,7 @@ export default function RackView() {
               </span>
             )}
 
-            {/* Live Sync indicator badge — pulses while fetch is in-flight */}
+            
             <div
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-wider transition-all duration-300',
@@ -565,7 +565,7 @@ export default function RackView() {
               const capVal = parseFloat(String(rack.max_capacity)) || 100;
               const limitVal = parseFloat(String(rack.threshold_limit)) || 10;
 
-              // Evaluated using central decoupled visualization rule engine
+              
               const vConfig = rackVisualizationRules.evaluate(rack);
               const isEmpty = vConfig.state === 'EMPTY';
               const isCriticalStock = vConfig.state === 'CRITICAL_STOCK' || (qtyVal > 0 && qtyVal <= limitVal);
@@ -584,10 +584,10 @@ export default function RackView() {
                     flashDirection === 'down' && "ring-4 ring-rose-500/50 shadow-lg shadow-rose-500/30 scale-[1.04] bg-rose-50/10 border-rose-400 z-10"
                   )}
                 >
-                  {/* Status Indicator Bar at top */}
+                  
                   <div className={cn("absolute top-0 left-0 right-0 h-1.5", vConfig.barColor)} />
 
-                  {/* Flash Update indicator */}
+                  
                   {flashDirection && (
                     <div className={cn(
                       "absolute top-2 right-2 px-2.5 py-1 rounded text-[8px] font-black uppercase tracking-wider animate-bounce z-20 shadow-sm border",
@@ -598,7 +598,7 @@ export default function RackView() {
                   )}
 
                   <div>
-                    {/* Header: Code & Status */}
+                    
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex flex-col">
                         <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Rack Name</span>
@@ -608,7 +608,7 @@ export default function RackView() {
                       </div>
                       
                       <div className="flex items-center gap-1.5">
-                        {/* Flashing Alert Beacon for RED / CRITICAL STOCK status */}
+                        
                         {(rack.status_color === 'RED' || isCriticalStock) && !isEmpty && (
                           <span className="relative flex h-2.5 w-2.5">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
@@ -632,7 +632,7 @@ export default function RackView() {
                       </div>
                     </div>
 
-                    {/* Content */}
+                    
                     <div className="space-y-3">
                       <div>
                         <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-0.5">Stored Material</h4>
@@ -662,7 +662,7 @@ export default function RackView() {
                         </div>
                       </div>
 
-                      {/* Critical Stock Alert Banner Message */}
+                      
                       {isCriticalStock && (
                         <div className="bg-rose-50 border border-rose-150 rounded-xl p-2.5 flex items-start gap-1.5 text-rose-700 text-[9px] font-bold leading-tight mt-1 animate-pulse">
                           <AlertTriangle size={12} className="text-rose-600 shrink-0 mt-0.5" />
@@ -675,9 +675,9 @@ export default function RackView() {
                     </div>
                   </div>
 
-                  {/* Occupancy and Actions */}
+                  
                   <div className="mt-6 pt-4 border-t border-slate-100/50 space-y-4">
-                    {/* Progress Bar & Occupancy gauges */}
+                    
                     <div>
                       <div className="flex justify-between items-baseline mb-1">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Occupancy %</span>
@@ -695,7 +695,7 @@ export default function RackView() {
                         />
                       </div>
                       
-                      {/* Capacity and Safety Limit Indicator Text */}
+                      
                       <div className="flex justify-between items-center mt-1.5">
                         <p className="text-[10px] text-slate-455 font-bold">
                           {isEmpty 
@@ -711,7 +711,7 @@ export default function RackView() {
                       </div>
                     </div>
 
-                    {/* Metric HUD Grid */}
+                    
                     <div className="grid grid-cols-3 gap-1 bg-slate-50 p-2 rounded-xl border border-slate-150/40">
                       <div className="text-center">
                         <p className="text-[7px] font-black text-slate-455 uppercase tracking-widest leading-none">
@@ -741,9 +741,9 @@ export default function RackView() {
                       </div>
                     </div>
 
-                    {/* Actions */}
+                    
                     <div className="flex justify-between items-center pt-2">
-                      {/* Ready status watermark for empty racks */}
+                      
                       {isEmpty ? (
                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider bg-slate-100/80 px-2 py-0.5 rounded border border-slate-200/50">
                           Empty Slot
@@ -789,7 +789,7 @@ export default function RackView() {
         )}
       </div>
 
-      {/* Add Rack Modal */}
+      
       {isAddModalOpen && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl border border-slate-100 max-w-md w-full shadow-2xl p-6 animate-in zoom-in-95 duration-200">
@@ -885,7 +885,7 @@ export default function RackView() {
         </div>
       )}
 
-      {/* Edit Rack Modal */}
+      
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl border border-slate-100 max-w-md w-full shadow-2xl p-6 animate-in zoom-in-95 duration-200">
@@ -980,7 +980,7 @@ export default function RackView() {
         </div>
       )}
 
-      {/* Inline animations for dangerous stock alerts */}
+      
       <style>{`
         @keyframes pulseRed {
           0%, 100% {

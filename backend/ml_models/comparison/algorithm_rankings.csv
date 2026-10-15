@@ -1,0 +1,6 @@
+rank,model,overall_score,cv_r2,rmse,mae,generalization_gap
+1,Gradient Boosting,99.95,0.9573,2.3198,0.4008,0.0427
+2,Extra Trees,98.86,0.9517,2.3058,0.3954,0.0483
+3,Random Forest,92.74,0.9376,2.5789,0.4423,0.0624
+4,XGBoost,42.59,-0.7541,3.7552,0.6442,1.7541
+5,HistGradientBoosting,6.04,-0.7636,32.5875,17.2855,1.5326

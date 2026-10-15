@@ -1,11 +1,5 @@
 import recommendationEngineService, { recommendationRegistry } from '../services/recommendationEngineService.js';
 
-/**
- * recommendationController.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 5: AI Recommendation Engine Controller
- */
-
 export const getRecommendationsEngine = async (req, res, next) => {
   try {
     const data = await recommendationEngineService.generateRecommendations();

@@ -34,7 +34,7 @@ const MaterialConsumptionAnalytics: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-fade-in pb-16">
-      {/* Top Header */}
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -47,7 +47,7 @@ const MaterialConsumptionAnalytics: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          {/* Date Range Selector */}
+          
           <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 text-xs shadow-sm">
             {(['7d', '30d', '90d', '1y'] as const).map((range) => (
               <button
@@ -81,13 +81,13 @@ const MaterialConsumptionAnalytics: React.FC = () => {
         </div>
       )}
 
-      {/* Summary Metrics */}
+      
       <ConsumptionSummaryCards data={data} loading={loading} />
 
-      {/* Historical Velocity Trend Charts */}
+      
       <ConsumptionTrendCharts data={data} loading={loading} />
 
-      {/* Movement Table & CSV Exporter */}
+      
       <ConsumptionMaterialTable
         materials={data?.allMaterials || []}
         mostConsumed={data?.mostConsumed || []}

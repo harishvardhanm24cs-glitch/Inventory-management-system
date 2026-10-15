@@ -1,11 +1,11 @@
 import express from 'express';
-// Trigger reload for email env recreation
+
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import pool from './config/db.js'; // Imports pool and verifies db connection
+import pool from './config/db.js'; 
 import testRoutes from './routes/testRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import materialRoutes from './routes/materialRoutes.js';
@@ -28,40 +28,32 @@ import aiApiRoutes from './routes/aiApiRoutes.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS
 app.use(cors());
 
-// Enable express.json() for request parsing
 app.use(express.json());
 
-// Ensure uploads folder exists directly inside backend root
 const uploadsPath = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsPath)) {
   fs.mkdirSync(uploadsPath, { recursive: true });
 }
 console.log('uploads folder detected');
 
-// Statically serve uploads folder (placed BEFORE all routes)
 app.use('/uploads', express.static(uploadsPath));
 console.log('static route active');
 
-// Ensure reports folder exists directly inside backend root
 const reportsPath = path.join(__dirname, 'reports');
 if (!fs.existsSync(reportsPath)) {
   fs.mkdirSync(reportsPath, { recursive: true });
 }
 
-// Statically serve reports folder
 app.use('/reports', express.static(reportsPath));
 console.log('reports static route active');
 
-// Fallback handler for missing uploads (placed BEFORE all routes)
 app.use('/uploads', (req, res) => {
   res.status(404).json({
     status: 'error',
@@ -69,11 +61,9 @@ app.use('/uploads', (req, res) => {
   });
 });
 
-// Health Check route
-// GET /health
 app.get('/health', async (req, res) => {
   try {
-    // Verify database connectivity
+    
     const connection = await pool.getConnection();
     await connection.query('SELECT 1');
     connection.release();
@@ -91,8 +81,6 @@ app.get('/health', async (req, res) => {
   }
 });
 
-// Health Check route
-// GET /api/health
 app.get('/api/health', (req, res) => {
   try {
     res.status(200).json({
@@ -106,7 +94,6 @@ app.get('/api/health', (req, res) => {
   }
 });
 
-// Connect Routes
 app.use('/api', testRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/materials', materialRoutes);
@@ -128,14 +115,12 @@ app.use('/api/movements', movementRoutes);
 app.use('/api/audit-logs', auditLogRoutes);
 app.use('/api/v1/ai', aiApiRoutes);
 
-// Catch-all route for unhandled requests (404)
 app.use((req, res, next) => {
   const error = new Error('Resource Not Found');
   error.statusCode = 404;
   next(error);
 });
 
-// Global Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error('Error occurred:', err.stack || err.message || err);
   
@@ -146,7 +131,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

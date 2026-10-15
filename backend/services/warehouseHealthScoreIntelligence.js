@@ -4,27 +4,6 @@ import deadStockIntelligence from './deadStockIntelligence.js';
 import rackOptimizationIntelligence from './rackOptimizationIntelligence.js';
 import smartAlertIntelligence from './smartAlertIntelligence.js';
 
-/**
- * warehouseHealthScoreIntelligence.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 10 – Warehouse Health Score Engine
- *
- * Evaluates 7 operational vectors to generate a single unified score between 0 and 100:
- * 1. Inventory Availability
- * 2. Low Stock Count
- * 3. Dead Stock Count
- * 4. Rack Utilization
- * 5. Scanner Status
- * 6. Synchronization Status
- * 7. Pending Alerts
- *
- * Classification:
- * • OPTIMAL   ➔ Score 85–100 (Green)
- * • MONITOR   ➔ Score 70–84  (Yellow)
- * • ATTENTION ➔ Score 50–69  (Orange)
- * • CRITICAL  ➔ Score 0–49   (Red)
- */
-
 class WarehouseHealthScoreEngine {
   async calculateHealthScore() {
     const nowISO = new Date().toISOString();
@@ -34,7 +13,7 @@ class WarehouseHealthScoreEngine {
     const recommendations = [];
     const recent_improvements = [];
 
-    // 1. Inventory Availability Vector (25% Weight)
+    
     const [materials] = await db.query('SELECT id, material_name, quantity, threshold_limit FROM materials');
     const totalMaterials = materials?.length || 0;
     const outOfStockMats = (materials || []).filter((m) => (parseFloat(m.quantity) || 0) === 0);
@@ -47,7 +26,7 @@ class WarehouseHealthScoreEngine {
       priority_issues.push(`${outOfStockCount} material SKU(s) completely out of stock (${outOfStockMats.map((m) => m.material_name).join(', ')}).`);
     }
 
-    // 2. Low Stock Count Vector (20% Weight)
+    
     let lowStockPenalty = 0;
     try {
       const lowStockData = await lowStockIntelligence.analyzeAll();
@@ -65,7 +44,7 @@ class WarehouseHealthScoreEngine {
       console.error('[HealthScoreEngine] Low stock vector error:', err);
     }
 
-    // 3. Dead Stock Count Vector (15% Weight)
+    
     let deadStockPenalty = 0;
     try {
       const deadStockData = await deadStockIntelligence.analyzeAll();
@@ -83,7 +62,7 @@ class WarehouseHealthScoreEngine {
       console.error('[HealthScoreEngine] Dead stock vector error:', err);
     }
 
-    // 4. Rack Utilization Vector (15% Weight)
+    
     let rackPenalty = 0;
     try {
       const rackOptData = await rackOptimizationIntelligence.analyzeAll();
@@ -101,15 +80,15 @@ class WarehouseHealthScoreEngine {
       console.error('[HealthScoreEngine] Rack utilization vector error:', err);
     }
 
-    // 5. Scanner Status Vector (10% Weight)
-    const scannerHealthPct = 100; // Live camera stream active
+    
+    const scannerHealthPct = 100; 
     recent_improvements.push('Inward & Outward Barcode Scanners operating normally.');
 
-    // 6. Synchronization Status Vector (10% Weight)
-    const syncHealthPct = 100; // Event-driven custom events active
+    
+    const syncHealthPct = 100; 
     recent_improvements.push('Real-time event synchronization active across Rack View & Digital Twin (0 sync lag).');
 
-    // 7. Pending Alerts Vector (5% Weight)
+    
     let alertPenalty = 0;
     try {
       const alertsData = await smartAlertIntelligence.generateSmartAlerts();
@@ -120,10 +99,10 @@ class WarehouseHealthScoreEngine {
       console.error('[HealthScoreEngine] Alert queue vector error:', err);
     }
 
-    // Bound final score between 0 and 100
+    
     const finalScore = Math.max(0, Math.min(100, score));
 
-    // Determine Health Status Tier
+    
     let health_status = 'OPTIMAL';
     let status_color = 'GREEN';
 

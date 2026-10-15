@@ -11,7 +11,6 @@ except ImportError:
 
 os.makedirs(LOGS_DIR, exist_ok=True)
 
-
 class MLLogger:
     """
     MLLogger
@@ -62,6 +61,5 @@ class MLLogger:
 
     def error(self, msg, exc_info=False):
         self.logger.error(f"[ERROR] {msg}", exc_info=exc_info)
-
 
 logger = MLLogger()

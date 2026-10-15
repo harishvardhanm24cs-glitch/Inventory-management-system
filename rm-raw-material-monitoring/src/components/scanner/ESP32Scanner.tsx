@@ -27,11 +27,11 @@ const ESP32Scanner: React.FC<ESP32ScannerProps> = ({ onScan, active }) => {
     const handleLoad = () => setStatus('connected');
     const handleError = () => {
         setStatus('error');
-        // Phase 5 Fallback Simulation text (we don't literally switch the camera automatically to avoid jarring UX, we just show the message as requested)
+        
         toast.error("Stream lost. Switch to Local Camera if issue persists.", { icon: '📡' });
     };
 
-    // Polling Loop: 500ms
+    
     useEffect(() => {
         if (status !== 'connected' || !active) {
             if (intervalRef.current) clearInterval(intervalRef.current);
@@ -77,7 +77,7 @@ const ESP32Scanner: React.FC<ESP32ScannerProps> = ({ onScan, active }) => {
 
     return (
         <div className="flex flex-col gap-4">
-            {/* IP configuration bar (Tesla-style terminal) */}
+            
             <div className="flex items-center gap-3 bg-[#0B0F1A] border border-cyan-500/20 p-2 rounded-2xl shadow-[inset_0_0_15px_rgba(6,182,212,0.1)] focus-within:border-cyan-400/50 transition-colors">
                 <div className="pl-4 pr-2 border-r border-cyan-500/20">
                     <Activity className={cn("w-4 h-4", status === 'connected' ? "text-emerald-400 animate-pulse" : "text-slate-600")} />
@@ -113,7 +113,7 @@ const ESP32Scanner: React.FC<ESP32ScannerProps> = ({ onScan, active }) => {
                 />
                 <canvas ref={canvasRef} className="hidden" />
 
-                {/* Cyber Brackets Overlay */}
+                
                 <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                     <div className="w-[80%] h-[80%] relative">
                         <div className={cn("absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 transition-colors duration-300", status === 'connected' ? "border-emerald-500/50" : "border-slate-700")} />
@@ -123,7 +123,7 @@ const ESP32Scanner: React.FC<ESP32ScannerProps> = ({ onScan, active }) => {
                     </div>
                 </div>
 
-                {/* Status Handling & Skeletons */}
+                
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-6">
                     {status === 'connecting' && (
                         <div className="flex flex-col items-center bg-[#0B0F1A]/80 p-6 rounded-2xl backdrop-blur-md border border-cyan-500/20">
@@ -140,7 +140,7 @@ const ESP32Scanner: React.FC<ESP32ScannerProps> = ({ onScan, active }) => {
                     )}
                 </div>
 
-                {/* HUD LED Node */}
+                
                 <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-[#0B0F1A]/80 px-3 py-1.5 rounded-lg border border-white/5 backdrop-blur-md">
                     {status === 'connected' ? (
                         <>

@@ -59,7 +59,7 @@ const SubstitutionManager: React.FC = () => {
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Selection Section */}
+                
                 <Card className="border-none shadow-xl shadow-slate-100 bg-white/80 backdrop-blur-md">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
@@ -115,7 +115,7 @@ const SubstitutionManager: React.FC = () => {
                     </CardContent>
                 </Card>
 
-                {/* Mapping Section */}
+                
                 <Card className="border-none shadow-xl shadow-slate-100 bg-white/80 backdrop-blur-md">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">

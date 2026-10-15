@@ -55,10 +55,10 @@ export const PredictionConfidenceWidget: React.FC = memo(() => {
 
   return (
     <div className="bg-slate-900/90 border border-slate-800/80 rounded-2xl p-6 shadow-2xl backdrop-blur-xl relative overflow-hidden group hover:border-emerald-500/30 transition-all duration-300">
-      {/* Glow Accent */}
+      
       <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-500" />
 
-      {/* Header */}
+      
       <div className="flex items-center justify-between mb-5 border-b border-slate-800/80 pb-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/20">
@@ -86,7 +86,7 @@ export const PredictionConfidenceWidget: React.FC = memo(() => {
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Hero Score Display */}
+          
           <div className="flex items-center justify-between p-4 rounded-xl bg-slate-950/60 border border-slate-800">
             <div>
               <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Confidence Score</span>
@@ -102,7 +102,7 @@ export const PredictionConfidenceWidget: React.FC = memo(() => {
             </div>
           </div>
 
-          {/* Key Statistical Metrics */}
+          
           <div className="grid grid-cols-3 gap-2.5">
             <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 text-center">
               <span className="text-[10px] text-slate-400 font-semibold block mb-0.5">F1 Metric</span>

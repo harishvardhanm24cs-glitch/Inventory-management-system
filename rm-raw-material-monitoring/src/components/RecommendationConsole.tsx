@@ -27,7 +27,7 @@ export const RecommendationConsole: React.FC = () => {
 
   return (
     <div className="bg-slate-900/90 border border-slate-800 rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden text-slate-100">
-      {/* Header */}
+      
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 border-b border-slate-800 gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/20">
@@ -63,7 +63,7 @@ export const RecommendationConsole: React.FC = () => {
           </div>
         )}
 
-        {/* Category Count Summary Grid */}
+        
         <div className="grid grid-cols-2 sm:grid-cols-6 gap-2.5">
           {(Object.keys(CATEGORY_CONFIG) as RecommendationCategory[]).map(catKey => {
             const conf = CATEGORY_CONFIG[catKey];
@@ -90,7 +90,7 @@ export const RecommendationConsole: React.FC = () => {
           })}
         </div>
 
-        {/* Filter Bar */}
+        
         <div className="flex items-center justify-between border-b border-slate-800 pb-3 text-xs">
           <div className="flex items-center gap-2">
             <Filter className="w-3.5 h-3.5 text-slate-400" />
@@ -106,7 +106,7 @@ export const RecommendationConsole: React.FC = () => {
           )}
         </div>
 
-        {/* Recommendation Cards List */}
+        
         <div className="space-y-4">
           {recommendations.length === 0 ? (
             <div className="p-8 text-center rounded-xl bg-slate-950/40 border border-slate-800 text-slate-400 text-xs">
@@ -124,10 +124,10 @@ export const RecommendationConsole: React.FC = () => {
                   key={rec.id}
                   className={`p-5 rounded-2xl bg-slate-950/60 border ${pBadge.border} transition-all hover:border-slate-600 space-y-3 relative overflow-hidden`}
                 >
-                  {/* Priority Strip Indicator */}
+                  
                   <div className={`absolute top-0 left-0 bottom-0 w-1 ${pBadge.bg}`} />
 
-                  {/* Header Row */}
+                  
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pl-2">
                     <div className="flex items-center gap-2">
                       <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${pBadge.bg} ${pBadge.border} ${pBadge.text}`}>
@@ -151,7 +151,7 @@ export const RecommendationConsole: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Title & Reason */}
+                  
                   <div className="pl-2 space-y-1.5">
                     <h4 className="text-sm font-bold text-white tracking-wide">{rec.title}</h4>
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800 font-sans">
@@ -160,7 +160,7 @@ export const RecommendationConsole: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Suggested Action Directive */}
+                  
                   <div className="pl-2 flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-500/10 via-slate-900 to-slate-900 border border-amber-500/20 gap-3">
                     <div className="flex items-center gap-2 text-xs text-amber-300 font-semibold">
                       <ArrowRight className="w-4 h-4 shrink-0 text-amber-400" />
@@ -173,7 +173,7 @@ export const RecommendationConsole: React.FC = () => {
           )}
         </div>
 
-        {/* Extensibility & ML Model Notice */}
+        
         <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/40 border border-slate-700/60 text-xs text-slate-400">
           <Sparkles className="w-5 h-5 shrink-0 text-amber-400 mt-0.5" />
           <div>

@@ -1,19 +1,10 @@
 import db from '../config/db.js';
 
-/**
- * rackOptimizationIntelligence.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 6 – Rack Optimization Intelligence Engine
- *
- * Reuses existing Rack View, Inventory, and Transaction tables without
- * modifying backend rack assignment logic or mutating allocations.
- */
-
 class RackOptimizationIntelligenceEngine {
   async analyzeAll() {
     const nowISO = new Date().toISOString();
 
-    // 1. Query Rack State & Inventory Occupancy
+    
     const [racks] = await db.query(`
       SELECT 
         r.id,
@@ -27,7 +18,7 @@ class RackOptimizationIntelligenceEngine {
       ORDER BY r.rack_code ASC
     `);
 
-    // 2. Query Material details
+    
     const [materials] = await db.query(`
       SELECT id, material_name, barcode, quantity, threshold_limit 
       FROM materials
@@ -38,7 +29,7 @@ class RackOptimizationIntelligenceEngine {
       matCategoryMap[(m.material_name || '').toLowerCase()] = m.category || 'General';
     });
 
-    // 3. Query 30-Day Movement Frequency per Rack & Material
+    
     const [history] = await db.query(`
       SELECT rack_code, material_name, COUNT(*) AS scan_count
       FROM qr_history
@@ -72,7 +63,7 @@ class RackOptimizationIntelligenceEngine {
     let placementCount = 0;
     let flowCount = 0;
 
-    // --- 1. RACK NEARING FULL CAPACITY (>85%) ---
+    
     highOccupancy.forEach((hr, idx) => {
       const occ = Math.round(parseFloat(hr.occupancy_percentage) || 0);
       const curCap = parseFloat(hr.current_capacity) || 0;
@@ -82,7 +73,7 @@ class RackOptimizationIntelligenceEngine {
       const matName = hr.material_name || 'Material';
       const category = matCategoryMap[matName.toLowerCase()] || 'General';
 
-      // Pick an empty or low-occupancy rack for rebalancing
+      
       const candidateTarget = (emptyRacks[idx % Math.max(1, emptyRacks.length)] || lowOccupancy[idx % Math.max(1, lowOccupancy.length)])?.rack_code || 'A3';
 
       const priority = occ > 95 ? 'CRITICAL' : 'HIGH';
@@ -107,7 +98,7 @@ class RackOptimizationIntelligenceEngine {
       nearFullCount++;
     });
 
-    // --- 2. RACK UNDERUTILIZED (<20%) ---
+    
     lowOccupancy.forEach((lr, idx) => {
       const occ = Math.round(parseFloat(lr.occupancy_percentage) || 0);
       const curCap = parseFloat(lr.current_capacity) || 0;
@@ -137,13 +128,13 @@ class RackOptimizationIntelligenceEngine {
       underutilizedCount++;
     });
 
-    // --- 3. BETTER RACK PLACEMENT (HIGH MOVEMENT FREQUENCY IN FAR STORAGE ZONES) ---
+    
     (racks || []).forEach((rack) => {
       const code = rack.rack_code.toUpperCase();
       const matName = rack.material_name;
-      if (matName && code.startsWith('B')) { // B-Zone is deep storage
+      if (matName && code.startsWith('B')) { 
         const moves = matFrequencyMap[matName.toLowerCase()] || 0;
-        if (moves > 8) { // High activity material stored in deep storage zone
+        if (moves > 8) { 
           const curCap = parseFloat(rack.current_capacity) || 0;
           const maxCap = parseFloat(rack.max_capacity) || 100;
           const availCap = Math.max(0, maxCap - curCap);
@@ -154,7 +145,7 @@ class RackOptimizationIntelligenceEngine {
             optimization_type: 'BETTER_PLACEMENT',
             priority: 'HIGH',
             current_rack: code,
-            suggested_rack: 'A1', // Receiving/Ingress zone A
+            suggested_rack: 'A1', 
             material_name: matName,
             category,
             suggestion: `High-frequency item ${matName} (${moves} scans/30d) is stored in deep Storage Rack ${code}. Relocate to Inbound Rack A1 for faster forklift retrieval.`,
@@ -171,7 +162,7 @@ class RackOptimizationIntelligenceEngine {
       }
     });
 
-    // --- 4. IMPROVE WAREHOUSE FLOW (ZONE IMBALANCE) ---
+    
     const zoneStats = { A: [], B: [], C: [] };
     (racks || []).forEach((r) => {
       const code = r.rack_code.toUpperCase();

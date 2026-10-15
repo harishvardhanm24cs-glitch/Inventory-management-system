@@ -108,7 +108,7 @@ export default function WarehouseMap() {
         const materialId = e.dataTransfer.getData('materialId');
         if (!materialId) return;
 
-        // Optimistically update UI
+        
         setMaterials(prev => prev.map(m => {
             const mId = m._id || m.id;
             if (mId === materialId) {
@@ -124,7 +124,7 @@ export default function WarehouseMap() {
         } catch (err) {
             console.error(err);
             toast.error("Failed to move material");
-            fetchMaterials(); // Revert to source of truth
+            fetchMaterials(); 
         }
     };
 

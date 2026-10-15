@@ -41,7 +41,7 @@ export const BarcodeRegistry = () => {
     const [qrDataUrl, setQrDataUrl] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     
-    // Phase 4: History & Print & Industrial View
+    
     const [historyList, setHistoryList] = useState<any[]>([]);
     const [printTarget, setPrintTarget] = useState<any>(null);
     const [viewTarget, setViewTarget] = useState<any>(null);
@@ -70,7 +70,7 @@ export const BarcodeRegistry = () => {
                 setFormData(prev => ({ ...prev, barcodeId: res.nextId }));
             } else {
                 console.warn('Backend returned no nextId (DB might be offline)');
-                // Fallback for offline mode: generate a temporary ID
+                
                 const offId = `PB-OFF-${Math.floor(1000 + Math.random() * 9000)}`;
                 setFormData(prev => ({ ...prev, barcodeId: offId }));
             }
@@ -188,7 +188,7 @@ export const BarcodeRegistry = () => {
 
         setIsSaving(true);
         try {
-            // Call backend API for QR generation & database registration
+            
             const res = await api.generateQR({
                 material_name: paintName,
                 weight: parsedWeight,
@@ -198,7 +198,7 @@ export const BarcodeRegistry = () => {
             });
 
             if (res.status === 'success' || res.barcode_id) {
-                // Store in state to render QRPreview modal
+                
                 setGeneratedQR({
                     qrCode: res.qr_image_path,
                     materialName: res.material_name,
@@ -257,7 +257,7 @@ export const BarcodeRegistry = () => {
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 print:block">
-                {/* Form Section */}
+                
                 <div className="lg:col-span-8 space-y-8 print:hidden">
                     <Card className="premium-card overflow-hidden">
                         <div className="p-8 border-b border-slate-50">
@@ -391,7 +391,7 @@ export const BarcodeRegistry = () => {
                     </Card>
                 </div>
 
-                {/* Preview Section */}
+                
                 <div className="lg:col-span-4 space-y-8">
                     <Card className="premium-card bg-slate-50 flex flex-col items-center justify-center relative min-h-[480px] p-8 border-dashed border-slate-300">
                         <div className="absolute top-6 left-6 flex items-center gap-2 print:hidden">
@@ -455,7 +455,7 @@ export const BarcodeRegistry = () => {
                 </div>
             </div>
 
-            {/* Historical Grid */}
+            
             <div className="mt-12 pt-12 border-t border-slate-200 print:hidden relative">
                 <div className="absolute top-0 right-10 w-64 h-64 bg-emerald-500/5 blur-3xl rounded-full" />
                 <h2 className="text-2xl font-black text-slate-900 mb-8 flex items-center gap-3">
@@ -466,7 +466,7 @@ export const BarcodeRegistry = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                     {historyList.map(qr => (
                         <div key={qr.id} className="bg-slate-900 rounded-3xl p-6 flex flex-col gap-6 group hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.25)] hover:border-emerald-500/50 transition-all duration-500 relative border border-slate-800 overflow-hidden shrink-0">
-                            {/* Decorative Glow */}
+                            
                             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full group-hover:bg-emerald-500/20 transition-all" />
                             
                             <div className="flex gap-5 items-start relative z-10 w-full overflow-hidden">
@@ -499,7 +499,7 @@ export const BarcodeRegistry = () => {
                                 </div>
                             </div>
                             
-                            {/* Action Ribbon */}
+                            
                             <div className="grid grid-cols-3 gap-3 relative z-10 pt-4 border-t border-slate-800/80">
                                 <button 
                                     onClick={() => setViewTarget(qr)} 
@@ -535,7 +535,7 @@ export const BarcodeRegistry = () => {
                 </div>
         </div>
 
-            {/* Print Only View */}
+            
             <div id="print-area" className="hidden print:flex flex-col items-center justify-center h-screen bg-white w-full">
                 <div className="flex flex-col items-center text-center">
                     <img 
@@ -568,7 +568,7 @@ export const BarcodeRegistry = () => {
                 />
             )}
 
-            {/* JSON Payload Viewer Modal */}
+            
             {viewTarget && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 print:hidden animate-in fade-in zoom-in-95 duration-200">
                     <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md" onClick={() => setViewTarget(null)} />

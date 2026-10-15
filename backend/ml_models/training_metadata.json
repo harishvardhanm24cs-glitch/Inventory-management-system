@@ -1,0 +1,16 @@
+{
+  "model_type": "RandomForestRegressor",
+  "baseline_parameters": {
+    "n_estimators": 100,
+    "max_depth": null,
+    "min_samples_leaf": 1,
+    "random_state": 42
+  },
+  "dataset_rows": 170,
+  "feature_count": 67,
+  "train_rows": 136,
+  "test_rows": 34,
+  "training_status": "PASS",
+  "model_saved": true,
+  "model_file_path": "D:\\atendence-main\\backend\\ml_models\\baseline_random_forest.pkl"
+}

@@ -33,7 +33,7 @@ const OperationalRecommendationsPage: React.FC = () => {
     loadConsumption();
   };
 
-  // Evaluate operational recommendations dynamically
+  
   const recommendations = useMemo(() => {
     return generateOperationalRecommendations(materials, racks, consumptionData);
   }, [materials, racks, consumptionData]);
@@ -42,7 +42,7 @@ const OperationalRecommendationsPage: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-fade-in pb-16">
-      {/* Top Header */}
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -69,7 +69,7 @@ const OperationalRecommendationsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Recommendations Panel */}
+      
       <OperationalRecommendationsPanel
         recommendations={recommendations}
         loading={isLoading}

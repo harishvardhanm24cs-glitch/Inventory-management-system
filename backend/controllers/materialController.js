@@ -12,8 +12,6 @@ import { getNextRackCode } from '../utils/rackHelper.js';
  * @returns {string|null} The warning message if stock is low, otherwise null
  */
 
-
-
 /**
  * Synchronizes material stock changes with the racks table.
  * Finds the rack containing the material (or grabs/creates one if needed)
@@ -29,7 +27,7 @@ const syncMaterialToRack = async (connection, materialName, quantityChange, batc
 
   console.log(`[Rack Sync] Syncing material '${materialName}' with qty change: ${quantityChange}`);
 
-  // 1. Look for a rack containing this material
+  
   const [existingRacks] = await connection.query(
     'SELECT id, rack_code, quantity, max_capacity, material_name FROM racks WHERE material_name = ? LIMIT 1',
     [materialName]
@@ -40,7 +38,7 @@ const syncMaterialToRack = async (connection, materialName, quantityChange, batc
     const newQty = Math.max(0, (parseFloat(rack.quantity) || 0) + quantityChange);
     
     if (newQty === 0) {
-      // Delete empty racks to store only used racks in database
+      
       await connection.query(
         'DELETE FROM racks WHERE id = ?',
         [rack.id]
@@ -54,7 +52,7 @@ const syncMaterialToRack = async (connection, materialName, quantityChange, batc
       console.log(`[Rack Sync] Updated rack ${rack.rack_code} quantity to ${newQty}`);
     }
   } else if (quantityChange > 0) {
-    // 2. If no rack exists for this material, find an empty rack to assign it to
+    
     const [emptyRacks] = await connection.query(
       'SELECT id, rack_code, max_capacity FROM racks WHERE quantity = 0 OR material_name IS NULL ORDER BY rack_code ASC LIMIT 1'
     );
@@ -67,7 +65,7 @@ const syncMaterialToRack = async (connection, materialName, quantityChange, batc
       );
       console.log(`[Rack Sync] Assigned material '${materialName}' to empty rack ${rack.rack_code} with quantity ${quantityChange}`);
     } else {
-      // 3. If no empty rack is found, create a new one automatically using Excel-style naming
+      
       const [existingRacksList] = await connection.query('SELECT rack_code FROM racks');
       const existingCodes = existingRacksList.map(r => r.rack_code);
       const generatedRackCode = getNextRackCode(existingCodes);
@@ -81,7 +79,6 @@ const syncMaterialToRack = async (connection, materialName, quantityChange, batc
     }
   }
 };
-
 
 /**
  * Get all materials
@@ -142,7 +139,7 @@ export const createMaterial = async (req, res, next) => {
   try {
     const { barcode, material_name, quantity, threshold_limit, unit, batch_number } = req.body;
 
-    // Validate fields
+    
     if (!barcode || !material_name || !unit) {
       return res.status(400).json({
         status: 'error',
@@ -167,7 +164,7 @@ export const createMaterial = async (req, res, next) => {
       });
     }
 
-    // Check for duplicate barcode
+    
     const [existing] = await db.query('SELECT id FROM materials WHERE barcode = ?', [barcode]);
     if (existing.length > 0) {
       return res.status(400).json({
@@ -176,7 +173,7 @@ export const createMaterial = async (req, res, next) => {
       });
     }
 
-    // Insert into MySQL
+    
     const [result] = await db.query(
       'INSERT INTO materials (barcode, material_name, quantity, threshold_limit, unit, batch_number) VALUES (?, ?, ?, ?, ?, ?)',
       [barcode, material_name, qty, limit, unit, batch_number || null]
@@ -184,15 +181,15 @@ export const createMaterial = async (req, res, next) => {
 
     const materialId = result.insertId;
 
-    // Sync with rack if initial quantity > 0
+    
     if (qty > 0) {
       await syncMaterialToRack(db, material_name, qty, batch_number || null);
     }
 
-    // Process alerts check
+    
     const alertResult = await processThresholdCheck(null, materialId);
 
-    // Find assigned rack and check its occupancy
+    
     const [assigned] = await db.query('SELECT rack_code FROM racks WHERE material_name = ?', [material_name]);
     if (assigned.length > 0) {
       await processRackOccupancyCheck(null, assigned[0].rack_code);
@@ -207,7 +204,7 @@ export const createMaterial = async (req, res, next) => {
       remarks: `Material added with initial stock of ${qty} ${unit}`
     });
 
-    // Fetch the newly created material
+    
     const [newMaterial] = await db.query(
       `SELECT m.*, (SELECT r.rack_code FROM racks r WHERE r.material_name = m.material_name LIMIT 1) AS location 
        FROM materials m 
@@ -216,7 +213,7 @@ export const createMaterial = async (req, res, next) => {
     );
     const createdMaterial = newMaterial[0];
 
-    // Log Material Created
+    
     let userName = 'System';
     if (req.user && req.user.id) {
       const [users] = await db.query('SELECT name FROM users WHERE id = ?', [req.user.id]);
@@ -229,6 +226,16 @@ export const createMaterial = async (req, res, next) => {
       user_name: userName,
       action_details: `Registered new raw material: ${material_name} (Barcode: ${barcode})`
     });
+
+    
+    import('../services/aiDataCollectionService.js').then(({ aiDataCollectionService }) => {
+      aiDataCollectionService.captureTransaction({
+        material_id: materialId,
+        quantity: parseFloat(quantity) || 0,
+        movement_type: 'INWARD',
+        created_at: new Date().toISOString()
+      });
+    }).catch(() => {});
 
     res.status(201).json({
       status: 'success',
@@ -250,7 +257,7 @@ export const updateMaterial = async (req, res, next) => {
     const { id } = req.params;
     const { material_name, quantity, threshold_limit, unit, batch_number, barcode, location } = req.body;
 
-    // Validate material exists
+    
     const [existing] = await db.query('SELECT id, material_name, quantity, batch_number, barcode FROM materials WHERE id = ?', [id]);
     if (existing.length === 0) {
       return res.status(404).json({
@@ -264,7 +271,7 @@ export const updateMaterial = async (req, res, next) => {
     const oldName = oldMaterial.material_name;
     const oldBatch = oldMaterial.batch_number;
 
-    // Validate quantity if provided
+    
     const qty = quantity !== undefined && quantity !== null ? parseFloat(quantity) : undefined;
     if (qty !== undefined && (isNaN(qty) || qty < 0)) {
       return res.status(400).json({
@@ -273,7 +280,7 @@ export const updateMaterial = async (req, res, next) => {
       });
     }
 
-    // Validate threshold_limit if provided
+    
     const limit = threshold_limit !== undefined && threshold_limit !== null ? parseFloat(threshold_limit) : undefined;
     if (limit !== undefined && (isNaN(limit) || limit < 0)) {
       return res.status(400).json({
@@ -282,7 +289,7 @@ export const updateMaterial = async (req, res, next) => {
       });
     }
 
-    // Update material fields dynamically in MySQL
+    
     await db.query(
       'UPDATE materials SET material_name = COALESCE(?, material_name), quantity = COALESCE(?, quantity), threshold_limit = COALESCE(?, threshold_limit), unit = COALESCE(?, unit), batch_number = COALESCE(?, batch_number), barcode = COALESCE(?, barcode) WHERE id = ?',
       [
@@ -296,7 +303,7 @@ export const updateMaterial = async (req, res, next) => {
       ]
     );
 
-    // Sync renaming
+    
     if (material_name && material_name !== oldName) {
       await db.query(
         'UPDATE racks SET material_name = ? WHERE material_name = ?',
@@ -304,7 +311,7 @@ export const updateMaterial = async (req, res, next) => {
       );
     }
 
-    // Sync batch number
+    
     if (batch_number && batch_number !== oldBatch) {
       await db.query(
         'UPDATE racks SET batch_number = ? WHERE material_name = ?',
@@ -324,15 +331,15 @@ export const updateMaterial = async (req, res, next) => {
         const currentMaterialName = material_name || oldName;
         const currentBatchNumber = batch_number || oldBatch;
 
-        // 1. Delete/clear old rack association
+        
         if (oldRackCode) {
           await db.query('DELETE FROM racks WHERE rack_code = ? AND material_name = ?', [oldRackCode, oldName]);
           console.log(`[Location Update] Removed material '${oldName}' from old rack ${oldRackCode}`);
         }
 
-        // 2. Assign to new rack if not UNASSIGNED
+        
         if (targetLocation !== 'UNASSIGNED') {
-          // Check if target rack is occupied by a different material
+          
           const [occupied] = await db.query(
             'SELECT material_name FROM racks WHERE rack_code = ? AND material_name != ? AND quantity > 0',
             [targetLocation, currentMaterialName]
@@ -344,7 +351,7 @@ export const updateMaterial = async (req, res, next) => {
             });
           }
 
-          // Check if destination rack already exists in DB
+          
           const [existingDest] = await db.query('SELECT id, quantity FROM racks WHERE rack_code = ?', [targetLocation]);
           if (existingDest.length > 0) {
             await db.query(
@@ -360,7 +367,7 @@ export const updateMaterial = async (req, res, next) => {
           console.log(`[Location Update] Assigned material '${currentMaterialName}' to rack ${targetLocation} with quantity ${finalQty}`);
         }
 
-        // Log movement in qr_history and audit log
+        
         let userName = 'System';
         if (req.user && req.user.id) {
           const [users] = await db.query('SELECT name FROM users WHERE id = ?', [req.user.id]);
@@ -390,7 +397,7 @@ export const updateMaterial = async (req, res, next) => {
           action_details: `Transferred material ${currentMaterialName} from ${oldRackCode || 'UNASSIGNED'} to ${targetLocation}`
         });
 
-        // Trigger rack checks
+        
         if (oldRackCode) {
           await processRackOccupancyCheck(null, oldRackCode);
         }
@@ -400,16 +407,16 @@ export const updateMaterial = async (req, res, next) => {
       }
     }
 
-    // Sync quantity changes if location didn't move (if moved, it was handled with finalQty)
+    
     if (qty !== undefined && !locationMoved) {
       const diff = qty - oldQty;
       await syncMaterialToRack(db, material_name || oldName, diff, batch_number || oldBatch);
     }
 
-    // Process alerts check in DB
+    
     const alertResult = await processThresholdCheck(null, id);
 
-    // FETCH FULL UPDATED RECORD FROM MYSQL (Double-fetching state as required)
+    
     const [updated] = await db.query(
       `SELECT m.*, (SELECT r.rack_code FROM racks r WHERE r.material_name = m.material_name LIMIT 1) AS location 
        FROM materials m 
@@ -418,16 +425,16 @@ export const updateMaterial = async (req, res, next) => {
     );
     const updatedMaterial = updated[0];
 
-    // Check rack occupancy alerts for this material's assigned rack
+    
     const [assigned] = await db.query('SELECT rack_code FROM racks WHERE material_name = ?', [updatedMaterial.material_name]);
     if (assigned.length > 0) {
       await processRackOccupancyCheck(null, assigned[0].rack_code);
     }
 
-    // Console Log: material updated
+    
     console.log(`[Inventory] Material updated: '${updatedMaterial.material_name}' (ID: ${id})`);
 
-    // Log Material Updated
+    
     let userName = 'System';
     if (req.user && req.user.id) {
       const [users] = await db.query('SELECT name FROM users WHERE id = ?', [req.user.id]);
@@ -471,7 +478,7 @@ export const deleteMaterial = async (req, res, next) => {
     const materialName = existing[0].material_name;
     const barcode = existing[0].barcode;
 
-    // Fetch assigned racks before resetting them
+    
     const [assignedRacks] = await db.query('SELECT rack_code FROM racks WHERE material_name = ?', [materialName]);
 
     await logQrHistory(db, {
@@ -485,18 +492,18 @@ export const deleteMaterial = async (req, res, next) => {
 
     await db.query('DELETE FROM materials WHERE id = ?', [id]);
 
-    // Sync with rack: reset any rack assigned to this material
+    
     await db.query(
       'UPDATE racks SET material_name = NULL, batch_number = NULL, quantity = 0.00 WHERE material_name = ?',
       [materialName]
     );
 
-    // Call processRackOccupancyCheck for each rack to clear its alerts
+    
     for (const rack of assignedRacks) {
       await processRackOccupancyCheck(null, rack.rack_code);
     }
 
-    // Log Material Deleted
+    
     let userName = 'System';
     if (req.user && req.user.id) {
       const [users] = await db.query('SELECT name FROM users WHERE id = ?', [req.user.id]);
@@ -527,7 +534,7 @@ export const adjustStock = async (req, res, next) => {
   const { id } = req.params;
   const { transaction_type, quantity } = req.body;
 
-  // Validation checks
+  
   if (!transaction_type || quantity === undefined) {
     return res.status(400).json({
       status: 'error',
@@ -550,12 +557,12 @@ export const adjustStock = async (req, res, next) => {
     });
   }
 
-  // Database transaction for stock adjustment safety
+  
   const connection = await db.getConnection();
   try {
     await connection.beginTransaction();
 
-    // 0. Fetch material first (no lock) to get its barcode
+    
     const [prelimMaterials] = await connection.query(
       'SELECT barcode, quantity, material_name, batch_number, unit FROM materials WHERE id = ?',
       [id]
@@ -573,13 +580,13 @@ export const adjustStock = async (req, res, next) => {
     const currentQty = parseFloat(material.quantity);
     let newQty = currentQty;
 
-    // 1. Lock qr_codes registry first
+    
     const [existingQr] = await connection.query(
       'SELECT id, barcode_id, status FROM qr_codes WHERE barcode_id = ? FOR UPDATE',
       [material.barcode]
     );
 
-    // 2. Lock material row second to match locking order of other files
+    
     const [materials] = await connection.query(
       'SELECT * FROM materials WHERE id = ? FOR UPDATE',
       [id]
@@ -592,8 +599,6 @@ export const adjustStock = async (req, res, next) => {
     } else {
       console.log(`[AUDIT] barcode NOT found in qr_codes registry: "${material.barcode}"`);
     }
-
-
 
     if (transaction_type === 'inward') {
       newQty = currentQty + adjustQty;
@@ -608,24 +613,35 @@ export const adjustStock = async (req, res, next) => {
       newQty = currentQty - adjustQty;
     }
 
-    // Update material quantity
+    
     await connection.query('UPDATE materials SET quantity = ? WHERE id = ?', [newQty, id]);
 
-    // Sync with rack table
+    
     const quantityChange = transaction_type === 'inward' ? adjustQty : -adjustQty;
     await syncMaterialToRack(connection, material.material_name, quantityChange, material.batch_number);
 
-    // Record stock transaction
+    
     const [transResult] = await connection.query(
       'INSERT INTO transactions (material_id, transaction_type, quantity, user_id) VALUES (?, ?, ?, ?)',
       [id, transaction_type, adjustQty, req.user ? req.user.id : null]
     );
 
-    // Fetch assigned rack code for logging
+    
+    import('../services/aiDataCollectionService.js').then(({ aiDataCollectionService }) => {
+      aiDataCollectionService.captureTransaction({
+        transaction_id: transResult.insertId,
+        material_id: parseInt(id, 10),
+        quantity: adjustQty,
+        movement_type: String(transaction_type).toUpperCase(),
+        created_at: new Date().toISOString()
+      });
+    }).catch(() => {});
+
+    
     const [assigned] = await connection.query('SELECT rack_code FROM racks WHERE material_name = ?', [material.material_name]);
     const assignedRackCode = assigned.length > 0 ? assigned[0].rack_code : null;
 
-    // Record user & scan timestamp
+    
     if (transaction_type === 'inward' && existingQr.length > 0) {
       await connection.query(
         "UPDATE qr_codes SET scanned_at = CURRENT_TIMESTAMP, scanned_by = ? WHERE barcode_id = ?",
@@ -633,7 +649,7 @@ export const adjustStock = async (req, res, next) => {
       );
     }
 
-    // Log SCANNED to qr_history for inward scans
+    
     if (transaction_type === 'inward') {
       await logQrHistory(connection, {
         barcode_id: material.barcode,
@@ -646,7 +662,7 @@ export const adjustStock = async (req, res, next) => {
       });
     }
 
-    // Log history
+    
     const isDepleted = newQty === 0;
     await logQrHistory(connection, {
       barcode_id: material.barcode,
@@ -663,13 +679,13 @@ export const adjustStock = async (req, res, next) => {
     const [[qrCheck]] = await connection.query('SELECT status FROM qr_codes WHERE barcode_id = ?', [material.barcode]);
     console.log(`[AUDIT] status after: "${qrCheck ? qrCheck.status : 'N/A'}"`);
 
-    // Commit to make quantity change final
+    
     await connection.commit();
 
-    // Check thresholds & trigger low-stock alerts
+    
     const alertResult = await processThresholdCheck(null, id);
 
-    // Retrieve updated material status
+    
     const [updatedMaterials] = await db.query(
       `SELECT m.*, (SELECT r.rack_code FROM racks r WHERE r.material_name = m.material_name LIMIT 1) AS location 
        FROM materials m 
@@ -678,13 +694,13 @@ export const adjustStock = async (req, res, next) => {
     );
     const updatedMaterial = updatedMaterials[0];
 
-    // Check rack occupancy alerts for this material's assigned rack
+    
     const [assignedRackAlert] = await db.query('SELECT rack_code FROM racks WHERE material_name = ?', [updatedMaterial.material_name]);
     if (assignedRackAlert.length > 0) {
       await processRackOccupancyCheck(null, assignedRackAlert[0].rack_code);
     }
 
-    // Console Log: material updated
+    
     console.log(`[Inventory] Material stock updated: '${updatedMaterial.material_name}' (ID: ${id}, type: ${transaction_type}, quantity: ${adjustQty})`);
 
     res.status(200).json({
@@ -759,7 +775,7 @@ export const getMaterialPredictions = async (req, res, next) => {
       `SELECT material_id, quantity, created_at FROM transactions WHERE transaction_type = 'outward' ORDER BY created_at ASC`
     );
 
-    // Group transactions by material_id
+    
     const txMap = {};
     outwardTransactions.forEach(tx => {
       const mid = tx.material_id;
@@ -774,7 +790,7 @@ export const getMaterialPredictions = async (req, res, next) => {
       const threshold = parseFloat(mat.threshold_limit) || 0;
       const txs = txMap[mat.id] || [];
 
-      // Calculate daily consumption rate
+      
       let dailyRate = 0;
       let trend = 'Stable';
 
@@ -787,7 +803,7 @@ export const getMaterialPredictions = async (req, res, next) => {
         const totalOutward = txs.reduce((acc, tx) => acc + parseFloat(tx.quantity), 0);
         dailyRate = totalOutward / diffDays;
 
-        // Calculate trend (comparing last 7 days vs previous)
+        
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
         const fourteenDaysAgo = new Date();
@@ -813,18 +829,18 @@ export const getMaterialPredictions = async (req, res, next) => {
         }
       }
 
-      // Safe fallbacks for dailyRate
+      
       if (dailyRate <= 0) {
         dailyRate = threshold > 0 ? parseFloat((threshold * 0.05).toFixed(2)) : 2.50;
       }
       dailyRate = Math.max(0.1, parseFloat(dailyRate.toFixed(2)));
 
-      // 1. Days until depletion
+      
       const daysUntilDepletion = Math.ceil(qty / dailyRate);
       const depletionDate = new Date();
       depletionDate.setDate(depletionDate.getDate() + daysUntilDepletion);
 
-      // 2. Days until reorder (reorder when stock hits threshold)
+      
       let daysUntilReorder = 0;
       if (qty > threshold) {
         daysUntilReorder = Math.ceil((qty - threshold) / dailyRate);
@@ -832,7 +848,7 @@ export const getMaterialPredictions = async (req, res, next) => {
       const reorderDate = new Date();
       reorderDate.setDate(reorderDate.getDate() + daysUntilReorder);
 
-      // 3. Shortage Risk & Risk Score
+      
       let risk = 'Low';
       let riskScore = 0;
 
@@ -894,7 +910,7 @@ export const getConsumptionAnalytics = async (req, res, next) => {
     else if (dateRange === '90d') daysInterval = 90;
     else if (dateRange === '1y') daysInterval = 365;
 
-    // 1. Most Consumed & Velocity Rankings
+    
     const [consumptionRows] = await db.query(
       `SELECT 
          m.id,
@@ -945,7 +961,7 @@ export const getConsumptionAnalytics = async (req, res, next) => {
     const fastMoving = formattedMaterials.filter(m => m.velocityCategory === 'Fast Moving');
     const slowMoving = formattedMaterials.filter(m => m.velocityCategory === 'Slow Moving');
 
-    // 2. Daily Consumption
+    
     const [dailyRows] = await db.query(
       `SELECT DATE_FORMAT(created_at, '%Y-%m-%d') AS date,
               SUM(quantity) AS consumed
@@ -961,7 +977,7 @@ export const getConsumptionAnalytics = async (req, res, next) => {
       consumed: parseFloat(r.consumed) || 0
     }));
 
-    // 3. Weekly Consumption
+    
     const [weeklyRows] = await db.query(
       `SELECT YEARWEEK(created_at, 1) AS yw,
               CONCAT('Week ', WEEK(created_at, 1)) AS label,
@@ -977,7 +993,7 @@ export const getConsumptionAnalytics = async (req, res, next) => {
       consumed: parseFloat(r.consumed) || 0
     }));
 
-    // 4. Monthly Consumption
+    
     const [monthlyRows] = await db.query(
       `SELECT DATE_FORMAT(created_at, '%b %Y') AS month,
               SUM(quantity) AS consumed

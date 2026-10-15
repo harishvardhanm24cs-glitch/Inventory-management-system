@@ -2,13 +2,10 @@ const asyncHandler = require('express-async-handler');
 const { validationResult } = require('express-validator');
 const Material = require('../models/materialModel');
 
-// @desc    Get all materials
-// @route   GET /api/materials
-// @access  Private
 const getMaterials = asyncHandler(async (req, res) => {
   const materials = await Material.findAll();
   
-  // Check for thresholds
+  
   const lowStock = materials.filter(m => m.quantity <= m.threshold_limit);
 
   res.status(200).json({
@@ -19,9 +16,6 @@ const getMaterials = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Get single material by barcode
-// @route   GET /api/materials/:barcode
-// @access  Private
 const getMaterial = asyncHandler(async (req, res) => {
   const material = await Material.findByBarcode(req.params.barcode);
   
@@ -36,16 +30,13 @@ const getMaterial = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Add a new material
-// @route   POST /api/materials
-// @access  Private (Manager & Engineer)
 const addMaterial = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ success: false, errors: errors.array() });
   }
 
-  // Prevent duplicate barcodes
+  
   const existing = await Material.findByBarcode(req.body.barcode);
   if (existing) {
     res.status(400);
@@ -61,9 +52,6 @@ const addMaterial = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Update material
-// @route   PUT /api/materials/:id
-// @access  Private (Manager & Engineer)
 const updateMaterial = asyncHandler(async (req, res) => {
   const material = await Material.findById(req.params.id);
 
@@ -90,9 +78,6 @@ const updateMaterial = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Delete material
-// @route   DELETE /api/materials/:id
-// @access  Private (Manager only)
 const deleteMaterial = asyncHandler(async (req, res) => {
   const material = await Material.findById(req.params.id);
 

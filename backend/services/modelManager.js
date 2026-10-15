@@ -6,40 +6,24 @@ import {
   ScikitLearnModelAdapter
 } from './modelAdapters.js';
 
-/**
- * modelManager.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 4: Model Management Core Service
- *
- * Capabilities:
- * • Model Registration (Register custom TF, PyTorch, ONNX, Sklearn adapters)
- * • Model Loading (Load weights & initialize graphs with error handling)
- * • Model Switching (Runtime strategy switching via API / UI)
- * • Model Versioning (Semantic versioning & metadata tracking)
- * • Model Performance (Accuracy %, F1-Score, MAE, latency ms, prediction counters)
- * • Graceful Fallback (Defaults automatically to DefaultHeuristicModelAdapter if no trained model exists)
- */
-
 export class ModelManager {
   constructor() {
     this.registry = new Map();
     this.performanceLogs = new Map();
     this.activeModelId = 'statistical_ml_default';
 
-    // Register built-in default statistical fallback model
+    
     const defaultModel = new DefaultHeuristicModelAdapter();
     this.registerModelInstance(defaultModel);
 
-    // Register sample framework model adapters
+    
     this.registerModelInstance(new TensorFlowModelAdapter());
     this.registerModelInstance(new PyTorchModelAdapter());
     this.registerModelInstance(new ONNXModelAdapter());
     this.registerModelInstance(new ScikitLearnModelAdapter());
   }
 
-  /**
-   * Register a model adapter instance
-   */
+  
   registerModelInstance(adapterInstance) {
     if (!adapterInstance || !adapterInstance.id) {
       throw new Error('Invalid model adapter instance. id property required.');
@@ -62,9 +46,7 @@ export class ModelManager {
     console.log(`[ModelManager] Registered model '${adapterInstance.id}' (${adapterInstance.framework} ${adapterInstance.version})`);
   }
 
-  /**
-   * Register a new model dynamically with metadata
-   */
+  
   registerNewModel(payload) {
     const { id, name, framework, version, author, description, modelPath } = payload;
     const modelId = id || `${framework.toLowerCase()}_${Date.now()}`;
@@ -91,9 +73,7 @@ export class ModelManager {
     return this.getModelMetadata(modelId);
   }
 
-  /**
-   * Switch active model strategy at runtime
-   */
+  
   switchActiveModel(modelId) {
     if (!this.registry.has(modelId)) {
       console.warn(`[ModelManager] Model '${modelId}' not found in registry. Falling back to 'statistical_ml_default'.`);
@@ -107,9 +87,7 @@ export class ModelManager {
     return { success: true, activeModelId: this.activeModelId, fallback: false };
   }
 
-  /**
-   * Get active model adapter with guaranteed fallback
-   */
+  
   getActiveModel() {
     let active = this.registry.get(this.activeModelId);
     if (!active) {
@@ -120,9 +98,7 @@ export class ModelManager {
     return active;
   }
 
-  /**
-   * Log performance metrics (latency, counter, accuracy)
-   */
+  
   recordPredictionMetrics(modelId, latencyMs) {
     const log = this.performanceLogs.get(modelId);
     if (log) {
@@ -132,9 +108,7 @@ export class ModelManager {
     }
   }
 
-  /**
-   * Get detailed metadata for a single model
-   */
+  
   getModelMetadata(modelId) {
     const adapter = this.registry.get(modelId);
     const perf = this.performanceLogs.get(modelId);
@@ -154,16 +128,12 @@ export class ModelManager {
     };
   }
 
-  /**
-   * List all registered models with active status
-   */
+  
   listAllModels() {
     return Array.from(this.registry.values()).map(adapter => this.getModelMetadata(adapter.id));
   }
 
-  /**
-   * Get system-wide model performance analytics summary
-   */
+  
   getPerformanceAnalytics() {
     const models = this.listAllModels();
     const activeModel = this.getModelMetadata(this.activeModelId);

@@ -2,33 +2,8 @@ import featureEngineeringService from './featureEngineeringService.js';
 import aiPredictionEngine from './aiPredictionEngine.js';
 import recommendationEngineService from './recommendationEngineService.js';
 
-/**
- * xaiEngineService.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 6: Explainable AI (XAI) System
- *
- * Objectives:
- * • Decoupled Explanation Layer (does not mutate prediction logic).
- * • Eliminates black-box AI outputs.
- * • Guarantees 6 mandatory attributes per explanation:
- *   1. Prediction
- *   2. Confidence Score
- *   3. Key Factors (with feature weights summing to 1.0)
- *   4. Reasoning (step-by-step narrative)
- *   5. Suggested Action
- *   6. Data Sources Used (audit lineage)
- *
- * Provides reusable consumer explanation adapters for:
- * • Dashboard
- * • Digital Twin
- * • Reports
- * • Manager Portal
- */
-
 export class XaiEngineService {
-  /**
-   * Synthesize comprehensive XAI explanation for a material item
-   */
+  
   async explainMaterial(materialId) {
     const [allFeatures, predictions] = await Promise.all([
       featureEngineeringService.generateAllFeatures(),
@@ -49,7 +24,7 @@ export class XaiEngineService {
     const avgDaily = mat.avg_daily_usage || 0;
     const unit = mat.unit || 'KG';
 
-    // Calculate feature influence weights (normalized sum = 1.0)
+    
     const stockRatio = stock / (threshold || 1);
     const wStock = 0.45;
     const wConsumption = 0.35;
@@ -117,9 +92,7 @@ export class XaiEngineService {
     };
   }
 
-  /**
-   * Synthesize comprehensive XAI explanation for a rack asset
-   */
+  
   async explainRack(rackCode) {
     const allFeatures = await featureEngineeringService.generateAllFeatures();
     const racks = allFeatures?.rack_features?.racks || [];
@@ -191,9 +164,7 @@ export class XaiEngineService {
     };
   }
 
-  /**
-   * 1. Dashboard XAI Service Adapter
-   */
+  
   async getDashboardExplanations() {
     const [matExp, rackExp] = await Promise.all([
       this.explainMaterial('1'),
@@ -211,9 +182,7 @@ export class XaiEngineService {
     };
   }
 
-  /**
-   * 2. Digital Twin XAI Service Adapter
-   */
+  
   async getDigitalTwinExplanations() {
     const allFeatures = await featureEngineeringService.generateAllFeatures();
     const racks = allFeatures?.rack_features?.racks || [];
@@ -231,9 +200,7 @@ export class XaiEngineService {
     };
   }
 
-  /**
-   * 3. Reports XAI Service Adapter
-   */
+  
   async getReportsExplanations() {
     const [recs, predictions] = await Promise.all([
       recommendationEngineService.generateRecommendations(),
@@ -265,9 +232,7 @@ export class XaiEngineService {
     };
   }
 
-  /**
-   * 4. Manager Portal XAI Service Adapter
-   */
+  
   async getManagerPortalExplanations() {
     const recs = await recommendationEngineService.generateRecommendations();
     const criticals = (recs.recommendations || []).filter(r => r.priority === 'CRITICAL' || r.priority === 'HIGH');

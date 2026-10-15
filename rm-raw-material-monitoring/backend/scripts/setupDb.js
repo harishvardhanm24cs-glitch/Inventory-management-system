@@ -5,7 +5,7 @@ const setupDatabase = async () => {
   console.log('🔌 Connecting to MySQL Server...');
   
   try {
-    // Connect without a specific database to create it if it doesn't exist
+    
     const pool = await mysql.createPool({
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',

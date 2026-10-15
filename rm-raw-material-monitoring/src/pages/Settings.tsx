@@ -122,7 +122,7 @@ const Settings = () => {
                                         value={localStorage.getItem('esp32-ip') || 'http://172.20.10.12'}
                                         onChange={(e) => {
                                             localStorage.setItem('esp32-ip', e.target.value);
-                                            window.dispatchEvent(new Event('storage')); // Trigger update if other tabs are listening
+                                            window.dispatchEvent(new Event('storage')); 
                                         }}
                                     />
                                 </div>

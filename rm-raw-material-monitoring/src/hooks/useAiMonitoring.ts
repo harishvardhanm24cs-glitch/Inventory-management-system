@@ -22,7 +22,7 @@ export const useAiMonitoring = () => {
 
   useEffect(() => {
     fetchHealthData();
-    // Auto-refresh every 30 seconds
+    
     const interval = setInterval(() => {
       fetchHealthData();
     }, 30000);

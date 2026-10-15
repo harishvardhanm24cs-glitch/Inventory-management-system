@@ -2,7 +2,7 @@ const tests = [
     { input: 'RM-12345678', expected: 'RM-12345678' },
     { input: 'https://www.canvaqr.com/RGBahkSER5', expected: 'RGBahkSER5' },
     { input: 'https://example.com/item/12345/', expected: '12345' },
-    { input: 'http://localhost:3000/scan?id=abc', expected: 'scan' }, // Simple extraction logic might fail on query params, let's see
+    { input: 'http://localhost:3000/scan?id=abc', expected: 'scan' }, 
     { input: '  RM-SPACE  ', expected: 'RM-SPACE' },
     { input: 'https://mysite.io/test', expected: 'test' }
 ];
@@ -12,7 +12,7 @@ const extractId = (text) => {
     if (!trimmed) return '';
     if (trimmed.startsWith('http')) {
         try {
-            // This is the logic used in the React components
+            
             const url = new URL(trimmed);
             const pathname = url.pathname.replace(/\/+$/, '');
             const segment = pathname.split('/').pop();

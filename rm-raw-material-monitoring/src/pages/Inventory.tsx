@@ -1,34 +1,32 @@
-import { useState, useEffect } from 'react';
-import { Search, Package, Box, Plus, Download, Trash2, Eye, History, Layers, QrCode } from 'lucide-react';
+import { useState } from 'react';
+import { Search, Package, Box, Plus, Download, Trash2, Layers, QrCode } from 'lucide-react';
 import AddMaterialModal from '../components/ui/AddMaterialModal';
 import BulkImportModal from '../components/ui/BulkImportModal';
 import QRCodeModal from '../components/ui/QRCodeModal';
-import { Card } from '../components/ui/Card';
 import EmptyState from '../components/ui/EmptyState';
 import { cn } from '../lib/utils';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { Button } from '../components/ui/Button';
-import API from '../services/api';
 import { useInventory } from '../context/InventoryContext';
 
 const StatusBadge = ({ status }: { status: string }) => {
     const styles = {
-        good: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
-        low: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
-        critical: 'bg-rose-500/10 text-rose-600 border-rose-500/20',
+        good: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200/80 dark:border-emerald-800/60',
+        low: 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border-amber-200/80 dark:border-amber-800/60',
+        critical: 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border-rose-200/80 dark:border-rose-800/60',
     };
 
     const labels = {
-        good: 'Available',
+        good: 'Optimal',
         low: 'Low Stock',
         critical: 'Critical',
     };
 
     return (
         <span className={cn(
-            "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.1em] border shadow-sm flex items-center gap-1.5 w-fit mx-auto",
+            "px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border flex items-center gap-1.5 w-fit mx-auto select-none",
             styles[status as keyof typeof styles]
         )}>
             <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", 
@@ -85,7 +83,7 @@ const Inventory = () => {
         const doc = new jsPDF();
 
         doc.setFontSize(20);
-        doc.text('Inventory Report', 14, 22);
+        doc.text('Inventory Control Report', 14, 22);
         doc.setFontSize(11);
         doc.setTextColor(100);
         doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
@@ -113,67 +111,67 @@ const Inventory = () => {
             body: tableRows,
             startY: 40,
             theme: 'grid',
-            headStyles: { fillColor: [37, 99, 235] }, // Primary color
+            headStyles: { fillColor: [37, 99, 235] },
         });
 
         doc.save(`Inventory_Report_${new Date().toISOString().split('T')[0]}.pdf`);
     };
 
     return (
-        <div className="space-y-8 animate-fade-in text-slate-900">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+        <div className="space-y-6 text-slate-900 dark:text-slate-100">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Inventory Control</h1>
-                    <p className="text-sm text-slate-500 font-medium mt-1">Real-time raw material monitoring & SKU management</p>
+                    <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Inventory Control</h1>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Real-time raw material monitoring & SKU management</p>
                 </div>
 
-                <div className="flex flex-wrap gap-3 w-full lg:w-auto">
+                <div className="flex flex-wrap gap-2.5 w-full lg:w-auto">
                     <Button
-                        variant="ghost"
+                        variant="outline"
                         onClick={handleDownloadPDF}
-                        className="bg-white border border-slate-200 text-slate-600 px-5 rounded-xl text-sm font-bold shadow-sm"
+                        size="md"
                     >
-                        <Download size={18} className="mr-2" />
-                        Export
+                        <Download size={16} className="mr-1.5" />
+                        Export PDF
                     </Button>
                     <Button
-                        variant="ghost"
+                        variant="secondary"
                         onClick={() => setIsBulkModalOpen(true)}
-                        className="bg-primary/10 text-primary border border-primary/5 px-5 rounded-xl text-sm font-bold"
+                        size="md"
                     >
-                        <Layers size={18} className="mr-2" />
+                        <Layers size={16} className="mr-1.5" />
                         Bulk Actions
                     </Button>
                     <Button
                         onClick={() => setIsAddModalOpen(true)}
-                        className="px-6 rounded-xl text-sm font-bold shadow-lg shadow-primary/30"
+                        size="md"
                     >
-                        <Plus size={18} className="mr-2" />
+                        <Plus size={16} className="mr-1.5" />
                         Add Material
                     </Button>
                 </div>
             </div>
 
-            <div className="saas-card overflow-hidden">
-                <div className="p-6 border-b border-slate-50 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
+            <div className="bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl overflow-hidden shadow-2xs">
+                <div className="p-5 border-b border-slate-100 dark:border-slate-700/80 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
                         <div className="relative w-full md:w-72">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                             <input
                                 type="text"
                                 placeholder="Search materials..."
-                                className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none text-sm font-medium placeholder:text-slate-400"
+                                className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-xs font-medium placeholder:text-slate-400 text-slate-900 dark:text-white"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                         
-                        <div className="flex items-center gap-3">
-                             <span className="text-xs font-semibold text-slate-500">Location:</span>
+                        <div className="flex items-center gap-2">
+                             <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Location:</span>
                              <select 
                                 value={filterLocation}
                                 onChange={(e) => setFilterLocation(e.target.value)}
-                                className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:ring-4 focus:ring-primary/10 outline-none transition-all cursor-pointer"
+                                className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-pointer"
                              >
                                 {locations.map(loc => (
                                     <option key={loc} value={loc}>{loc}</option>
@@ -182,37 +180,37 @@ const Inventory = () => {
                         </div>
                     </div>
                     
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
                         {lastUpdated && (
                             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                                Last Updated: {lastUpdated}
+                                Sync: {lastUpdated}
                             </span>
                         )}
-                        <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
-                            <Package size={14} className="text-primary" />
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <Package size={14} className="text-blue-600 dark:text-blue-400" />
                             {filteredData.length} Live Items
                         </div>
                     </div>
                 </div>
 
-                <div className="overflow-x-auto hidden md:block">
+                <div className="overflow-x-auto">
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center py-16 space-y-4 animate-pulse">
+                        <div className="flex flex-col items-center justify-center py-16 space-y-3 animate-pulse">
                             <LoadingSpinner />
-                            <p className="text-sm font-semibold text-slate-400">Loading inventory...</p>
+                            <p className="text-xs font-semibold text-slate-400">Loading inventory data...</p>
                         </div>
                     ) : filteredData.length > 0 ? (
-                        <table className="saas-table">
+                        <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr>
-                                    <th className="px-6 py-4">Material Details</th>
-                                    <th className="px-6 py-4">Identity & Loc</th>
-                                    <th className="px-6 py-4 text-right">Stock Levels</th>
-                                    <th className="px-6 py-4 text-center">Status</th>
-                                    <th className="px-6 py-4 text-right">Actions</th>
+                                <tr className="border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-800/50 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                    <th className="px-5 py-3.5">Material Details</th>
+                                    <th className="px-5 py-3.5">Identity & Location</th>
+                                    <th className="px-5 py-3.5 text-right">Stock Level</th>
+                                    <th className="px-5 py-3.5 text-center">Status</th>
+                                    <th className="px-5 py-3.5 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60 text-xs">
                                 {filteredData.map((item) => {
                                     const qty = parseFloat(item.quantity !== undefined ? item.quantity : item.stock) || 0;
                                     const limit = parseFloat(item.threshold_limit !== undefined ? item.threshold_limit : item.minLimit) || 0;
@@ -221,64 +219,64 @@ const Inventory = () => {
                                     const batch = item.batch_number || item.batchNumber || 'N/A';
                                     
                                     return (
-                                        <tr key={item.id}>
-                                            <td className="px-6 py-5">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 overflow-hidden shrink-0">
+                                        <tr key={item.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+                                            <td className="px-5 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center border border-slate-200 dark:border-slate-600 overflow-hidden shrink-0">
                                                         {item.image ? (
                                                             <img src={item.image} alt="" className="w-full h-full object-cover" />
                                                         ) : (
-                                                            <Box className="text-slate-300" size={20} />
+                                                            <Box className="text-slate-400" size={18} />
                                                         )}
                                                     </div>
                                                     <div className="min-w-0">
-                                                        <p className="font-semibold text-slate-900 truncate">{name}</p>
-                                                        <p className="text-[11px] text-slate-400 font-medium">#{item.id}</p>
+                                                        <p className="font-bold text-slate-900 dark:text-white truncate">{name}</p>
+                                                        <p className="text-[11px] text-slate-400 font-mono">#{item.id}</p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-5">
-                                                <div className="flex flex-col gap-1.5">
-                                                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-slate-50 rounded-lg border border-slate-100 w-fit">
+                                            <td className="px-5 py-4">
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-slate-50 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 w-fit">
                                                         <QrCode size={12} className="text-slate-400" />
-                                                        <span className="text-[11px] font-medium text-slate-600">{item.barcode}</span>
+                                                        <span className="text-[11px] font-mono font-semibold text-slate-700 dark:text-slate-300">{item.barcode}</span>
                                                     </div>
-                                                    <span className="text-[11px] font-medium text-slate-400">
+                                                    <span className="text-[11px] text-slate-500 dark:text-slate-400">
                                                         Loc: {item.location || 'Warehouse Zone A'} | Batch: {batch}
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-5 text-right">
+                                            <td className="px-5 py-4 text-right">
                                                 <div className="flex flex-col items-end">
-                                                    <div className="flex items-baseline gap-1.5">
-                                                        <span className="text-base font-bold text-slate-900">{qty.toLocaleString()}</span>
+                                                    <div className="flex items-baseline gap-1">
+                                                        <span className="text-sm font-extrabold font-mono text-slate-900 dark:text-white">{qty.toLocaleString()}</span>
                                                         <span className="text-[11px] font-semibold text-slate-400">{item.unit || ''}</span>
                                                     </div>
-                                                    <p className="text-[10px] text-slate-400">Min: {limit}{item.unit || ''}</p>
+                                                    <p className="text-[10px] text-slate-400">Min: {limit} {item.unit || ''}</p>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-5">
+                                            <td className="px-5 py-4">
                                                 <div className="flex justify-center">
                                                     <StatusBadge status={status} />
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-5">
+                                            <td className="px-5 py-4 text-right">
                                                 <div className="flex justify-end gap-1">
                                                     <Button 
                                                         variant="ghost" 
                                                         size="icon" 
                                                         onClick={() => setSelectedMaterial({ name: name, id: String(item.id), barcode: item.barcode || '' })}
-                                                        className="h-9 w-9 rounded-lg text-slate-400 hover:text-primary hover:bg-blue-50"
+                                                        className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/60"
                                                     >
-                                                        <QrCode size={18} />
+                                                        <QrCode size={16} />
                                                     </Button>
                                                     <Button 
                                                         variant="ghost" 
                                                         size="icon" 
                                                         onClick={() => handleDelete(String(item.id))}
-                                                        className="h-9 w-9 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50"
+                                                        className="h-8 w-8 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60"
                                                     >
-                                                        <Trash2 size={18} />
+                                                        <Trash2 size={16} />
                                                     </Button>
                                                 </div>
                                             </td>
@@ -296,87 +294,6 @@ const Inventory = () => {
                                 label: "Register Material",
                                 onClick: () => setIsAddModalOpen(true)
                             }}
-                        />
-                    )}
-                </div>
-
-                {/* Mobile View - Cards */}
-                <div className="md:hidden divide-y divide-slate-100">
-                    {loading ? (
-                        <div className="flex flex-col items-center justify-center py-16 space-y-4 animate-pulse">
-                            <LoadingSpinner />
-                            <p className="text-sm font-semibold text-slate-400">Loading inventory...</p>
-                        </div>
-                    ) : filteredData.length > 0 ? (
-                        filteredData.map((item) => {
-                            const qty = parseFloat(item.quantity !== undefined ? item.quantity : item.stock) || 0;
-                            const limit = parseFloat(item.threshold_limit !== undefined ? item.threshold_limit : item.minLimit) || 0;
-                            const status = getStatus(qty, limit);
-                            const name = item.material_name || item.name || '';
-                            const batch = item.batch_number || item.batchNumber || 'N/A';
-                            
-                            return (
-                                <div key={item.id} className="p-4 space-y-4 hover:bg-slate-50 transition-colors">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200 overflow-hidden shadow-sm">
-                                                {item.image ? (
-                                                    <img src={item.image} alt="" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <Box className="text-slate-400" size={20} />
-                                                )}
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-slate-900 leading-none">{name}</p>
-                                                <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-tight font-mono">{item.id}</p>
-                                            </div>
-                                        </div>
-                                        <StatusBadge status={status} />
-                                    </div>
-                                    
-                                    <div className="grid grid-cols-2 gap-4 py-2">
-                                        <div className="space-y-1">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase">Current Stock</p>
-                                            <p className="text-lg font-black text-slate-900">{qty.toLocaleString()} <span className="text-[10px]">{item.unit || ''}</span></p>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase">Location & Batch</p>
-                                            <p className="text-xs font-bold text-slate-700">Loc: {item.location || 'Warehouse Zone A'}<br/>Batch: {batch}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center justify-between pt-2 border-t border-slate-50">
-                                        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-slate-50 rounded-md border border-slate-100">
-                                            <QrCode size={10} className="text-slate-400" />
-                                            <code className="text-[10px] font-bold font-mono text-slate-600">{item.barcode}</code>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <Button 
-                                                variant="ghost" 
-                                                size="icon" 
-                                                onClick={() => setSelectedMaterial({ name: name, id: String(item.id), barcode: item.barcode || '' })}
-                                                className="h-10 w-10 rounded-xl bg-slate-100 text-slate-600"
-                                            >
-                                                <QrCode size={18} />
-                                            </Button>
-                                            <Button 
-                                                variant="ghost" 
-                                                size="icon" 
-                                                onClick={() => handleDelete(String(item.id))}
-                                                className="h-10 w-10 rounded-xl bg-red-50 text-red-600"
-                                            >
-                                                <Trash2 size={18} />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })
-                    ) : (
-                        <EmptyState 
-                            icon={Search} 
-                            title="No materials found" 
-                            description="Adjust your search or filters to find what you're looking for."
                         />
                     )}
                 </div>

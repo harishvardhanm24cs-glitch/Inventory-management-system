@@ -16,42 +16,42 @@ export const getAuditLogs = async (req, res, next) => {
     let dataQuery = 'SELECT * FROM audit_logs WHERE 1=1';
     const queryParams = [];
 
-    // Filter by action type
+    
     if (action_type && action_type !== 'All') {
       countQuery += ' AND action_type = ?';
       dataQuery += ' AND action_type = ?';
       queryParams.push(action_type);
     }
 
-    // Filter by material name
+    
     if (material_name) {
       countQuery += ' AND material_name LIKE ?';
       dataQuery += ' AND material_name LIKE ?';
       queryParams.push(`%${material_name}%`);
     }
 
-    // Filter by rack code
+    
     if (rack_code) {
       countQuery += ' AND rack_code LIKE ?';
       dataQuery += ' AND rack_code LIKE ?';
       queryParams.push(`%${rack_code}%`);
     }
 
-    // Filter by user
+    
     if (user_name) {
       countQuery += ' AND user_name LIKE ?';
       dataQuery += ' AND user_name LIKE ?';
       queryParams.push(`%${user_name}%`);
     }
 
-    // Filter by date (YYYY-MM-DD)
+    
     if (date) {
       countQuery += ' AND DATE(timestamp) = ?';
       dataQuery += ' AND DATE(timestamp) = ?';
       queryParams.push(date);
     }
 
-    // General search query
+    
     if (q) {
       countQuery += ' AND (action_type LIKE ? OR material_name LIKE ? OR rack_code LIKE ? OR user_name LIKE ? OR action_details LIKE ?)';
       dataQuery += ' AND (action_type LIKE ? OR material_name LIKE ? OR rack_code LIKE ? OR user_name LIKE ? OR action_details LIKE ?)';
@@ -59,7 +59,7 @@ export const getAuditLogs = async (req, res, next) => {
       queryParams.push(pattern, pattern, pattern, pattern, pattern);
     }
 
-    // Sort order validation
+    
     const allowedSortFields = ['timestamp', 'action_type', 'user_name', 'material_name', 'rack_code'];
     const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'timestamp';
     const direction = sortOrder.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
@@ -72,7 +72,7 @@ export const getAuditLogs = async (req, res, next) => {
     const [[{ total }]] = await db.query(countQuery, countParams);
     const [results] = await db.query(dataQuery, dataParams);
 
-    // Get today's summary stats
+    
     const todaySummaryQuery = `
       SELECT 
         COUNT(CASE WHEN DATE(timestamp) = CURDATE() THEN 1 END) AS today_actions,
@@ -127,37 +127,37 @@ export const exportAuditLogs = async (req, res, next) => {
     let dataQuery = 'SELECT * FROM audit_logs WHERE 1=1';
     const queryParams = [];
 
-    // Filter by action type
+    
     if (action_type && action_type !== 'All') {
       dataQuery += ' AND action_type = ?';
       queryParams.push(action_type);
     }
 
-    // Filter by material name
+    
     if (material_name) {
       dataQuery += ' AND material_name LIKE ?';
       queryParams.push(`%${material_name}%`);
     }
 
-    // Filter by rack code
+    
     if (rack_code) {
       dataQuery += ' AND rack_code LIKE ?';
       queryParams.push(`%${rack_code}%`);
     }
 
-    // Filter by user
+    
     if (user_name) {
       dataQuery += ' AND user_name LIKE ?';
       queryParams.push(`%${user_name}%`);
     }
 
-    // Filter by date (YYYY-MM-DD)
+    
     if (date) {
       dataQuery += ' AND DATE(timestamp) = ?';
       queryParams.push(date);
     }
 
-    // General search query
+    
     if (q) {
       dataQuery += ' AND (action_type LIKE ? OR material_name LIKE ? OR rack_code LIKE ? OR user_name LIKE ? OR action_details LIKE ?)';
       const pattern = `%${q}%`;

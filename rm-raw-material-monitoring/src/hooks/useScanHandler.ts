@@ -18,9 +18,9 @@ export const useScanHandler = () => {
         }
 
         const now = Date.now();
-        // Prevent duplicate scan (cooldown 3 sec)
+        
         if (result.materialId === lastScanRef.current.id && (now - lastScanRef.current.time) < 3000) {
-            return false; // Silently ignore duplicate
+            return false; 
         }
 
         if (isProcessing) return false;
@@ -32,7 +32,7 @@ export const useScanHandler = () => {
             const payloadData = {
                 sku_id: result.extracts?.registrationId || result.materialId,
                 weight: result.quantity,
-                type: type, // "inward" or "outward"
+                type: type, 
                 paint_name: result.extracts?.paintName || 'Unknown Material',
                 batch_number: result.extracts?.batchNumber || 'N/A',
                 location: result.extracts?.location || 'Unknown'
@@ -47,7 +47,7 @@ export const useScanHandler = () => {
                 toast.success(`Success: Removed ${result.quantity} KG ❌`);
             }
             await refreshData();
-            // Trigger real-time digital twin state refresh
+            
             window.dispatchEvent(new CustomEvent('rack-inventory-update'));
             if (typeof (window as any).refreshDigitalTwin === 'function') {
                 (window as any).refreshDigitalTwin();

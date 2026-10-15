@@ -6,7 +6,6 @@ import { logAudit } from '../utils/auditLogger.js';
 
 dotenv.config();
 
-// Helper to generate JWT Token
 const generateToken = (id, email, role) => {
   return jwt.sign(
     { id, email, role },
@@ -24,7 +23,7 @@ export const register = async (req, res, next) => {
     const { name, email, password } = req.body;
     const role = req.body.role || 'worker';
 
-    // Validate fields
+    
     if (!name || !email || !password) {
       return res.status(400).json({
         status: 'error',
@@ -32,7 +31,7 @@ export const register = async (req, res, next) => {
       });
     }
 
-    // Validate role
+    
     if (role !== 'manager' && role !== 'worker') {
       return res.status(400).json({
         status: 'error',
@@ -40,7 +39,7 @@ export const register = async (req, res, next) => {
       });
     }
 
-    // Check if user already exists
+    
     const [existingUsers] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
     if (existingUsers.length > 0) {
       return res.status(400).json({
@@ -49,11 +48,11 @@ export const register = async (req, res, next) => {
       });
     }
 
-    // Hash password
+    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Insert user into MySQL database
+    
     const [result] = await db.query(
       'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
       [name, email, hashedPassword, role]
@@ -84,7 +83,7 @@ export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Validate fields
+    
     if (!email || !password) {
       return res.status(400).json({
         status: 'error',
@@ -92,7 +91,7 @@ export const login = async (req, res, next) => {
       });
     }
 
-    // Retrieve user by email
+    
     const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
     if (users.length === 0) {
       return res.status(401).json({
@@ -103,7 +102,7 @@ export const login = async (req, res, next) => {
 
     const user = users[0];
 
-    // Verify password
+    
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({
@@ -112,10 +111,10 @@ export const login = async (req, res, next) => {
       });
     }
 
-    // Generate JWT token
+    
     const token = generateToken(user.id, user.email, user.role);
 
-    // Log user login
+    
     await logAudit({
       action_type: 'User Login',
       user_name: user.name,
@@ -145,7 +144,7 @@ export const login = async (req, res, next) => {
  */
 export const getProfile = async (req, res, next) => {
   try {
-    // req.user was populated by protect middleware
+    
     const [users] = await db.query('SELECT id, name, email, role, created_at FROM users WHERE id = ?', [req.user.id]);
     
     if (users.length === 0) {

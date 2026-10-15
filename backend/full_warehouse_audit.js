@@ -13,7 +13,7 @@ async function runAudit() {
   console.log('       STARTING FULL WAREHOUSE FLOW QA AUDIT      ');
   console.log('===================================================');
 
-  // Results tracker
+  
   const results = {
     qrSync: { status: 'FAIL', details: '' },
     inventoryUpdate: { status: 'FAIL', details: '' },
@@ -28,9 +28,9 @@ async function runAudit() {
   const testRackLow = 'AUDIT-RACK-LOW';
 
   try {
-    // -------------------------------------------------
-    // RESET & SETUP
-    // -------------------------------------------------
+    
+    
+    
     console.log('\n[Setup] Cleaning up old audit data...');
     await db.query("DELETE FROM qr_history WHERE barcode_id IN (?, ?)", [testBarcode, testBarcodeLow]);
     await db.query("DELETE FROM alerts WHERE material_id IN (SELECT id FROM materials WHERE barcode IN (?, ?))", [testBarcode, testBarcodeLow]);
@@ -59,14 +59,14 @@ async function runAudit() {
 
     const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    // -------------------------------------------------
-    // TEST 1 & 3: INWARD SCAN (QR Sync & Rack Sync Inward)
-    // -------------------------------------------------
+    
+    
+    
     console.log('\n===================================================');
     console.log('TEST 1 & 3 — SIMULATING INWARD SCAN');
     console.log('===================================================');
     
-    // Fetch initial rack state
+    
     const [[rackBefore]] = await db.query("SELECT * FROM rack_inventory WHERE rack_code = ?", [testRack]);
     console.log('Rack state BEFORE inward scan:', {
       rack_code: rackBefore.rack_code,
@@ -96,7 +96,7 @@ async function runAudit() {
     const jsonInward = resInward.status === 200 ? await resInward.json() : await resInward.text();
     console.log('Inward Response:', jsonInward);
 
-    // Verify QR status changes
+    
     const [[qrAfterInward]] = await db.query("SELECT barcode_id, status FROM qr_codes WHERE barcode_id = ?", [testBarcode]);
     console.log('\nQR Code state AFTER inward scan:');
     console.table([qrAfterInward]);
@@ -108,11 +108,11 @@ async function runAudit() {
       results.qrSync.details = `status changed to '${qrAfterInward ? qrAfterInward.status : 'N/A'}'.`;
     }
 
-    // Verify Inventory increases
+    
     const [[matAfterInward]] = await db.query("SELECT * FROM materials WHERE barcode = ?", [testBarcode]);
     console.log('\nMaterial inventory state AFTER inward scan:', matAfterInward);
 
-    // Verify Rack occupancy increases
+    
     const [[rackAfterInward]] = await db.query("SELECT * FROM rack_inventory WHERE rack_code = ?", [testRack]);
     console.log('Rack state AFTER inward scan:', {
       rack_code: rackAfterInward.rack_code,
@@ -122,9 +122,9 @@ async function runAudit() {
 
     const inwardRackPass = parseFloat(rackAfterInward.current_capacity) > parseFloat(rackBefore.current_capacity);
 
-    // -------------------------------------------------
-    // TEST 2 & 3: OUTWARD SCAN (Inventory & Rack Sync Outward)
-    // -------------------------------------------------
+    
+    
+    
     console.log('\n===================================================');
     console.log('TEST 2 & 3 — SIMULATING OUTWARD SCAN');
     console.log('===================================================');
@@ -148,7 +148,7 @@ async function runAudit() {
     const jsonOutward = resOutward.status === 200 ? await resOutward.json() : await resOutward.text();
     console.log('Outward Response:', jsonOutward);
 
-    // Verify material inventory state
+    
     const [[matAfterOutward]] = await db.query("SELECT * FROM materials WHERE barcode = ?", [testBarcode]);
     console.log('\nMaterial inventory state AFTER outward scan:', matAfterOutward);
 
@@ -161,7 +161,7 @@ async function runAudit() {
       results.inventoryUpdate.details = `Inventory mismatch. Inward qty: ${matAfterInward?.quantity}, Outward qty: ${matAfterOutward?.quantity}`;
     }
 
-    // Verify Rack occupancy decreases
+    
     const [[rackAfterOutward]] = await db.query("SELECT * FROM rack_inventory WHERE rack_code = ?", [testRack]);
     console.log('Rack state AFTER outward scan:', rackAfterOutward ? {
       rack_code: rackAfterOutward.rack_code,
@@ -177,9 +177,9 @@ async function runAudit() {
       results.rackSync.details = `Inward rack check: ${inwardRackPass ? 'PASS' : 'FAIL'}, Outward rack check: ${outwardRackPass ? 'PASS' : 'FAIL'}`;
     }
 
-    // -------------------------------------------------
-    // TEST 4: TRANSACTION LOGGING
-    // -------------------------------------------------
+    
+    
+    
     console.log('\n===================================================');
     console.log('TEST 4 — TRANSACTION HISTORY AUDIT');
     console.log('===================================================');
@@ -203,22 +203,22 @@ async function runAudit() {
       results.transactionLogging.details = `Missing logs. Inward TX found: ${auditInwardTx}, Outward TX found: ${auditOutwardTx}`;
     }
 
-    // -------------------------------------------------
-    // TEST 5: ALERT ENGINE
-    // -------------------------------------------------
+    
+    
+    
     console.log('\n===================================================');
     console.log('TEST 5 — LOW STOCK ALERT ENGINE AUDIT');
     console.log('===================================================');
 
     console.log('[Alert Setup] Registering QR code and low-threshold material...');
-    // Create low-threshold material (Threshold: 20.00 KG)
+    
     const [insertedMatLow] = await db.query(
       "INSERT INTO materials (barcode, material_name, quantity, threshold_limit, unit, batch_number) VALUES (?, 'AUDIT LOW STOCK', 15.00, 20.00, 'KG', 'B-LOW-001')",
       [testBarcodeLow]
     );
     const lowMatId = insertedMatLow.insertId;
 
-    // Create an unused QR code of units 10.00
+    
     await db.query(
       "INSERT INTO qr_codes (barcode_id, material_name, quantity, units, rack_code, status) VALUES (?, 'AUDIT LOW STOCK', 1.00, 10.00, ?, 'unused')",
       [testBarcodeLow, testRackLow]
@@ -269,7 +269,7 @@ async function runAudit() {
     const [[lowMatFinal]] = await db.query("SELECT quantity FROM materials WHERE id = ?", [lowMatId]);
     console.log(`Stock level after outward: ${lowMatFinal.quantity} KG (Threshold: 20.00 KG)`);
 
-    // Verify if alert was created
+    
     const [alertRows] = await db.query(
       "SELECT * FROM alerts WHERE material_id = ? AND alert_status = 'active' ORDER BY id DESC",
       [lowMatId]
@@ -285,9 +285,9 @@ async function runAudit() {
       results.alertEngine.details = 'No active alert record generated in alerts table.';
     }
 
-    // -------------------------------------------------
-    // FINAL SYSTEM HEALTH REPORT
-    // -------------------------------------------------
+    
+    
+    
     console.log('\n===================================================');
     console.log('             FINAL SYSTEM HEALTH REPORT           ');
     console.log('===================================================');
@@ -308,7 +308,7 @@ async function runAudit() {
 
     console.log('\nBlocking Issues: None. All core system operations are performing within compliance criteria.');
 
-    // Cleanup audit records
+    
     await db.query("DELETE FROM qr_history WHERE barcode_id IN (?, ?)", [testBarcode, testBarcodeLow]);
     await db.query("DELETE FROM alerts WHERE material_id IN (SELECT id FROM materials WHERE barcode IN (?, ?))", [testBarcode, testBarcodeLow]);
     await db.query("DELETE FROM transactions WHERE material_id IN (SELECT id FROM materials WHERE barcode IN (?, ?))", [testBarcode, testBarcodeLow]);

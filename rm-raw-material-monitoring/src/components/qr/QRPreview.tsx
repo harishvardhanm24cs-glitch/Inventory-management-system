@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { cn } from '../../lib/utils';
 
 interface QRPreviewProps {
-    qrCode: string; // File path (e.g., uploads/qr_BAR-...) or Base64 string
+    qrCode: string; 
     materialName: string;
     batchNumber: string;
     rackCode: string;
@@ -20,12 +20,12 @@ const QRPreview: React.FC<QRPreviewProps> = ({
     barcodeId,
     onClose
 }) => {
-    // Determine the correct image source (either direct Base64 or backend static file server path)
+    
     const qrImageSrc = qrCode.startsWith('data:') || qrCode.startsWith('http')
         ? qrCode
         : `http://localhost:5000/${qrCode}`;
 
-    // Success notification on mount
+    
     useEffect(() => {
         toast.success("QR Code Generated successfully! ✅");
     }, []);
@@ -34,7 +34,7 @@ const QRPreview: React.FC<QRPreviewProps> = ({
         try {
             const link = document.createElement('a');
             link.href = qrImageSrc;
-            // Set crossOrigin to allow downloading from port 5000 if needed (or let the browser handle it)
+            
             link.setAttribute('download', `QR_${barcodeId}.png`);
             document.body.appendChild(link);
             link.click();
@@ -52,13 +52,13 @@ const QRPreview: React.FC<QRPreviewProps> = ({
 
     return (
         <>
-            {/* Modal Overlay */}
+            
             <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 print:hidden animate-[fadeIn_0.2s_ease-out_forwards]">
                 <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" onClick={onClose} />
                 
-                {/* Modal Container */}
+                
                 <div className="bg-white border border-slate-100 rounded-[2.5rem] w-full max-w-2xl relative z-10 overflow-hidden shadow-2xl flex flex-col md:flex-row animate-[scaleIn_0.3s_ease-out_forwards]">
-                    {/* Left Column: Visual QR code presentation */}
+                    
                     <div className="md:w-1/2 bg-slate-50 p-8 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-slate-100">
                         <div className="absolute top-6 left-6 flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
@@ -71,9 +71,9 @@ const QRPreview: React.FC<QRPreviewProps> = ({
                         </div>
                     </div>
 
-                    {/* Right Column: Metadata details & actions */}
+                    
                     <div className="md:w-1/2 p-8 flex flex-col justify-between">
-                        {/* Close button */}
+                        
                         <button 
                             onClick={onClose} 
                             className="absolute top-6 right-6 p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-400 hover:text-slate-900"
@@ -89,7 +89,7 @@ const QRPreview: React.FC<QRPreviewProps> = ({
                                 <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">Industrial Label Details</p>
                             </div>
 
-                            {/* Metadata list */}
+                            
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3">
                                     <div className="p-2 bg-slate-50 border border-slate-100 rounded-lg text-slate-400 shrink-0">
@@ -133,7 +133,7 @@ const QRPreview: React.FC<QRPreviewProps> = ({
                             </div>
                         </div>
 
-                        {/* Actions buttons */}
+                        
                         <div className="flex gap-3 mt-8">
                             <button
                                 onClick={handleDownload}
@@ -152,7 +152,7 @@ const QRPreview: React.FC<QRPreviewProps> = ({
                 </div>
             </div>
 
-            {/* Hidden Print Area specifically for printing this QR code */}
+            
             <div id="print-area" className="hidden print:flex flex-col items-center justify-center h-screen bg-white w-full">
                 <div className="flex flex-col items-center text-center p-8 border-[4pt] border-black rounded-none">
                     <img src={qrImageSrc} alt="QR Code" className="w-[80mm] h-[80mm]" />

@@ -6,7 +6,6 @@ import { type UserRole } from '../../types';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
 
-
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -24,17 +23,17 @@ const Login = () => {
         setIsLoading(true);
 
         try {
-            // 5. Ensure login request body: { email, password }
+            
             const response = await api.loginUser({
                 email,
                 password
             });
             
-            // 2. Add console logs
+            
             console.log("Login success");
             console.log("Token received");
             
-            // 1. Save token
+            
             localStorage.setItem("token", response.data.token);
             console.log("Token saved");
             
@@ -46,18 +45,18 @@ const Login = () => {
             
             toast.success("Logged in successfully!");
             
-            // 3. Redirect to dashboard after login
+            
             window.location.href = '/'; 
         } catch (error: any) {
             console.error("Login Error", error);
-            // 4. Handle backend errors properly
+            
             toast.error(error.message || "Invalid credentials or network error");
         } finally {
             if (mountedRef.current) setIsLoading(false);
         }
     };
 
-    // Phase 7: Use mounted checks
+    
     const mountedRef = React.useRef(true);
     React.useEffect(() => {
         return () => { mountedRef.current = false; };

@@ -40,7 +40,7 @@ export const ConsumptionMaterialTable: React.FC<ConsumptionMaterialTableProps> =
     );
   }, [activeTab, searchQuery, materials, mostConsumed, leastConsumed, fastMoving, slowMoving]);
 
-  // Export dataset to CSV
+  
   const handleExportCSV = () => {
     if (displayList.length === 0) return;
 
@@ -83,7 +83,7 @@ export const ConsumptionMaterialTable: React.FC<ConsumptionMaterialTableProps> =
 
   return (
     <div className="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-6 backdrop-blur-md transition-all shadow-xl space-y-6">
-      {/* Header, Search & CSV Export */}
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
         <div>
           <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
@@ -96,7 +96,7 @@ export const ConsumptionMaterialTable: React.FC<ConsumptionMaterialTableProps> =
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          {/* Search */}
+          
           <div className="relative flex-1 md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
             <input
@@ -108,7 +108,7 @@ export const ConsumptionMaterialTable: React.FC<ConsumptionMaterialTableProps> =
             />
           </div>
 
-          {/* CSV Export */}
+          
           <button
             onClick={handleExportCSV}
             className="flex items-center gap-2 rounded-xl bg-cyan-600 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-cyan-500 transition-all cursor-pointer shadow-lg shadow-cyan-600/20"
@@ -118,7 +118,7 @@ export const ConsumptionMaterialTable: React.FC<ConsumptionMaterialTableProps> =
         </div>
       </div>
 
-      {/* Category Tabs */}
+      
       <div className="flex flex-wrap items-center gap-2 border-b border-slate-800/80 pb-3">
         <button
           onClick={() => setActiveTab('most')}
@@ -176,7 +176,7 @@ export const ConsumptionMaterialTable: React.FC<ConsumptionMaterialTableProps> =
         </button>
       </div>
 
-      {/* Table Canvas */}
+      
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>

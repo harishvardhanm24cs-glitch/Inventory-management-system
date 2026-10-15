@@ -11,14 +11,12 @@ try:
 except ImportError:
     from ai_training.config import MODEL_REGISTRY_JSON
 
-
 from datetime import datetime
 
 try:
     from config import MODEL_REGISTRY_JSON, FEATURE_DATASET_CSV
 except ImportError:
     from ai_training.config import MODEL_REGISTRY_JSON, FEATURE_DATASET_CSV
-
 
 class ModelRegistryManager:
     """
@@ -88,7 +86,6 @@ class ModelRegistryManager:
 
         print(f"[ModelRegistryManager] Registered model '{model_entry['model_id']}' in '{self.registry_path}'.")
         return model_entry
-
 
 if __name__ == "__main__":
     mgr = ModelRegistryManager()

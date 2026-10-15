@@ -11,7 +11,7 @@ const BASE_URL = 'http://localhost:5000/api';
 async function testAiEndpoints() {
   console.log('--- STARTING PREDICTIVE AI ENDPOINTS TEST ---');
   
-  // 1. Test GET /api/ai/predictions
+  
   console.log('\n--- 1. Testing GET /api/ai/predictions ---');
   let response = await fetch(`${BASE_URL}/ai/predictions`, {
     headers: { 'Authorization': authHeader }
@@ -24,7 +24,7 @@ async function testAiEndpoints() {
   }
   console.log('✓ Predictions payload active. First item:', result.data[0]);
 
-  // 2. Test GET /api/ai/reorder-recommendations
+  
   console.log('\n--- 2. Testing GET /api/ai/reorder-recommendations ---');
   response = await fetch(`${BASE_URL}/ai/reorder-recommendations`, {
     headers: { 'Authorization': authHeader }
@@ -37,7 +37,7 @@ async function testAiEndpoints() {
   }
   console.log('✓ Reorder recommendations payload active. Count:', result.data.length);
 
-  // 3. Test GET /api/ai/risk-analysis
+  
   console.log('\n--- 3. Testing GET /api/ai/risk-analysis ---');
   response = await fetch(`${BASE_URL}/ai/risk-analysis`, {
     headers: { 'Authorization': authHeader }

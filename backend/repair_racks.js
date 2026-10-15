@@ -1,7 +1,4 @@
-/**
- * repair_racks.js
- * Database script to inspect and repair overloaded racks where current capacity exceeds max capacity.
- */
+
 import db from './config/db.js';
 import fs from 'fs';
 import path from 'path';
@@ -13,19 +10,19 @@ const __dirname = path.dirname(__filename);
 async function runRepair() {
   console.log('=== Rack Capacity Repair & Audit Utility ===\n');
 
-  // 1. Fetch overloaded racks from racks table
+  
   const [overloadedRacks] = await db.query(
     'SELECT id, rack_code, material_name, quantity, max_capacity, status_color FROM racks WHERE quantity > max_capacity'
   );
 
-  // 2. Fetch overloaded racks from rack_inventory table
+  
   const [overloadedInv] = await db.query(
     'SELECT id, rack_code, current_capacity, max_capacity, occupancy_percentage FROM rack_inventory WHERE current_capacity > max_capacity'
   );
 
   const totalOverloaded = Math.max(overloadedRacks.length, overloadedInv.length);
 
-  // Generate Report Output
+  
   let reportText = `======================================================================\n`;
   reportText += `RACK OVERLOAD AUDIT REPORT\n`;
   reportText += `Generated on: ${new Date().toLocaleString()}\n`;
@@ -38,7 +35,7 @@ async function runRepair() {
     reportText += `ALERT: Detected ${totalOverloaded} overloaded rack capacity discrepancies!\n\n`;
     reportText += `--- DETAILED INVENTORY SHELF OVERLOADS ---\n`;
     
-    // Create map of inventory statuses
+    
     const invMap = {};
     overloadedInv.forEach(item => {
       invMap[item.rack_code] = item;
@@ -58,7 +55,7 @@ async function runRepair() {
     console.log(`⚠️  Detected ${totalOverloaded} overloaded rack(s)!`);
     console.log(reportText);
 
-    // Auto-repair execution
+    
     const shouldRepair = process.argv.includes('--repair');
     if (shouldRepair) {
       console.log('Initiating repair protocols...');
@@ -68,7 +65,7 @@ async function runRepair() {
           'UPDATE racks SET max_capacity = ? WHERE rack_code = ?',
           [rack.quantity, rack.rack_code]
         );
-        // Recalculate occupancy percentage in update
+        
         const occPercent = 100.00;
         await db.query(
           'UPDATE rack_inventory SET max_capacity = ?, occupancy_percentage = ? WHERE rack_code = ?',
@@ -83,7 +80,7 @@ async function runRepair() {
     }
   }
 
-  // Save report to reports directory
+  
   const reportsDir = path.join(__dirname, 'reports');
   if (!fs.existsSync(reportsDir)) {
     fs.mkdirSync(reportsDir, { recursive: true });
@@ -94,7 +91,7 @@ async function runRepair() {
   fs.writeFileSync(reportFilePath, reportText, 'utf8');
   console.log(`\nReport saved successfully to: ${reportFilePath}`);
 
-  // Wait for background connection setup to settle
+  
   await new Promise(resolve => setTimeout(resolve, 1500));
   await db.end();
 }

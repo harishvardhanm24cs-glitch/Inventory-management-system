@@ -1,8 +1,5 @@
 import pool from '../config/db.js';
 
-/**
- * Log warehouse events to the audit_logs table
- */
 export const logAudit = async ({
   action_type,
   material_name = null,

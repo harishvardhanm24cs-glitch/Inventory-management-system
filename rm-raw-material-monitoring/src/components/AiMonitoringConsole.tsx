@@ -14,7 +14,7 @@ export const AiMonitoringConsole: React.FC = () => {
 
   return (
     <div className="bg-slate-900/90 border border-slate-800 rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden text-slate-100">
-      {/* Header */}
+      
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 border-b border-slate-800 gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 shadow-lg shadow-emerald-500/20">
@@ -56,7 +56,7 @@ export const AiMonitoringConsole: React.FC = () => {
           </div>
         )}
 
-        {/* AI Health Index Gauge Banner */}
+        
         <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-teal-950/60 border border-emerald-500/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="relative flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 font-mono font-extrabold text-2xl shadow-inner">
@@ -76,9 +76,9 @@ export const AiMonitoringConsole: React.FC = () => {
           </div>
         </div>
 
-        {/* 6 Core Metrics Grid */}
+        
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* 1. Prediction Accuracy */}
+          
           <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-slate-300 flex items-center gap-1.5">
@@ -100,7 +100,7 @@ export const AiMonitoringConsole: React.FC = () => {
             </div>
           </div>
 
-          {/* 2. Prediction Latency */}
+          
           <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-slate-300 flex items-center gap-1.5">
@@ -119,7 +119,7 @@ export const AiMonitoringConsole: React.FC = () => {
             </div>
           </div>
 
-          {/* 3. Feature Availability */}
+          
           <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-slate-300 flex items-center gap-1.5">
@@ -141,7 +141,7 @@ export const AiMonitoringConsole: React.FC = () => {
             </div>
           </div>
 
-          {/* 4. Model Status */}
+          
           <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-slate-300 flex items-center gap-1.5">
@@ -160,7 +160,7 @@ export const AiMonitoringConsole: React.FC = () => {
             </div>
           </div>
 
-          {/* 5. Data Quality */}
+          
           <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-slate-300 flex items-center gap-1.5">
@@ -182,7 +182,7 @@ export const AiMonitoringConsole: React.FC = () => {
             </div>
           </div>
 
-          {/* 6. Prediction Failures */}
+          
           <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-slate-300 flex items-center gap-1.5">

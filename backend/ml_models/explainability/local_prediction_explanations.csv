@@ -1,0 +1,11 @@
+record_id,material_name,rack_code,predicted_quantity_used,actual_quantity_used,prediction_error,top_5_contributing_features
+139,Cherry Red,E3,99.97,100.0,0.03,norm_quantity=0.0955 (Positive (+)); ohe_mov_OUTWARD=1.0 (Positive (+)); ohe_mov_INWARD=0.0 (Negative (-)); rolling_movement_avg=8.14 (Positive (+)); total_outward=3000.0 (Positive (+))
+30,E2E-TEST-MAT-778713,C3,0.0,0.0,0.0,norm_quantity=0.1156 (Positive (+)); ohe_mov_OUTWARD=0.0 (Positive (+)); ohe_mov_INWARD=1.0 (Positive (+)); rolling_movement_avg=0.14 (Positive (+)); total_outward=0.0 (Positive (+))
+119,Cherry Red,E3,0.0,0.0,0.0,norm_quantity=0.0955 (Positive (+)); ohe_mov_OUTWARD=0.0 (Positive (+)); ohe_mov_INWARD=1.0 (Positive (+)); rolling_movement_avg=8.14 (Positive (+)); total_outward=3000.0 (Positive (+))
+29,E2E-TEST-MAT-894643,C2,0.0,0.0,0.0,norm_quantity=0.1156 (Positive (+)); ohe_mov_OUTWARD=0.0 (Positive (+)); ohe_mov_INWARD=1.0 (Positive (+)); rolling_movement_avg=0.14 (Positive (+)); total_outward=0.0 (Positive (+))
+144,sky Blue,E4,0.0,0.0,0.0,norm_quantity=0.0955 (Positive (+)); ohe_mov_OUTWARD=0.0 (Positive (+)); ohe_mov_INWARD=1.0 (Positive (+)); rolling_movement_avg=3.71 (Positive (+)); total_outward=0.0 (Positive (+))
+163,Cherry Red,E3,0.0,0.0,0.0,norm_quantity=0.0955 (Positive (+)); ohe_mov_OUTWARD=0.0 (Positive (+)); ohe_mov_INWARD=1.0 (Positive (+)); rolling_movement_avg=8.14 (Positive (+)); total_outward=3000.0 (Positive (+))
+166,sky Blue,E4,0.0,0.0,0.0,norm_quantity=0.0955 (Positive (+)); ohe_mov_OUTWARD=0.0 (Positive (+)); ohe_mov_INWARD=1.0 (Positive (+)); rolling_movement_avg=3.71 (Positive (+)); total_outward=0.0 (Positive (+))
+51,PINK,A2,0.0,0.0,0.0,norm_quantity=0.0251 (Positive (+)); ohe_mov_OUTWARD=0.0 (Positive (+)); ohe_mov_INWARD=1.0 (Positive (+)); rolling_movement_avg=0.29 (Positive (+)); total_outward=0.0 (Positive (+))
+105,Cherry Red,E3,0.0,0.0,0.0,norm_quantity=0.0955 (Positive (+)); ohe_mov_OUTWARD=0.0 (Positive (+)); ohe_mov_INWARD=1.0 (Positive (+)); rolling_movement_avg=8.14 (Positive (+)); total_outward=3000.0 (Positive (+))
+60,white,RACK-01,30.01,30.0,0.01,norm_quantity=0.0251 (Positive (+)); ohe_mov_OUTWARD=1.0 (Positive (+)); ohe_mov_INWARD=0.0 (Negative (-)); rolling_movement_avg=3.14 (Positive (+)); total_outward=330.0 (Positive (+))

@@ -25,7 +25,7 @@ export const PredictionAnalyticsReport: React.FC = () => {
 
   return (
     <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl backdrop-blur-xl text-slate-100">
-      {/* Title Bar */}
+      
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-slate-800 pb-4">
         <div>
           <div className="flex items-center gap-2">
@@ -37,7 +37,7 @@ export const PredictionAnalyticsReport: React.FC = () => {
           <p className="text-xs text-slate-400 mt-1">Multi-horizon predictive forecasting and automated depletion risk scheduling</p>
         </div>
 
-        {/* Tab Controls */}
+        
         <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
           <button
             onClick={() => setActiveTab('depletion')}
@@ -73,7 +73,7 @@ export const PredictionAnalyticsReport: React.FC = () => {
         </div>
       </div>
 
-      {/* Tab 1: Depletion Schedule */}
+      
       {activeTab === 'depletion' && (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-300">
@@ -115,7 +115,7 @@ export const PredictionAnalyticsReport: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 2: Demand Forecast */}
+      
       {activeTab === 'demand' && (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-300">
@@ -147,7 +147,7 @@ export const PredictionAnalyticsReport: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 3: Consumption Trends */}
+      
       {activeTab === 'trends' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {consumptionTrend.map((item, idx) => {

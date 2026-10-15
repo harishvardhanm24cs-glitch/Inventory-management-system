@@ -4,29 +4,25 @@ import db from '../config/db.js';
 
 dotenv.config();
 
-/**
- * Middleware to verify JWT token and protect routes.
- * Expects Authorization header in the format: Bearer <token>
- */
 export const protect = async (req, res, next) => {
   let token;
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
-      // Get token from header
+      
       token = req.headers.authorization.split(' ')[1];
 
-      // Verify token
+      
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'rm_secret_key');
 
-      // Fetch user from DB to get the current role
+      
       const [users] = await db.query('SELECT role FROM users WHERE id = ?', [decoded.id]);
       const databaseRole = users.length > 0 ? users[0].role : null;
       req.databaseRole = databaseRole;
 
       const currentTokenRole = decoded.role;
 
-      // If role was changed in database: force logout and require reauthentication.
+      
       if (databaseRole && databaseRole !== currentTokenRole) {
         console.log(`[AUTH DEBUG] Role mismatch! Token role: '${currentTokenRole}', Database role: '${databaseRole}'. Forcing logout.`);
         return res.status(401).json({
@@ -35,7 +31,7 @@ export const protect = async (req, res, next) => {
         });
       }
 
-      // Attach user details to request object
+      
       req.user = decoded;
 
       return next();
@@ -84,8 +80,21 @@ export const authorize = (...roles) => {
   };
 };
 
-// Role check aliases
 export const managerOnly = authorize('manager', 'admin');
 export const workerOnly = authorize('worker');
 export const anyRole = authorize('manager', 'worker', 'admin');
 export const adminOnly = authorize('admin', 'manager');
+
+export const optionalAuth = async (req, res, next) => {
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    try {
+      const token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'rm_secret_key');
+      req.user = decoded;
+    } catch (e) {
+      
+    }
+  }
+  return next();
+};
+

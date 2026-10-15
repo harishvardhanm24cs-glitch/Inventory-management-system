@@ -3,16 +3,11 @@ import modelRegistry, { IPredictionModelStrategy } from './services/predictionMo
 import aiPredictionEngine from './services/aiPredictionEngine.js';
 import recommendationEngine from './services/recommendationEngine.js';
 
-/**
- * test_ai_prediction_engine.js
- * Verification script to validate all 5 AI predictions, feature extraction, strategy pluggability, and recommendations.
- */
-
 async function runTests() {
   console.log('=== RUNNING AI PREDICTION ENGINE SUITE TESTS ===\n');
 
   try {
-    // 1. Feature Extraction Test
+    
     console.log('[1/5] Testing Feature Extractor Layer...');
     const matFeatures = await featureExtractor.extractMaterialFeatures();
     const rackFeatures = await featureExtractor.extractRackFeatures();
@@ -22,7 +17,7 @@ async function runTests() {
     console.log(`  ✓ Extracted ${rackFeatures.length} rack feature vectors.`);
     console.log(`  ✓ Warehouse features summary: Health Score = ${warehouseFeatures.healthScore}, Critical Alerts = ${warehouseFeatures.criticalAlertsCount}`);
 
-    // 2. Prediction Core Test
+    
     console.log('\n[2/5] Testing 5 Core AI Predictions...');
     const demand = await aiPredictionEngine.predictDemand();
     const depletion = await aiPredictionEngine.predictDepletion();
@@ -36,18 +31,18 @@ async function runTests() {
     console.log(`  ✓ 4. Warehouse Risk Score: ${risk.overall_risk_score}/100 (${risk.risk_level})`);
     console.log(`  ✓ 5. Consumption Trend Predictions: ${trend.length} items evaluated.`);
 
-    // 3. Consolidated Overview Test
+    
     console.log('\n[3/5] Testing Consolidated AI Engine Overview Payload...');
     const overview = await aiPredictionEngine.getOverviewPredictions();
     console.log(`  ✓ Engine Version: ${overview.engine_version}`);
     console.log(`  ✓ Active Model Strategy: ${overview.model_strategy}`);
 
-    // 4. Recommendation Engine Integration Test
+    
     console.log('\n[4/5] Testing Predictive Recommendation Engine Integration...');
     const recs = await recommendationEngine.generatePredictiveRecommendations();
     console.log(`  ✓ Generated ${recs.total_recommendations} predictive recommendations.`);
 
-    // 5. Pluggable ML Strategy Pattern Test
+    
     console.log('\n[5/5] Testing Pluggable ML Strategy Adapter Interface...');
 
     class MockCustomMLModelStrategy extends IPredictionModelStrategy {
@@ -68,7 +63,7 @@ async function runTests() {
     const customOverview = await aiPredictionEngine.getOverviewPredictions();
     console.log(`  ✓ Successfully switched active strategy to: '${customOverview.model_strategy}' without UI or core modification!`);
 
-    // Reset back to default
+    
     modelRegistry.setActiveModel('default');
     console.log(`  ✓ Successfully restored default strategy: '${aiPredictionEngine.getActiveStrategy().name}'.`);
 

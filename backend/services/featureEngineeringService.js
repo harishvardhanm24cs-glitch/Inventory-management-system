@@ -1,39 +1,9 @@
 import db from '../config/db.js';
 
-/**
- * featureEngineeringService.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 3: Feature Engineering Service
- * Version: v1.0.0
- *
- * Generates reusable, model-independent AI features from historical warehouse data.
- * STRICT RULE: Does NOT generate predictions. Features only.
- *
- * Features Calculated:
- *  1. Daily Consumption (24h outward volume)
- *  2. Weekly Consumption (7d outward volume)
- *  3. Monthly Consumption (30d outward volume)
- *  4. Inventory Turnover (Outward 30d volume / average stock level)
- *  5. Rack Occupancy (percentage capacity utilization per rack)
- *  6. Movement Frequency (transaction + scan event counts over 24h, 7d, 30d)
- *  7. Average Scan Time (mean seconds between consecutive scan events)
- *  8. Material Activity Score (0-100 composite activity score)
- *  9. Warehouse Utilization (total occupied rack space / total max capacity)
- * 10. Threshold Distance (current stock - threshold limit, margin %)
- *
- * Consumed By:
- * • Prediction Engine
- * • Dashboard
- * • Reports
- * • Digital Twin
- */
-
 export const FEATURE_VERSION = 'v1.0.0';
 
 export const featureEngineeringService = {
-  /**
-   * Get feature versioning metadata
-   */
+  
   getMetadata() {
     return {
       version: FEATURE_VERSION,
@@ -44,9 +14,7 @@ export const featureEngineeringService = {
     };
   },
 
-  /**
-   * Helper: Safely query materials with fallback telemetry
-   */
+  
   async getMaterialsData() {
     try {
       const [rows] = await db.query(
@@ -64,9 +32,7 @@ export const featureEngineeringService = {
     ];
   },
 
-  /**
-   * Helper: Safely query transactions with fallback telemetry
-   */
+  
   async getTransactionsData() {
     try {
       const [rows] = await db.query(
@@ -92,9 +58,7 @@ export const featureEngineeringService = {
     ];
   },
 
-  /**
-   * Helper: Safely query racks with fallback telemetry
-   */
+  
   async getRacksData() {
     try {
       const [rows] = await db.query(`
@@ -117,9 +81,7 @@ export const featureEngineeringService = {
     ];
   },
 
-  /**
-   * Helper: Safely query scanner events with fallback telemetry
-   */
+  
   async getScannerData() {
     try {
       const [rows] = await db.query(
@@ -136,9 +98,7 @@ export const featureEngineeringService = {
     ];
   },
 
-  /**
-   * Feature 1, 2, 3: Calculate Daily, Weekly, Monthly Consumption per material
-   */
+  
   async computeConsumptionFeatures(materials, transactions) {
     const now = Date.now();
     const ms24h = 24 * 60 * 60 * 1000;
@@ -190,9 +150,7 @@ export const featureEngineeringService = {
     return Object.values(consumptionMap);
   },
 
-  /**
-   * Feature 4: Inventory Turnover Ratio per material
-   */
+  
   computeInventoryTurnover(materials, consumptionList) {
     const consumptionMap = {};
     (consumptionList || []).forEach(c => {
@@ -202,7 +160,7 @@ export const featureEngineeringService = {
     return (materials || []).map(m => {
       const currentStock = parseFloat(m.quantity) || 0.0;
       const monthlyOutward = consumptionMap[m.id] || 0.0;
-      // Formula: Monthly Outward Volume / (Current Stock || 1)
+      
       const turnover_ratio = currentStock > 0
         ? parseFloat((monthlyOutward / currentStock).toFixed(3))
         : (monthlyOutward > 0 ? 5.0 : 0.0);
@@ -222,9 +180,7 @@ export const featureEngineeringService = {
     });
   },
 
-  /**
-   * Feature 5: Rack Occupancy Percentage per rack
-   */
+  
   computeRackOccupancy(racks) {
     return (racks || []).map(r => {
       const current = parseFloat(r.current_capacity) || 0.0;
@@ -246,9 +202,7 @@ export const featureEngineeringService = {
     });
   },
 
-  /**
-   * Feature 6: Movement Frequency (counts of transactions & scan events over 24h, 7d, 30d)
-   */
+  
   computeMovementFrequency(materials, transactions, scanLogs) {
     const now = Date.now();
     const ms24h = 24 * 60 * 60 * 1000;
@@ -278,7 +232,7 @@ export const featureEngineeringService = {
 
     (transactions || []).forEach(t => addEvent(t.material_id, t.created_at));
     (scanLogs || []).forEach(s => {
-      // match material by barcode or name if material_id not present
+      
       const matchMat = (materials || []).find(m => m.barcode === s.barcode_id || m.material_name === s.material_name);
       if (matchMat) addEvent(matchMat.id, s.created_at);
     });
@@ -286,9 +240,7 @@ export const featureEngineeringService = {
     return Object.values(freqMap);
   },
 
-  /**
-   * Feature 7: Average Scan Duration/Time between consecutive barcode events
-   */
+  
   computeAverageScanTime(scanLogs) {
     if (!scanLogs || scanLogs.length < 2) {
       return {
@@ -305,7 +257,7 @@ export const featureEngineeringService = {
 
     for (let i = 1; i < sortedScans.length; i++) {
       const diffMs = new Date(sortedScans[i].created_at).getTime() - new Date(sortedScans[i - 1].created_at).getTime();
-      if (diffMs > 0 && diffMs <= 24 * 3600 * 1000) { // filter multi-day gaps
+      if (diffMs > 0 && diffMs <= 24 * 3600 * 1000) { 
         totalDiffSeconds += diffMs / 1000;
         intervalCount++;
       }
@@ -329,9 +281,7 @@ export const featureEngineeringService = {
     };
   },
 
-  /**
-   * Feature 8: Material Activity Score (0-100 score per material)
-   */
+  
   computeMaterialActivityScore(materials, movementFreqs, turnoverList) {
     const freqMap = {};
     (movementFreqs || []).forEach(f => { freqMap[f.material_id] = f; });
@@ -342,7 +292,7 @@ export const featureEngineeringService = {
       const f = freqMap[m.id] || { events_30d: 0, events_7d: 0 };
       const t = turnoverMap[m.id] || { turnover_ratio: 0 };
 
-      // Component weights: 30d events (max 50 points), 7d events (max 30 points), Turnover ratio (max 20 points)
+      
       const freqScore = Math.min(50, f.events_30d * 5);
       const recentScore = Math.min(30, f.events_7d * 10);
       const turnoverScore = Math.min(20, Math.round(t.turnover_ratio * 10));
@@ -365,9 +315,7 @@ export const featureEngineeringService = {
     });
   },
 
-  /**
-   * Feature 9: Warehouse Utilization (Overall space efficiency percentage)
-   */
+  
   computeWarehouseUtilization(racks) {
     if (!racks || racks.length === 0) {
       return {
@@ -396,9 +344,7 @@ export const featureEngineeringService = {
     };
   },
 
-  /**
-   * Feature 10: Threshold Distance per material
-   */
+  
   computeThresholdDistance(materials) {
     return (materials || []).map(m => {
       const currentStock = parseFloat(m.quantity) || 0.0;
@@ -425,10 +371,7 @@ export const featureEngineeringService = {
     });
   },
 
-  /**
-   * Comprehensive Feature Engineering Pipeline Execution
-   * Returns all 10 features bundled into a clean, reusable response schema.
-   */
+  
   async generateAllFeatures() {
     const [materials, transactions, racks, scanLogs] = await Promise.all([
       this.getMaterialsData(),
@@ -437,7 +380,7 @@ export const featureEngineeringService = {
       this.getScannerData()
     ]);
 
-    // Calculate features sequentially / compositionally
+    
     const consumptionFeatures = await this.computeConsumptionFeatures(materials, transactions);
     const inventoryTurnover = this.computeInventoryTurnover(materials, consumptionFeatures);
     const rackOccupancy = this.computeRackOccupancy(racks);
@@ -463,36 +406,36 @@ export const featureEngineeringService = {
           unit: m.unit || 'KG',
           current_stock: parseFloat(m.quantity) || 0.0,
           threshold_limit: parseFloat(m.threshold_limit) || 0.0,
-          // Feature 1: Daily Consumption
+          
           daily_consumption: c.daily_consumption || 0.0,
-          // Feature 2: Weekly Consumption
+          
           weekly_consumption: c.weekly_consumption || 0.0,
-          // Feature 3: Monthly Consumption
+          
           monthly_consumption: c.monthly_consumption || 0.0,
-          // Feature 4: Inventory Turnover
+          
           turnover_ratio: t.turnover_ratio || 0.0,
           turnover_category: t.turnover_category || 'SLOW_MOVING',
-          // Feature 6: Movement Frequency
+          
           movement_events_24h: f.events_24h || 0,
           movement_events_7d: f.events_7d || 0,
           movement_events_30d: f.events_30d || 0,
-          // Feature 8: Material Activity Score
+          
           activity_score: a.activity_score || 0,
           activity_tier: a.activity_tier || 'DORMANT',
-          // Feature 10: Threshold Distance
+          
           threshold_distance: td.threshold_distance || 0.0,
           margin_percentage: td.margin_percentage || 0.0,
           risk_flag: td.risk_flag || 'SAFE'
         };
       }),
       rack_features: {
-        // Feature 5: Rack Occupancy
+        
         racks: rackOccupancy
       },
       warehouse_features: {
-        // Feature 7: Average Scan Time
+        
         average_scan_time: avgScanTime,
-        // Feature 9: Warehouse Utilization
+        
         warehouse_utilization: warehouseUtilization
       }
     };

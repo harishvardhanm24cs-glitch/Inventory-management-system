@@ -1,0 +1,768 @@
+[
+  {
+    "decision_id": "DEC-20260818-13A129",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_id": null,
+    "decision": "APPROVED",
+    "reason": "Candidate model v1.1.0 passed all 9 policy rules with 100.0% confidence.",
+    "confidence": 100.0,
+    "passed_rules": [
+      {
+        "key": "higher_r2",
+        "name": "Higher R\u00b2 Score",
+        "detail": "Candidate R\u00b2 (0.9600) vs Production R\u00b2 (0.9400)",
+        "passed": true
+      },
+      {
+        "key": "lower_mae",
+        "name": "Lower MAE",
+        "detail": "Candidate MAE (0.7800) vs Production MAE (0.8500)",
+        "passed": true
+      },
+      {
+        "key": "lower_rmse",
+        "name": "Lower RMSE",
+        "detail": "Candidate RMSE (1.0200) vs Production RMSE (1.1200)",
+        "passed": true
+      },
+      {
+        "key": "cv_score_gte",
+        "name": "CV Score >= Production",
+        "detail": "Candidate CV (0.9400) vs Production CV (0.9200)",
+        "passed": true
+      },
+      {
+        "key": "integrity_verified",
+        "name": "Integrity VERIFIED",
+        "detail": "Candidate Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "artifact_verified",
+        "name": "Artifact VERIFIED",
+        "detail": "Candidate Artifact Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "dataset_verified",
+        "name": "Dataset VERIFIED",
+        "detail": "Dataset Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "candidate_status",
+        "name": "Status = CANDIDATE",
+        "detail": "Candidate Status is 'CANDIDATE' (Allowed: CANDIDATE, STAGING, DEVELOPMENT, REGISTERED)",
+        "passed": true
+      },
+      {
+        "key": "promotion_recommendation",
+        "name": "Recommendation = ELIGIBLE_FOR_PROMOTION",
+        "detail": "Comparison Engine Recommendation is 'ELIGIBLE_FOR_PROMOTION' (Expected: ELIGIBLE_FOR_PROMOTION)",
+        "passed": true
+      }
+    ],
+    "failed_rules": [],
+    "triggered_rules": [
+      {
+        "key": "higher_r2",
+        "name": "Higher R\u00b2 Score",
+        "detail": "Candidate R\u00b2 (0.9600) vs Production R\u00b2 (0.9400)",
+        "passed": true
+      },
+      {
+        "key": "lower_mae",
+        "name": "Lower MAE",
+        "detail": "Candidate MAE (0.7800) vs Production MAE (0.8500)",
+        "passed": true
+      },
+      {
+        "key": "lower_rmse",
+        "name": "Lower RMSE",
+        "detail": "Candidate RMSE (1.0200) vs Production RMSE (1.1200)",
+        "passed": true
+      },
+      {
+        "key": "cv_score_gte",
+        "name": "CV Score >= Production",
+        "detail": "Candidate CV (0.9400) vs Production CV (0.9200)",
+        "passed": true
+      },
+      {
+        "key": "integrity_verified",
+        "name": "Integrity VERIFIED",
+        "detail": "Candidate Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "artifact_verified",
+        "name": "Artifact VERIFIED",
+        "detail": "Candidate Artifact Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "dataset_verified",
+        "name": "Dataset VERIFIED",
+        "detail": "Dataset Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "candidate_status",
+        "name": "Status = CANDIDATE",
+        "detail": "Candidate Status is 'CANDIDATE' (Allowed: CANDIDATE, STAGING, DEVELOPMENT, REGISTERED)",
+        "passed": true
+      },
+      {
+        "key": "promotion_recommendation",
+        "name": "Recommendation = ELIGIBLE_FOR_PROMOTION",
+        "detail": "Comparison Engine Recommendation is 'ELIGIBLE_FOR_PROMOTION' (Expected: ELIGIBLE_FOR_PROMOTION)",
+        "passed": true
+      }
+    ],
+    "manual_override": false,
+    "reviewed_by": "SYSTEM",
+    "created_at": "2026-08-18T17:14:22.817108",
+    "comparison_score": 53.62
+  },
+  {
+    "decision_id": "DEC-20260818-9EF9C4",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_id": null,
+    "decision": "APPROVED",
+    "reason": "Candidate model v1.1.0 passed all 9 policy rules with 100.0% confidence.",
+    "confidence": 100.0,
+    "passed_rules": [
+      {
+        "key": "higher_r2",
+        "name": "Higher R\u00b2 Score",
+        "detail": "Candidate R\u00b2 (0.9600) vs Production R\u00b2 (0.9400)",
+        "passed": true
+      },
+      {
+        "key": "lower_mae",
+        "name": "Lower MAE",
+        "detail": "Candidate MAE (0.7800) vs Production MAE (0.8500)",
+        "passed": true
+      },
+      {
+        "key": "lower_rmse",
+        "name": "Lower RMSE",
+        "detail": "Candidate RMSE (1.0200) vs Production RMSE (1.1200)",
+        "passed": true
+      },
+      {
+        "key": "cv_score_gte",
+        "name": "CV Score >= Production",
+        "detail": "Candidate CV (0.9400) vs Production CV (0.9200)",
+        "passed": true
+      },
+      {
+        "key": "integrity_verified",
+        "name": "Integrity VERIFIED",
+        "detail": "Candidate Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "artifact_verified",
+        "name": "Artifact VERIFIED",
+        "detail": "Candidate Artifact Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "dataset_verified",
+        "name": "Dataset VERIFIED",
+        "detail": "Dataset Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "candidate_status",
+        "name": "Status = CANDIDATE",
+        "detail": "Candidate Status is 'CANDIDATE' (Allowed: CANDIDATE, STAGING, DEVELOPMENT, REGISTERED)",
+        "passed": true
+      },
+      {
+        "key": "promotion_recommendation",
+        "name": "Recommendation = ELIGIBLE_FOR_PROMOTION",
+        "detail": "Comparison Engine Recommendation is 'ELIGIBLE_FOR_PROMOTION' (Expected: ELIGIBLE_FOR_PROMOTION)",
+        "passed": true
+      }
+    ],
+    "failed_rules": [],
+    "triggered_rules": [
+      {
+        "key": "higher_r2",
+        "name": "Higher R\u00b2 Score",
+        "detail": "Candidate R\u00b2 (0.9600) vs Production R\u00b2 (0.9400)",
+        "passed": true
+      },
+      {
+        "key": "lower_mae",
+        "name": "Lower MAE",
+        "detail": "Candidate MAE (0.7800) vs Production MAE (0.8500)",
+        "passed": true
+      },
+      {
+        "key": "lower_rmse",
+        "name": "Lower RMSE",
+        "detail": "Candidate RMSE (1.0200) vs Production RMSE (1.1200)",
+        "passed": true
+      },
+      {
+        "key": "cv_score_gte",
+        "name": "CV Score >= Production",
+        "detail": "Candidate CV (0.9400) vs Production CV (0.9200)",
+        "passed": true
+      },
+      {
+        "key": "integrity_verified",
+        "name": "Integrity VERIFIED",
+        "detail": "Candidate Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "artifact_verified",
+        "name": "Artifact VERIFIED",
+        "detail": "Candidate Artifact Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "dataset_verified",
+        "name": "Dataset VERIFIED",
+        "detail": "Dataset Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "candidate_status",
+        "name": "Status = CANDIDATE",
+        "detail": "Candidate Status is 'CANDIDATE' (Allowed: CANDIDATE, STAGING, DEVELOPMENT, REGISTERED)",
+        "passed": true
+      },
+      {
+        "key": "promotion_recommendation",
+        "name": "Recommendation = ELIGIBLE_FOR_PROMOTION",
+        "detail": "Comparison Engine Recommendation is 'ELIGIBLE_FOR_PROMOTION' (Expected: ELIGIBLE_FOR_PROMOTION)",
+        "passed": true
+      }
+    ],
+    "manual_override": false,
+    "reviewed_by": "SYSTEM",
+    "created_at": "2026-08-18T17:14:14.500366",
+    "comparison_score": 53.62
+  },
+  {
+    "decision_id": "DEC-20260728-20EA2E",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_id": null,
+    "decision": "REJECTED",
+    "reason": "Candidate model v1.1.0 rejected due to 1 policy failure(s): Integrity VERIFIED.",
+    "confidence": 88.89,
+    "passed_rules": [
+      {
+        "key": "higher_r2",
+        "name": "Higher R\u00b2 Score",
+        "detail": "Candidate R\u00b2 (0.9600) vs Production R\u00b2 (0.9400)",
+        "passed": true
+      },
+      {
+        "key": "lower_mae",
+        "name": "Lower MAE",
+        "detail": "Candidate MAE (0.7800) vs Production MAE (0.8500)",
+        "passed": true
+      },
+      {
+        "key": "lower_rmse",
+        "name": "Lower RMSE",
+        "detail": "Candidate RMSE (1.0200) vs Production RMSE (1.1200)",
+        "passed": true
+      },
+      {
+        "key": "cv_score_gte",
+        "name": "CV Score >= Production",
+        "detail": "Candidate CV (0.9400) vs Production CV (0.9200)",
+        "passed": true
+      },
+      {
+        "key": "artifact_verified",
+        "name": "Artifact VERIFIED",
+        "detail": "Candidate Artifact Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "dataset_verified",
+        "name": "Dataset VERIFIED",
+        "detail": "Dataset Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "candidate_status",
+        "name": "Status = CANDIDATE",
+        "detail": "Candidate Status is 'CANDIDATE' (Allowed: CANDIDATE, STAGING, DEVELOPMENT, REGISTERED)",
+        "passed": true
+      },
+      {
+        "key": "promotion_recommendation",
+        "name": "Recommendation = ELIGIBLE_FOR_PROMOTION",
+        "detail": "Comparison Engine Recommendation is 'ELIGIBLE_FOR_PROMOTION' (Expected: ELIGIBLE_FOR_PROMOTION)",
+        "passed": true
+      }
+    ],
+    "failed_rules": [
+      {
+        "key": "integrity_verified",
+        "name": "Integrity VERIFIED",
+        "detail": "Candidate Integrity Status is 'VERIFIED' (Expected: CORRUPTED)",
+        "passed": false
+      }
+    ],
+    "triggered_rules": [
+      {
+        "key": "higher_r2",
+        "name": "Higher R\u00b2 Score",
+        "detail": "Candidate R\u00b2 (0.9600) vs Production R\u00b2 (0.9400)",
+        "passed": true
+      },
+      {
+        "key": "lower_mae",
+        "name": "Lower MAE",
+        "detail": "Candidate MAE (0.7800) vs Production MAE (0.8500)",
+        "passed": true
+      },
+      {
+        "key": "lower_rmse",
+        "name": "Lower RMSE",
+        "detail": "Candidate RMSE (1.0200) vs Production RMSE (1.1200)",
+        "passed": true
+      },
+      {
+        "key": "cv_score_gte",
+        "name": "CV Score >= Production",
+        "detail": "Candidate CV (0.9400) vs Production CV (0.9200)",
+        "passed": true
+      },
+      {
+        "key": "integrity_verified",
+        "name": "Integrity VERIFIED",
+        "detail": "Candidate Integrity Status is 'VERIFIED' (Expected: CORRUPTED)",
+        "passed": false
+      },
+      {
+        "key": "artifact_verified",
+        "name": "Artifact VERIFIED",
+        "detail": "Candidate Artifact Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "dataset_verified",
+        "name": "Dataset VERIFIED",
+        "detail": "Dataset Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "candidate_status",
+        "name": "Status = CANDIDATE",
+        "detail": "Candidate Status is 'CANDIDATE' (Allowed: CANDIDATE, STAGING, DEVELOPMENT, REGISTERED)",
+        "passed": true
+      },
+      {
+        "key": "promotion_recommendation",
+        "name": "Recommendation = ELIGIBLE_FOR_PROMOTION",
+        "detail": "Comparison Engine Recommendation is 'ELIGIBLE_FOR_PROMOTION' (Expected: ELIGIBLE_FOR_PROMOTION)",
+        "passed": true
+      }
+    ],
+    "manual_override": false,
+    "reviewed_by": "SYSTEM",
+    "created_at": "2026-07-28T23:28:34.903159",
+    "comparison_score": 53.62
+  },
+  {
+    "decision_id": "DEC-20260728-F73C26",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_id": null,
+    "decision": "REJECTED",
+    "reason": "OVERRIDE [TEST_ADMINISTRATOR]: Automated test manual rejection override validation (Previous: APPROVED)",
+    "confidence": 100.0,
+    "passed_rules": [
+      {
+        "key": "higher_r2",
+        "name": "Higher R\u00b2 Score",
+        "detail": "Candidate R\u00b2 (0.9600) vs Production R\u00b2 (0.9400)",
+        "passed": true
+      },
+      {
+        "key": "lower_mae",
+        "name": "Lower MAE",
+        "detail": "Candidate MAE (0.7800) vs Production MAE (0.8500)",
+        "passed": true
+      },
+      {
+        "key": "lower_rmse",
+        "name": "Lower RMSE",
+        "detail": "Candidate RMSE (1.0200) vs Production RMSE (1.1200)",
+        "passed": true
+      },
+      {
+        "key": "cv_score_gte",
+        "name": "CV Score >= Production",
+        "detail": "Candidate CV (0.9400) vs Production CV (0.9200)",
+        "passed": true
+      },
+      {
+        "key": "integrity_verified",
+        "name": "Integrity VERIFIED",
+        "detail": "Candidate Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "artifact_verified",
+        "name": "Artifact VERIFIED",
+        "detail": "Candidate Artifact Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "dataset_verified",
+        "name": "Dataset VERIFIED",
+        "detail": "Dataset Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "candidate_status",
+        "name": "Status = CANDIDATE",
+        "detail": "Candidate Status is 'CANDIDATE' (Allowed: CANDIDATE, STAGING, DEVELOPMENT, REGISTERED)",
+        "passed": true
+      },
+      {
+        "key": "promotion_recommendation",
+        "name": "Recommendation = ELIGIBLE_FOR_PROMOTION",
+        "detail": "Comparison Engine Recommendation is 'ELIGIBLE_FOR_PROMOTION' (Expected: ELIGIBLE_FOR_PROMOTION)",
+        "passed": true
+      }
+    ],
+    "failed_rules": [],
+    "triggered_rules": [
+      {
+        "key": "higher_r2",
+        "name": "Higher R\u00b2 Score",
+        "detail": "Candidate R\u00b2 (0.9600) vs Production R\u00b2 (0.9400)",
+        "passed": true
+      },
+      {
+        "key": "lower_mae",
+        "name": "Lower MAE",
+        "detail": "Candidate MAE (0.7800) vs Production MAE (0.8500)",
+        "passed": true
+      },
+      {
+        "key": "lower_rmse",
+        "name": "Lower RMSE",
+        "detail": "Candidate RMSE (1.0200) vs Production RMSE (1.1200)",
+        "passed": true
+      },
+      {
+        "key": "cv_score_gte",
+        "name": "CV Score >= Production",
+        "detail": "Candidate CV (0.9400) vs Production CV (0.9200)",
+        "passed": true
+      },
+      {
+        "key": "integrity_verified",
+        "name": "Integrity VERIFIED",
+        "detail": "Candidate Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "artifact_verified",
+        "name": "Artifact VERIFIED",
+        "detail": "Candidate Artifact Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "dataset_verified",
+        "name": "Dataset VERIFIED",
+        "detail": "Dataset Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "candidate_status",
+        "name": "Status = CANDIDATE",
+        "detail": "Candidate Status is 'CANDIDATE' (Allowed: CANDIDATE, STAGING, DEVELOPMENT, REGISTERED)",
+        "passed": true
+      },
+      {
+        "key": "promotion_recommendation",
+        "name": "Recommendation = ELIGIBLE_FOR_PROMOTION",
+        "detail": "Comparison Engine Recommendation is 'ELIGIBLE_FOR_PROMOTION' (Expected: ELIGIBLE_FOR_PROMOTION)",
+        "passed": true
+      }
+    ],
+    "manual_override": true,
+    "reviewed_by": "TEST_ADMINISTRATOR",
+    "created_at": "2026-07-28T23:28:32.694057",
+    "comparison_score": 53.62,
+    "override_audit": {
+      "previous_decision": "APPROVED",
+      "new_decision": "REJECTED",
+      "override_action": "REJECT",
+      "reviewed_by": "TEST_ADMINISTRATOR",
+      "reason": "Automated test manual rejection override validation",
+      "timestamp": "2026-07-28T23:28:37.143456"
+    },
+    "updated_at": "2026-07-28T23:28:37.143465"
+  },
+  {
+    "decision_id": "DEC-20260728-CABCAB",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_id": null,
+    "decision": "APPROVED",
+    "reason": "Candidate model v1.1.0 passed all 9 policy rules with 100.0% confidence.",
+    "confidence": 100.0,
+    "passed_rules": [
+      {
+        "key": "higher_r2",
+        "name": "Higher R\u00b2 Score",
+        "detail": "Candidate R\u00b2 (0.9600) vs Production R\u00b2 (0.9400)",
+        "passed": true
+      },
+      {
+        "key": "lower_mae",
+        "name": "Lower MAE",
+        "detail": "Candidate MAE (0.7800) vs Production MAE (0.8500)",
+        "passed": true
+      },
+      {
+        "key": "lower_rmse",
+        "name": "Lower RMSE",
+        "detail": "Candidate RMSE (1.0200) vs Production RMSE (1.1200)",
+        "passed": true
+      },
+      {
+        "key": "cv_score_gte",
+        "name": "CV Score >= Production",
+        "detail": "Candidate CV (0.9400) vs Production CV (0.9200)",
+        "passed": true
+      },
+      {
+        "key": "integrity_verified",
+        "name": "Integrity VERIFIED",
+        "detail": "Candidate Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "artifact_verified",
+        "name": "Artifact VERIFIED",
+        "detail": "Candidate Artifact Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "dataset_verified",
+        "name": "Dataset VERIFIED",
+        "detail": "Dataset Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "candidate_status",
+        "name": "Status = CANDIDATE",
+        "detail": "Candidate Status is 'CANDIDATE' (Allowed: CANDIDATE, STAGING, DEVELOPMENT, REGISTERED)",
+        "passed": true
+      },
+      {
+        "key": "promotion_recommendation",
+        "name": "Recommendation = ELIGIBLE_FOR_PROMOTION",
+        "detail": "Comparison Engine Recommendation is 'ELIGIBLE_FOR_PROMOTION' (Expected: ELIGIBLE_FOR_PROMOTION)",
+        "passed": true
+      }
+    ],
+    "failed_rules": [],
+    "triggered_rules": [
+      {
+        "key": "higher_r2",
+        "name": "Higher R\u00b2 Score",
+        "detail": "Candidate R\u00b2 (0.9600) vs Production R\u00b2 (0.9400)",
+        "passed": true
+      },
+      {
+        "key": "lower_mae",
+        "name": "Lower MAE",
+        "detail": "Candidate MAE (0.7800) vs Production MAE (0.8500)",
+        "passed": true
+      },
+      {
+        "key": "lower_rmse",
+        "name": "Lower RMSE",
+        "detail": "Candidate RMSE (1.0200) vs Production RMSE (1.1200)",
+        "passed": true
+      },
+      {
+        "key": "cv_score_gte",
+        "name": "CV Score >= Production",
+        "detail": "Candidate CV (0.9400) vs Production CV (0.9200)",
+        "passed": true
+      },
+      {
+        "key": "integrity_verified",
+        "name": "Integrity VERIFIED",
+        "detail": "Candidate Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "artifact_verified",
+        "name": "Artifact VERIFIED",
+        "detail": "Candidate Artifact Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "dataset_verified",
+        "name": "Dataset VERIFIED",
+        "detail": "Dataset Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "candidate_status",
+        "name": "Status = CANDIDATE",
+        "detail": "Candidate Status is 'CANDIDATE' (Allowed: CANDIDATE, STAGING, DEVELOPMENT, REGISTERED)",
+        "passed": true
+      },
+      {
+        "key": "promotion_recommendation",
+        "name": "Recommendation = ELIGIBLE_FOR_PROMOTION",
+        "detail": "Comparison Engine Recommendation is 'ELIGIBLE_FOR_PROMOTION' (Expected: ELIGIBLE_FOR_PROMOTION)",
+        "passed": true
+      }
+    ],
+    "manual_override": false,
+    "reviewed_by": "SYSTEM",
+    "created_at": "2026-07-28T23:28:28.612274",
+    "comparison_score": 53.62
+  },
+  {
+    "decision_id": "DEC-20260728-2390F4",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_id": null,
+    "decision": "APPROVED",
+    "reason": "Candidate model v1.1.0 passed all 9 policy rules with 100.0% confidence.",
+    "confidence": 100.0,
+    "passed_rules": [
+      {
+        "key": "higher_r2",
+        "name": "Higher R\u00b2 Score",
+        "detail": "Candidate R\u00b2 (0.9600) vs Production R\u00b2 (0.9400)",
+        "passed": true
+      },
+      {
+        "key": "lower_mae",
+        "name": "Lower MAE",
+        "detail": "Candidate MAE (0.7800) vs Production MAE (0.8500)",
+        "passed": true
+      },
+      {
+        "key": "lower_rmse",
+        "name": "Lower RMSE",
+        "detail": "Candidate RMSE (1.0200) vs Production RMSE (1.1200)",
+        "passed": true
+      },
+      {
+        "key": "cv_score_gte",
+        "name": "CV Score >= Production",
+        "detail": "Candidate CV (0.9400) vs Production CV (0.9200)",
+        "passed": true
+      },
+      {
+        "key": "integrity_verified",
+        "name": "Integrity VERIFIED",
+        "detail": "Candidate Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "artifact_verified",
+        "name": "Artifact VERIFIED",
+        "detail": "Candidate Artifact Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "dataset_verified",
+        "name": "Dataset VERIFIED",
+        "detail": "Dataset Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "candidate_status",
+        "name": "Status = CANDIDATE",
+        "detail": "Candidate Status is 'CANDIDATE' (Allowed: CANDIDATE, STAGING, DEVELOPMENT, REGISTERED)",
+        "passed": true
+      },
+      {
+        "key": "promotion_recommendation",
+        "name": "Recommendation = ELIGIBLE_FOR_PROMOTION",
+        "detail": "Comparison Engine Recommendation is 'ELIGIBLE_FOR_PROMOTION' (Expected: ELIGIBLE_FOR_PROMOTION)",
+        "passed": true
+      }
+    ],
+    "failed_rules": [],
+    "triggered_rules": [
+      {
+        "key": "higher_r2",
+        "name": "Higher R\u00b2 Score",
+        "detail": "Candidate R\u00b2 (0.9600) vs Production R\u00b2 (0.9400)",
+        "passed": true
+      },
+      {
+        "key": "lower_mae",
+        "name": "Lower MAE",
+        "detail": "Candidate MAE (0.7800) vs Production MAE (0.8500)",
+        "passed": true
+      },
+      {
+        "key": "lower_rmse",
+        "name": "Lower RMSE",
+        "detail": "Candidate RMSE (1.0200) vs Production RMSE (1.1200)",
+        "passed": true
+      },
+      {
+        "key": "cv_score_gte",
+        "name": "CV Score >= Production",
+        "detail": "Candidate CV (0.9400) vs Production CV (0.9200)",
+        "passed": true
+      },
+      {
+        "key": "integrity_verified",
+        "name": "Integrity VERIFIED",
+        "detail": "Candidate Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "artifact_verified",
+        "name": "Artifact VERIFIED",
+        "detail": "Candidate Artifact Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "dataset_verified",
+        "name": "Dataset VERIFIED",
+        "detail": "Dataset Integrity Status is 'VERIFIED' (Expected: VERIFIED)",
+        "passed": true
+      },
+      {
+        "key": "candidate_status",
+        "name": "Status = CANDIDATE",
+        "detail": "Candidate Status is 'CANDIDATE' (Allowed: CANDIDATE, STAGING, DEVELOPMENT, REGISTERED)",
+        "passed": true
+      },
+      {
+        "key": "promotion_recommendation",
+        "name": "Recommendation = ELIGIBLE_FOR_PROMOTION",
+        "detail": "Comparison Engine Recommendation is 'ELIGIBLE_FOR_PROMOTION' (Expected: ELIGIBLE_FOR_PROMOTION)",
+        "passed": true
+      }
+    ],
+    "manual_override": false,
+    "reviewed_by": "SYSTEM",
+    "created_at": "2026-07-28T23:27:50.030680",
+    "comparison_score": 53.62
+  }
+]

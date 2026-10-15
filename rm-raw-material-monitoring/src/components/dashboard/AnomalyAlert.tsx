@@ -20,7 +20,7 @@ const AnomalyAlert: React.FC = () => {
         const fetchAnomalies = async () => {
             try {
                 const data = await api.getAnomalies();
-                // Ensure data is an array before setting state
+                
                 setAnomalies(Array.isArray(data) ? data : []);
             } catch (error) {
                 console.error('Failed to fetch anomalies:', error);
@@ -32,7 +32,7 @@ const AnomalyAlert: React.FC = () => {
 
         fetchAnomalies();
         
-        // Refresh every 5 minutes
+        
         const interval = setInterval(fetchAnomalies, 5 * 60 * 1000);
         return () => clearInterval(interval);
     }, []);

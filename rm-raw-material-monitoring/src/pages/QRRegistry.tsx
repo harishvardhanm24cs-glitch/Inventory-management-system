@@ -24,13 +24,13 @@ const QRRegistry = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState<'all' | 'used' | 'unused'>('all');
     
-    // Pagination state
+    
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const limit = 10;
 
-    // Preview modal state
+    
     const [selectedQR, setSelectedQR] = useState<QRItem | null>(null);
 
     const fetchQrCodes = async () => {
@@ -55,7 +55,7 @@ const QRRegistry = () => {
     };
 
     useEffect(() => {
-        // Reset to page 1 when search or status filters change
+        
         setPage(1);
     }, [searchQuery, statusFilter]);
 
@@ -90,7 +90,7 @@ const QRRegistry = () => {
         { id: 'used', label: 'Used (Depleted)' }
     ];
 
-    // Compute simple summaries based on current list state or totals
+    
     const unusedCount = qrList.filter(item => item.status === 'Unused').length;
     const usedCount = qrList.filter(item => item.status === 'Used').length;
 
@@ -106,7 +106,7 @@ const QRRegistry = () => {
                 </div>
             </div>
 
-            {/* Quick Metrics Bar */}
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div className="saas-card p-5 bg-white border border-slate-200/60 rounded-2xl shadow-sm flex flex-col justify-between">
                     <div>
@@ -137,9 +137,9 @@ const QRRegistry = () => {
                 </div>
             </div>
 
-            {/* Filter controls */}
+            
             <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-                {/* Tabs */}
+                
                 <div className="flex bg-slate-100 p-1 rounded-xl gap-1 border border-slate-200/40">
                     {filterTabs.map((t) => (
                         <button
@@ -157,7 +157,7 @@ const QRRegistry = () => {
                     ))}
                 </div>
 
-                {/* Search query */}
+                
                 <div className="relative w-full md:w-80">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
@@ -170,7 +170,7 @@ const QRRegistry = () => {
                 </div>
             </div>
 
-            {/* Table */}
+            
             <div className="glass-panel overflow-hidden border border-slate-200/60 rounded-2xl shadow-sm bg-white">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
@@ -273,7 +273,7 @@ const QRRegistry = () => {
                     </table>
                 </div>
 
-                {/* Pagination Controls */}
+                
                 {totalPages > 1 && (
                     <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex justify-between items-center gap-4">
                         <span className="text-xs text-slate-405 font-bold">
@@ -302,11 +302,11 @@ const QRRegistry = () => {
                 )}
             </div>
 
-            {/* QR Detail Preview Modal */}
+            
             {selectedQR && (
                 <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-saas-fade">
                     <div className="bg-white rounded-2xl border border-slate-250/60 shadow-2xl max-w-sm w-full overflow-hidden flex flex-col relative animate-saas-scale">
-                        {/* Header */}
+                        
                         <div className="bg-slate-50 px-5 py-4 border-b border-slate-100 flex justify-between items-center">
                             <div className="flex items-center gap-1.5">
                                 <QrCode size={16} className="text-primary animate-pulse" />
@@ -320,7 +320,7 @@ const QRRegistry = () => {
                             </button>
                         </div>
 
-                        {/* Image Body */}
+                        
                         <div className="p-6 flex flex-col items-center border-b border-slate-100 space-y-4">
                             <div className="p-3 bg-slate-50 border border-slate-150 rounded-2xl shadow-inner">
                                 <img
@@ -335,7 +335,7 @@ const QRRegistry = () => {
                             </div>
                         </div>
 
-                        {/* Detail Metadata Grid */}
+                        
                         <div className="px-5 py-4 bg-slate-50/50 text-xs font-semibold grid grid-cols-2 gap-4 border-b border-slate-100">
                             <div>
                                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Rack Location</span>
@@ -373,7 +373,7 @@ const QRRegistry = () => {
                             </div>
                         </div>
 
-                        {/* Actions */}
+                        
                         <div className="px-5 py-3.5 bg-slate-50 flex gap-2">
                             <button
                                 onClick={() => selectedQR.qr_image_path && handleDownload(selectedQR.qr_image_path, selectedQR.barcode_id)}

@@ -6,7 +6,7 @@ const RackMaterials = {
    * Route: GET /api/racks/:rackCode/materials
    */
   async getByRackCode(rackCode) {
-    // 1. Rack header from rack_inventory
+    
     const [rackRows] = await db.query(
       `SELECT
          ri.rack_code,
@@ -27,7 +27,7 @@ const RackMaterials = {
     const maxCap = parseFloat(rack.max_capacity) || 100;
     const occ = parseFloat(rack.occupancy_percentage) || 0;
 
-    // 1 & 2. Validation: Occupancy capacity and Negative inventory check
+    
     if (currentCap > maxCap) {
         console.error(`[VALIDATION ERROR] Rack ${rackCode} occupancy ${currentCap} KG exceeds max capacity ${maxCap} KG!`);
     }
@@ -35,7 +35,7 @@ const RackMaterials = {
         console.error(`[VALIDATION ERROR] Rack ${rackCode} has negative capacity stats! Current: ${currentCap}, Max: ${maxCap}, Occ: ${occ}%`);
     }
 
-    // 2. Materials for this rack from materials table
+    
     const [matRows] = await db.query(
       `SELECT
          m.id,
@@ -52,7 +52,7 @@ const RackMaterials = {
       [rackCode]
     );
 
-    // 3. Validation: Merge duplicate entries & prevent negative inventory
+    
     const mergedMap = new Map();
     for (const row of matRows) {
         const name = row.material_name;
@@ -62,7 +62,7 @@ const RackMaterials = {
 
         if (quantity < 0 || weight < 0) {
             console.error(`[VALIDATION ERROR] Negative inventory not allowed for material '${name}' in Rack '${rackCode}': Quantity=${quantity}, Weight=${weight}`);
-            continue; // Skip negative entries
+            continue; 
         }
 
         if (mergedMap.has(name)) {
@@ -106,9 +106,7 @@ const RackMaterials = {
     };
   },
 
-  /**
-   * Get materials for ALL racks at once (used by the floor map overview)
-   */
+  
   async getAllRacksSummary() {
     const [rows] = await db.query(`
       SELECT

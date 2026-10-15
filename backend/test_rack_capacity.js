@@ -1,7 +1,4 @@
-/**
- * test_rack_capacity.js
- * End-to-end integration test for Rack Capacity Enforcement.
- */
+
 import db from './config/db.js';
 import jwt from 'jsonwebtoken';
 
@@ -22,7 +19,7 @@ async function runTest() {
   const testBarcode = 'CAP-BARCODE-001';
   const testMatName = 'Capacity Test Paint';
 
-  // 1. Reset/Create test rack in DB with max_capacity = 100
+  
   console.log(`Resetting test state...`);
   await db.query('DELETE FROM audit_logs WHERE rack_code = ?', [testRack]);
   await db.query('DELETE FROM transactions WHERE material_id IN (SELECT id FROM materials WHERE barcode = ?)', [testBarcode]);
@@ -59,7 +56,7 @@ async function runTest() {
   }
   console.log(`✓ QR Code generated successfully: ${qrJson.barcode_id}`);
 
-  // 2. Test Inward Scanner / Auto-Store with 120 KG (exceeding 100 max)
+  
   console.log(`\n[Test 1] Scanning QR of 120 KG into 100 KG capacity rack...`);
   const storeRes = await fetch(`${BASE_URL}/scanner/auto-store`, {
     method: 'POST',
@@ -85,7 +82,7 @@ async function runTest() {
     throw new Error(`FAILURE: Auto-store request was rejected. Status: ${storeRes.status}`);
   }
 
-  // 3. Verify database state (Commit verification)
+  
   console.log('\n[Test 2] Verifying database changes were committed successfully...');
   
   const [[qrCheck]] = await db.query('SELECT status FROM qr_codes WHERE barcode_id = ?', [qrJson.barcode_id]);
@@ -109,7 +106,7 @@ async function runTest() {
     throw new Error(`FAILURE: Rack quantity was not modified! Got: ${rackCheck?.quantity}`);
   }
 
-  // 4. Verify no capacity blocked logs are written
+  
   console.log('\n[Test 3] Verifying no capacity blocked audit logs were written...');
   const [logs] = await db.query('SELECT action_type, action_details FROM audit_logs WHERE rack_code = ? ORDER BY id DESC', [testRack]);
   const capBlockedLogs = logs.filter(l => l.action_type === 'Capacity Blocked');
@@ -119,7 +116,7 @@ async function runTest() {
   }
   console.log('✓ SUCCESS: No capacity blocked audit logs found!');
 
-  // 5. Test PUT /api/racks/:id overloading
+  
   console.log(`\n[Test 4] Testing PUT /api/racks/:id allows overloading...`);
   const [[testRackRow]] = await db.query('SELECT id FROM racks WHERE rack_code = ?', [testRack]);
   const putRes = await fetch(`${BASE_URL}/racks/${testRackRow.id}`, {
@@ -141,7 +138,7 @@ async function runTest() {
     throw new Error(`FAILURE: PUT /racks/:id overload failed! Status: ${putRes.status}`);
   }
 
-  // 6. Test PUT /api/rack-inventory/:rackCode overloading
+  
   console.log(`\n[Test 5] Testing PUT /api/rack-inventory/:rackCode allows overloading...`);
   const putInvRes = await fetch(`${BASE_URL}/rack-inventory/${testRack}`, {
     method: 'PUT',
@@ -162,10 +159,10 @@ async function runTest() {
     throw new Error(`FAILURE: PUT /rack-inventory/:rackCode overload failed! Status: ${putInvRes.status}`);
   }
 
-  // Cleanup
+  
   console.log('\nCleaning up test state...');
   await db.query('DELETE FROM audit_logs WHERE rack_code = ?', [testRack]);
-  // Also clean up materials created under this test
+  
   if (matsCheck.length > 0) {
     await db.query('DELETE FROM transactions WHERE material_id = ?', [matsCheck[0].id]);
     await db.query('DELETE FROM materials WHERE id = ?', [matsCheck[0].id]);

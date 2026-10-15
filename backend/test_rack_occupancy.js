@@ -4,7 +4,6 @@ import db from './config/db.js';
 
 dotenv.config();
 
-// Setup JWT Auth Header
 const token = jwt.sign({ id: 1, email: 'test@example.com', role: 'manager' }, process.env.JWT_SECRET || 'rm_secret_key');
 const authHeader = `Bearer ${token}`;
 const BASE_URL = 'http://localhost:5000/api';
@@ -15,19 +14,19 @@ async function runTest() {
 
   console.log('--- STARTING LIVE RACK OCCUPANCY INTEGRATION TESTS ---');
   
-  // 1. Clean up any existing test data
+  
   console.log('Cleaning up old test data...');
   const testBarcode = 'TEST-BARCODE-A1';
   const testMatName = 'Test Material A1';
   
-  // Delete transactions for test materials
+  
   await db.query("DELETE FROM transactions WHERE material_id IN (SELECT id FROM materials WHERE barcode = ?)", [testBarcode]);
-  // Delete test materials
+  
   await db.query("DELETE FROM materials WHERE barcode = ?", [testBarcode]);
-  // Reset any racks assigned to our test material
+  
   await db.query("UPDATE racks SET material_name = NULL, batch_number = NULL, quantity = 0.00 WHERE material_name = ?", [testMatName]);
   
-  // Find or create a test rack
+  
   const testRackCode = 'RACK-TEST-A1';
   const [existingRacks] = await db.query("SELECT id FROM racks WHERE rack_code = ?", [testRackCode]);
   if (existingRacks.length === 0) {
@@ -38,7 +37,7 @@ async function runTest() {
     await db.query("UPDATE racks SET material_name = NULL, batch_number = NULL, quantity = 0.00 WHERE rack_code = ?", [testRackCode]);
   }
 
-  // Verify initial rack_inventory occupancy is 0%
+  
   const [initialInv] = await db.query("SELECT * FROM rack_inventory WHERE rack_code = ?", [testRackCode]);
   console.log(`Initial occupancy check for ${testRackCode} in rack_inventory:`);
   console.log(`- Current capacity: ${initialInv[0]?.current_capacity} (Expected: 0.00)`);
@@ -49,7 +48,7 @@ async function runTest() {
   }
   console.log('✓ Initial occupancy is 0%');
 
-  // 2. Create material via POST /api/materials (Initial stock > 0)
+  
   console.log('\nCreating test material via API...');
   const createResponse = await fetch(`${BASE_URL}/materials`, {
     method: 'POST',
@@ -76,8 +75,8 @@ async function runTest() {
   const materialId = createResult.material.id;
   console.log(`✓ Material created successfully. ID: ${materialId}`);
 
-  // 3. Verify Rack Sync: check if quantity & occupancy_percentage updated in rack_inventory
-  // Find which rack the material was assigned to
+  
+  
   const [assignedRacks] = await db.query("SELECT * FROM racks WHERE material_name = ?", [testMatName]);
   if (assignedRacks.length === 0) {
     console.error('❌ Failure: Material was not assigned to any rack!');
@@ -110,7 +109,7 @@ async function runTest() {
   }
   console.log(`✓ Rack inventory occupancy synchronized successfully to ${expectedOcc1}%`);
 
-  // 4. Verify Rack API: check if occupancy_percentage is returned
+  
   console.log('\nFetching racks via GET /api/racks...');
   const getRacksResponse = await fetch(`${BASE_URL}/racks`, {
     headers: { 'Authorization': authHeader }
@@ -126,7 +125,7 @@ async function runTest() {
   }
   console.log('✓ Rack API returns correct occupancy percentage');
 
-  // 5. Adjust Stock: Inward 15.00
+  
   console.log('\nAdjusting stock: Inward 15.00...');
   const inwardResponse = await fetch(`${BASE_URL}/materials/${materialId}/stock`, {
     method: 'POST',
@@ -144,7 +143,7 @@ async function runTest() {
   console.log('Inward Response Body:', inwardResult);
   console.log('Inward stock adjustment quantity:', inwardResult.material?.quantity);
 
-  // Verify rack_inventory capacity is now 35.00
+  
   const [invCheck2] = await db.query("SELECT * FROM rack_inventory WHERE rack_code = ?", [assignedRackCode]);
   console.log(`Verification 2: Check rack_inventory for ${assignedRackCode}:`);
   console.log(`- Current capacity: ${invCheck2[0]?.current_capacity} (Expected: 35.00)`);
@@ -155,7 +154,7 @@ async function runTest() {
   }
   console.log(`✓ Rack inventory occupancy synchronized successfully to ${expectedOcc2}%`);
 
-  // 6. Adjust Stock: Outward 10.00
+  
   console.log('\nAdjusting stock: Outward 10.00...');
   const outwardResponse = await fetch(`${BASE_URL}/materials/${materialId}/stock`, {
     method: 'POST',
@@ -171,7 +170,7 @@ async function runTest() {
   const outwardResult = await outwardResponse.json();
   console.log('Outward stock adjustment quantity:', outwardResult.material?.quantity);
 
-  // Verify rack_inventory capacity is now 25.00
+  
   const [invCheck3] = await db.query("SELECT * FROM rack_inventory WHERE rack_code = ?", [assignedRackCode]);
   console.log(`Verification 3: Check rack_inventory for ${assignedRackCode}:`);
   console.log(`- Current capacity: ${invCheck3[0]?.current_capacity} (Expected: 25.00)`);
@@ -182,7 +181,7 @@ async function runTest() {
   }
   console.log(`✓ Rack inventory occupancy synchronized successfully to ${expectedOcc3}%`);
 
-  // 7. Update Material: Direct update to quantity 50.00
+  
   console.log('\nUpdating material: set quantity directly to 50.00...');
   const updateResponse = await fetch(`${BASE_URL}/materials/${materialId}`, {
     method: 'PUT',
@@ -197,7 +196,7 @@ async function runTest() {
   const updateResult = await updateResponse.json();
   console.log('Direct update quantity:', updateResult.material?.quantity);
 
-  // Verify rack_inventory capacity is now 50.00
+  
   const [invCheck4] = await db.query("SELECT * FROM rack_inventory WHERE rack_code = ?", [assignedRackCode]);
   console.log(`Verification 4: Check rack_inventory for ${assignedRackCode}:`);
   console.log(`- Current capacity: ${invCheck4[0]?.current_capacity} (Expected: 50.00)`);
@@ -215,7 +214,7 @@ async function runTest() {
   }
   console.log(`✓ Rack inventory occupancy synchronized successfully to ${expectedOcc4}% and status color is ${expectedColor4}`);
 
-  // 8. Delete Material
+  
   console.log('\nDeleting material...');
   const deleteResponse = await fetch(`${BASE_URL}/materials/${materialId}`, {
     method: 'DELETE',
@@ -226,7 +225,7 @@ async function runTest() {
   const deleteResult = await deleteResponse.json();
   console.log('Delete response:', deleteResult.message);
 
-  // Verify rack_inventory occupancy resets to 0% and rack is empty
+  
   const [invCheck5] = await db.query("SELECT * FROM rack_inventory WHERE rack_code = ?", [assignedRackCode]);
   console.log(`Verification 5: Check rack_inventory for ${assignedRackCode}:`);
   console.log(`- Current capacity: ${invCheck5[0]?.current_capacity} (Expected: 0.00)`);

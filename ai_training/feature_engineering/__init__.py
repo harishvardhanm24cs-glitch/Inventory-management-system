@@ -2,7 +2,6 @@ import os
 import json
 from ai_training.config import FEATURE_REGISTRY_JSON, FEATURE_IMPORTANCE_TEMPLATE_JSON
 
-
 class FeatureLoader:
     """
     FeatureLoader
@@ -22,6 +21,5 @@ class FeatureLoader:
             return {}
         with open(FEATURE_IMPORTANCE_TEMPLATE_JSON, "r", encoding="utf-8") as f:
             return json.load(f)
-
 
 __all__ = ["FeatureLoader"]

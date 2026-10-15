@@ -12,7 +12,7 @@ export interface NotificationItem {
   category: NotificationCategory;
   title: string;
   message: string;
-  date: string; // ISO string or timestamp
+  date: string; 
   severity: NotificationSeverity;
   isRead: boolean;
   recipient?: string;
@@ -27,9 +27,6 @@ export interface DateGroupedNotifications {
 const READ_NOTIFS_KEY = 'rm_read_notification_ids';
 const DELETED_NOTIFS_KEY = 'rm_deleted_notification_ids';
 
-/**
- * Gets set of read notification IDs from LocalStorage
- */
 export const getReadNotificationIds = (): Set<string> => {
   try {
     const raw = localStorage.getItem(READ_NOTIFS_KEY);
@@ -39,9 +36,6 @@ export const getReadNotificationIds = (): Set<string> => {
   }
 };
 
-/**
- * Gets set of deleted notification IDs from LocalStorage
- */
 export const getDeletedNotificationIds = (): Set<string> => {
   try {
     const raw = localStorage.getItem(DELETED_NOTIFS_KEY);
@@ -51,9 +45,6 @@ export const getDeletedNotificationIds = (): Set<string> => {
   }
 };
 
-/**
- * Marks notification as read in LocalStorage
- */
 export const markNotificationAsReadInStorage = (id: string) => {
   try {
     const readSet = getReadNotificationIds();
@@ -64,9 +55,6 @@ export const markNotificationAsReadInStorage = (id: string) => {
   }
 };
 
-/**
- * Marks all notifications as read in LocalStorage
- */
 export const markAllNotificationsAsReadInStorage = (ids: string[]) => {
   try {
     const readSet = getReadNotificationIds();
@@ -77,9 +65,6 @@ export const markAllNotificationsAsReadInStorage = (ids: string[]) => {
   }
 };
 
-/**
- * Deletes notification in LocalStorage
- */
 export const deleteNotificationInStorage = (id: string) => {
   try {
     const deletedSet = getDeletedNotificationIds();
@@ -90,9 +75,6 @@ export const deleteNotificationInStorage = (id: string) => {
   }
 };
 
-/**
- * Groups notifications chronologically by date
- */
 export const groupNotificationsByDate = (items: NotificationItem[]): DateGroupedNotifications[] => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -133,9 +115,6 @@ export const groupNotificationsByDate = (items: NotificationItem[]): DateGrouped
     }));
 };
 
-/**
- * Web Push Notification API Helper (Future integration)
- */
 export const requestBrowserPushPermission = async (): Promise<boolean> => {
   if (!('Notification' in window)) {
     alert('This browser does not support native desktop push notifications.');
@@ -154,9 +133,6 @@ export const requestBrowserPushPermission = async (): Promise<boolean> => {
   return false;
 };
 
-/**
- * Send native browser push notification
- */
 export const sendBrowserPushNotification = (title: string, body: string, icon?: string) => {
   if ('Notification' in window && Notification.permission === 'granted') {
     try {

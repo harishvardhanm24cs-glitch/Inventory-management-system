@@ -38,7 +38,7 @@ const BatchInventory = () => {
         return { label: 'Valid', color: 'bg-emerald-500/20 text-emerald-500 border-emerald-500/50', icon: CheckCircle2 };
     };
 
-    // FIFO Calculations
+    
     const activeBatches = batches.filter((b: any) => Number(b.quantity) > 0);
     const fifoQueue = [...activeBatches].sort((a, b) => 
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -91,9 +91,9 @@ const BatchInventory = () => {
                 </div>
             </div>
 
-            {/* FIFO Telemetry Widget */}
+            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                {/* Card 1: Oldest Batch (Dispatch Priority 1) */}
+                
                 <div className="saas-card p-5 bg-white border border-slate-200/60 rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-rose-500/5 rounded-bl-full pointer-events-none transition-all group-hover:scale-110" />
                     <div className="space-y-3">
@@ -130,7 +130,7 @@ const BatchInventory = () => {
                     )}
                 </div>
 
-                {/* Card 2: Newest Batch */}
+                
                 <div className="saas-card p-5 bg-white border border-slate-200/60 rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-bl-full pointer-events-none transition-all group-hover:scale-110" />
                     <div className="space-y-3">
@@ -164,7 +164,7 @@ const BatchInventory = () => {
                     )}
                 </div>
 
-                {/* Card 3: Avg Storage Days */}
+                
                 <div className="saas-card p-5 bg-white border border-slate-200/60 rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-bl-full pointer-events-none transition-all group-hover:scale-110" />
                     <div className="space-y-3">
@@ -186,7 +186,7 @@ const BatchInventory = () => {
                     </div>
                 </div>
 
-                {/* Card 4: Overdue Batches */}
+                
                 <div className="saas-card p-5 bg-white border border-slate-200/60 rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-bl-full pointer-events-none transition-all group-hover:scale-110" />
                     <div className="space-y-3">
@@ -254,7 +254,7 @@ const BatchInventory = () => {
                                     const isDepleted = Number(batch.quantity) <= 0;
                                     const isOverdue = !isDepleted && daysStored > 14;
                                     
-                                    // Calculate FIFO priority rank
+                                    
                                     const fifoRank = isDepleted 
                                         ? -1 
                                         : fifoQueue.findIndex(b => b.id === batch.id) + 1;

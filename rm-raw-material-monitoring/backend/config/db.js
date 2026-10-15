@@ -11,7 +11,6 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
-// Immediately test connection and handle errors gracefully
 const connectDB = async () => {
   try {
     const connection = await pool.getConnection();
@@ -19,7 +18,7 @@ const connectDB = async () => {
     connection.release();
   } catch (error) {
     console.error(`❌ Error connecting to MySQL: ${error.message}`);
-    process.exit(1); // Exit process with failure
+    process.exit(1); 
   }
 };
 

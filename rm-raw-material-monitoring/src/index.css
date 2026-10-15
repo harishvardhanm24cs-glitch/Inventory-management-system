@@ -4,58 +4,67 @@
 @theme {
   --font-sans: 'Inter', system-ui, sans-serif;
   
-  --color-primary: #4F8CFF;
-  --color-primary-hover: #3B82F6;
-  --color-bg-main: #F4F7FB;
+  --color-primary: #2563EB;
+  --color-primary-hover: #1D4ED8;
+  --color-bg-main: #F8FAFC;
   --color-card: #FFFFFF;
-  --color-success: #22C55E;
+  --color-success: #16A34A;
   --color-warning: #F59E0B;
-  --color-text-main: #374151;
-  --color-text-muted: #6B7280;
+  --color-danger: #DC2626;
+  --color-text-main: #0F172A;
+  --color-text-muted: #64748B;
+  --color-border: #E2E8F0;
 
-  --shadow-saas: 0 4px 12px rgba(0,0,0,0.05);
-  --shadow-saas-hover: 0 8px 24px rgba(0,0,0,0.08);
+  --shadow-saas: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+  --shadow-saas-hover: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
 }
 
 @layer base {
   :root {
-    --primary: 221 100% 65%; /* #4F8CFF */
-    --background: 214 32% 97%; /* #F4F7FB */
-    --foreground: 215 25% 27%;
+    --primary: 221 83% 53%; /* #2563EB */
+    --background: 210 40% 98%; /* #F8FAFC */
+    --foreground: 222 47% 11%; /* #0F172A */
     --card: 0 0% 100%;
-    --border: 214 32% 91%;
+    --border: 214 32% 91%; /* #E2E8F0 */
     --radius: 12px;
   }
 
   body {
-    @apply bg-bg-main text-text-main font-sans antialiased;
-    background-image: none; /* Remove previous mesh gradients */
+    @apply bg-[#F8FAFC] text-[#0F172A] font-sans antialiased selection:bg-blue-500/20 selection:text-blue-600;
+  }
+
+  .dark body {
+    @apply bg-slate-900 text-slate-100;
   }
 }
 
 @layer components {
   .saas-card {
-    @apply bg-card rounded-xl border border-slate-200/50 shadow-saas transition-all duration-200 hover:shadow-saas-hover hover:-translate-y-1;
+    @apply bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm transition-all duration-200 hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600;
   }
 
   .saas-button {
-    @apply bg-primary text-white rounded-xl px-5 py-2.5 font-semibold shadow-sm transition-all duration-200 hover:bg-primary-hover hover:shadow-md active:scale-95 flex items-center justify-center gap-2;
+    @apply bg-blue-600 text-white rounded-xl px-4 py-2.5 text-sm font-semibold shadow-sm transition-all duration-200 hover:bg-blue-700 hover:shadow-md active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .saas-button-secondary {
+    @apply bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-semibold shadow-sm transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 active:scale-95 flex items-center justify-center gap-2;
   }
 
   .saas-sidebar-item {
-    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200;
+    @apply flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200;
   }
 
   .saas-sidebar-item-active {
-    @apply bg-[#F0F7FF] text-primary font-bold shadow-sm;
+    @apply bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400 font-bold shadow-xs border border-blue-200/60 dark:border-blue-800/40;
   }
 
   .saas-sidebar-item-inactive {
-    @apply text-text-muted hover:bg-slate-50 hover:text-text-main;
+    @apply text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white;
   }
 
   .icon-container {
-    @apply w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200;
+    @apply w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200;
   }
   
   /* Standard Table Design */
@@ -64,34 +73,35 @@
   }
 
   .saas-table th {
-    @apply py-4 px-6 text-left text-[11px] font-black uppercase tracking-widest text-text-muted border-b border-slate-100;
+    @apply py-3 px-4 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 sticky top-0 backdrop-blur-xs;
   }
 
   .saas-table td {
-    @apply py-5 px-6 text-sm text-text-main border-b border-slate-50;
+    @apply py-3.5 px-4 text-xs text-slate-800 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800;
   }
 
   .saas-table tr:nth-child(even) td {
-    @apply bg-slate-50/30;
+    @apply bg-slate-50/40 dark:bg-slate-800/30;
   }
 
   .saas-table tr:hover td {
-    @apply bg-slate-50/80;
+    @apply bg-blue-50/40 dark:bg-slate-800/80;
   }
 }
 
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-saas-fade {
-  animation: fade-in 0.4s ease-out forwards;
+  animation: fade-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -99,7 +109,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-200 rounded-full hover:bg-slate-300 transition-colors border-2 border-bg-main bg-clip-padding;
+  @apply bg-slate-300 dark:bg-slate-700 rounded-full hover:bg-slate-400 dark:hover:bg-slate-600 transition-colors;
 }
 
 @media print {
@@ -122,4 +132,4 @@
     margin: 0;
     padding: 0;
   }
-}
+}

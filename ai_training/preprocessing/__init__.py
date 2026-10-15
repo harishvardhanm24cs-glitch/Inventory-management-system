@@ -10,7 +10,6 @@ try:
 except ImportError:
     from ai_training.config import PREPROCESSING_CONFIG_JSON, TARGET_COLUMN, RANDOM_STATE, TEST_SPLIT_RATIO
 
-
 class DataPreprocessor:
     """
     DataPreprocessor
@@ -47,7 +46,6 @@ class DataPreprocessor:
         """
         df_processed = df.copy()
 
-        # 1. Missing Value Imputation
         missing_strat = self.preprocessing_config.get("missing_value_strategy", {})
         for col in df_processed.columns:
             if df_processed[col].isnull().sum() > 0:
@@ -60,34 +58,28 @@ class DataPreprocessor:
                     else:
                         df_processed[col] = df_processed[col].fillna(0)
                 elif pd.api.types.is_numeric_dtype(df_processed[col]):
-                    # Default numeric strategy: fill with 0
                     df_processed[col] = df_processed[col].fillna(0)
                 else:
                     df_processed[col] = df_processed[col].fillna("Unknown")
 
-        # 2. Extract Target y
         if self.target_column not in df_processed.columns:
             raise KeyError(f"Target column '{self.target_column}' missing from dataset.")
 
         y = df_processed[self.target_column].astype(float)
 
-        # 3. Exclude Target Column
         X_df = df_processed.drop(columns=[self.target_column])
 
-        # Drop non-predictive or redundant ID text columns if present
         ignore_cols = ["user_id", "timestamp"]
         for ic in ignore_cols:
             if ic in X_df.columns:
                 X_df = X_df.drop(columns=[ic])
 
-        # 4. Handle Categorical Columns
         for col in X_df.columns:
             if X_df[col].dtype == "object" or isinstance(X_df[col].dtype, pd.CategoricalDtype):
                 le = LabelEncoder()
                 X_df[col] = le.fit_transform(X_df[col].astype(str))
                 self.label_encoders[col] = le
 
-        # Ensure all columns are numeric
         X_df = X_df.apply(pd.to_numeric, errors="coerce").fillna(0)
 
         feature_names = list(X_df.columns)
@@ -111,7 +103,6 @@ class DataPreprocessor:
             f"Test samples = {len(X_test)} (20%), Random State = {random_state}."
         )
         return X_train, X_test, y_train, y_test
-
 
 __all__ = ["DataPreprocessor"]
 

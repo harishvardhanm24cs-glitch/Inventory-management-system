@@ -10,8 +10,6 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// --- Materials Endpoints ---
-
 app.get('/api/materials', async (req, res) => {
     try {
         const materials = await prisma.material.findMany();
@@ -174,8 +172,6 @@ app.post('/api/alerts/:id/acknowledge', async (req, res) => {
     }
 });
 
-// --- Smart Scan & Registry Endpoints ---
-
 app.get('/api/registry', async (req, res) => {
     try {
         const materials = await prisma.material.findMany({
@@ -200,21 +196,21 @@ app.post('/api/scan', async (req, res) => {
             return res.status(404).json({ error: 'Material not registered in system' });
         }
 
-        // HEURISTIC PREDICTION LOGIC
-        // 1. If user explicitly provided a type (Inward/Outward Tab), use it.
-        // 2. Otherwise, predict:
-        //    - If stock is below minLimit, it's likely an INWARD scan.
-        //    - If stock is healthy, it's likely an OUTWARD scan for production.
+        
+        
+        
+        
+        
         
         let predictedType = manualType;
         if (!predictedType) {
             predictedType = (material.stock <= material.minLimit) ? 'inward' : 'outward';
         }
 
-        // Default amount for the "Smart" quick action (e.g., 1 pack/unit or pre-defined batch)
+        
         const amount = 1; 
 
-        // Apply Stock Update (Calling normalized logic or repeating for simplicity in this script)
+        
         const newStock = predictedType === 'inward' ? material.stock + amount : material.stock - amount;
         
         let newStatus = 'good';
@@ -226,7 +222,7 @@ app.post('/api/scan', async (req, res) => {
             data: { stock: newStock, status: newStatus }
         });
 
-        // Log Transaction
+        
         const transaction = await prisma.transaction.create({
             data: {
                 id: `TRX-${Date.now()}`,
@@ -239,7 +235,7 @@ app.post('/api/scan', async (req, res) => {
             }
         });
 
-        // Create Alert if needed
+        
         if (newStatus !== material.status && (newStatus === 'low' || newStatus === 'critical')) {
             await prisma.alert.create({
                 data: {

@@ -4,7 +4,6 @@ import {
     Home,
     Search,
     Box,
-    Maximize,
     Camera,
     Bell,
     User,
@@ -14,14 +13,10 @@ import {
     ChevronRight,
     HelpCircle,
     History,
-    Tag,
     Clock,
     Layout,
     ShieldCheck,
     Cpu,
-    ArrowRightLeft,
-    PackageMinus,
-    PackagePlus,
     TrendingUp,
     Map,
     X,
@@ -34,7 +29,9 @@ import {
     Clipboard,
     Brain,
     FileText,
-    Percent
+    Percent,
+    Layers,
+    Warehouse
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { type UserRole } from '../../types';
@@ -51,40 +48,66 @@ type NavItem = {
     path: string;
     icon: any;
     label: string;
-    roles?: UserRole[]; // Optional: if not specified, available to all roles
+    roles?: UserRole[];
 };
 
-const navItems: NavItem[] = [
-    { path: '/', icon: Home, label: 'Overview' },
-    { path: '/health', icon: Activity, label: 'System Health' },
-    { path: '/tests', icon: Clipboard, label: 'Test Center' },
-    { path: '/inventory', icon: Box, label: 'Materials' },
-    { path: '/batches', icon: Clock, label: 'Batch Records' },
-    { path: '/warehouse', icon: Layout, label: 'Digital Twin' },
-    { path: '/warehouse-utilization', icon: Percent, label: 'Utilization HUD' },
-    { path: '/map', icon: Map, label: 'Rack View' },
-    { path: '/production-check', icon: ShieldCheck, label: 'Quality Check', roles: ['admin', 'manager', 'store'] },
-    { path: '/iot-console', icon: Cpu, label: 'Bridge Hub', roles: ['admin', 'store'] },
-    { path: '/scanner', icon: Camera, label: 'Smart Scanner' },
-    { path: '/outward-scanner', icon: PackageMinus, label: 'Outward Scanner' },
-    { path: '/bulk-qr', icon: QrCode, label: 'Bulk QR Gen' },
-    { path: '/qr-registry', icon: Clipboard, label: 'QR Registry' },
-    { path: '/qr-history', icon: History, label: 'QR History' },
-    { path: '/qr-traceability', icon: Search, label: 'QR Traceability' },
-    { path: '/analytics', icon: TrendingUp, label: 'Intelligence', roles: ['engineer', 'manager', 'store'] },
-    { path: '/consumption-analytics', icon: Activity, label: 'Consumption Hub' },
-    { path: '/inventory-intelligence', icon: Brain, label: 'Stock Health' },
-    { path: '/recommendations', icon: Brain, label: 'Smart Advisor' },
-    { path: '/ai-insights', icon: Brain, label: 'AI Insights' },
-    { path: '/manager-dashboard', icon: Activity, label: 'Manager Stats', roles: ['admin', 'manager'] },
-    { path: '/reports', icon: FileText, label: 'Reports' },
-    { path: '/alerts', icon: Bell, label: 'Notifications' },
-    { path: '/transactions', icon: History, label: 'Transaction History' },
-    { path: '/audit', icon: Database, label: 'Audit Log' },
+type NavGroup = {
+    category: string;
+    items: NavItem[];
+};
+
+const navGroups: NavGroup[] = [
+    {
+        category: 'Overview',
+        items: [
+            { path: '/', icon: Home, label: 'Dashboard' },
+            { path: '/health', icon: Activity, label: 'System Health' },
+            { path: '/tests', icon: Clipboard, label: 'Test Center' },
+        ]
+    },
+    {
+        category: 'Warehouse',
+        items: [
+            { path: '/inventory', icon: Box, label: 'Materials' },
+            { path: '/map', icon: Map, label: 'Rack View' },
+            { path: '/warehouse', icon: Layout, label: 'Digital Twin' },
+            { path: '/batches', icon: Clock, label: 'Batch Records' },
+            { path: '/warehouse-utilization', icon: Percent, label: 'Utilization HUD' },
+            { path: '/scanner', icon: Camera, label: 'Smart Scanner' },
+            { path: '/outward-scanner', icon: Camera, label: 'Outward Scanner' },
+            { path: '/bulk-qr', icon: QrCode, label: 'Bulk QR Gen' },
+            { path: '/qr-registry', icon: Clipboard, label: 'QR Registry' },
+            { path: '/qr-history', icon: History, label: 'QR History' },
+            { path: '/qr-traceability', icon: Search, label: 'QR Traceability' },
+        ]
+    },
+    {
+        category: 'AI Intelligence',
+        items: [
+            { path: '/inventory-intelligence', icon: Brain, label: 'Stock Health' },
+            { path: '/recommendations', icon: Brain, label: 'Smart Advisor' },
+            { path: '/ai-insights', icon: Brain, label: 'AI Insights' },
+            { path: '/manager-dashboard', icon: Activity, label: 'Manager Stats', roles: ['admin', 'manager'] },
+            { path: '/iot-console', icon: Cpu, label: 'Bridge Hub', roles: ['admin', 'store'] },
+        ]
+    },
+    {
+        category: 'Analytics & Logs',
+        items: [
+            { path: '/analytics', icon: TrendingUp, label: 'Intelligence', roles: ['engineer', 'manager', 'store'] },
+            { path: '/consumption-analytics', icon: Activity, label: 'Consumption Hub' },
+            { path: '/production-check', icon: ShieldCheck, label: 'Quality Check', roles: ['admin', 'manager', 'store'] },
+            { path: '/reports', icon: FileText, label: 'Reports' },
+            { path: '/alerts', icon: Bell, label: 'Notifications' },
+            { path: '/transactions', icon: History, label: 'Transaction History' },
+            { path: '/audit', icon: Database, label: 'Audit Log' },
+        ]
+    }
 ];
+
 const bottomItems: NavItem[] = [
     { path: '/profile', icon: User, label: 'User Profile' },
-    { path: '/settings', icon: Settings, label: 'Account Settings' },
+    { path: '/settings', icon: Settings, label: 'Settings' },
     { path: '/guide', icon: HelpCircle, label: 'User Guide' },
 ];
 
@@ -99,7 +122,6 @@ const SidebarContent = ({ collapsed = false, toggleCollapse, isMobile = false, c
     const location = useLocation();
     const { role, profileName } = useAuth();
 
-    // Material Location Finder Search State
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -145,24 +167,26 @@ const SidebarContent = ({ collapsed = false, toggleCollapse, isMobile = false, c
         setIsSearching(false);
     };
 
-    const visibleNavItems = navItems.filter(item => !item.roles || item.roles.includes(role));
-    const visibleBottomItems = bottomItems.filter(item => !item.roles || item.roles.includes(role));
-
     return (
-        <div className="flex flex-col h-full bg-white border-r border-slate-200 transition-all duration-300 relative shadow-sm">
-            {/* Header */}
-            <div className={cn("flex items-center h-20 px-6 border-b border-slate-50", collapsed ? "justify-center" : "justify-between")}>
+        <div className="flex flex-col h-full bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 transition-all duration-300 relative shadow-2xs">
+            {/* Sidebar Brand Header */}
+            <div className={cn("flex items-center h-16 px-5 border-b border-slate-100 dark:border-slate-800", collapsed ? "justify-center" : "justify-between")}>
                 {!collapsed && (
-                    <span className="text-xl font-extrabold text-[#4F8CFF] tracking-tight">
-                        RM Monitor
-                    </span>
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-xs">
+                            <Warehouse size={18} />
+                        </div>
+                        <span className="text-base font-extrabold text-slate-900 dark:text-white tracking-tight">
+                            RM Monitor
+                        </span>
+                    </div>
                 )}
                 {!isMobile && toggleCollapse && (
                     <button
                         onClick={toggleCollapse}
-                        className={cn("saas-sidebar-collapse-btn", collapsed && "mx-auto")}
+                        className={cn("p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors", collapsed && "mx-auto")}
                     >
-                        {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+                        {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
                     </button>
                 )}
                 {isMobile && closeMobileMenu && (
@@ -172,20 +196,20 @@ const SidebarContent = ({ collapsed = false, toggleCollapse, isMobile = false, c
                 )}
             </div>
 
-            {/* Search Finder Box */}
+            {/* Finder Search */}
             {!collapsed && (
-                <div className="px-4 py-3 border-b border-slate-50 relative">
+                <div className="px-3.5 py-3 border-b border-slate-100 dark:border-slate-800 relative">
                      <div className="relative">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                           <input
                                type="text"
-                               placeholder="Find material location..."
+                               placeholder="Locate material..."
                                value={searchQuery}
                                onChange={(e) => handleSearchChange(e.target.value)}
-                               className="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-150 rounded-xl outline-none text-xs font-semibold focus:ring-2 focus:ring-[#4F8CFF]/25 focus:border-[#4F8CFF] transition-all text-slate-900"
+                               className="w-full pl-8 pr-7 py-1.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl outline-none text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
                           />
                           {(searchQuery || isSearching) && (
-                               <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center">
+                               <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
                                     {isSearching ? (
                                          <Loader2 size={12} className="text-slate-400 animate-spin" />
                                     ) : (
@@ -200,11 +224,11 @@ const SidebarContent = ({ collapsed = false, toggleCollapse, isMobile = false, c
                           )}
                      </div>
                      
-                     {/* Floating Search Results Dropdown */}
+                     {/* Search Results Dropdown */}
                      {searchQuery.trim() && (
-                          <div className="absolute left-4 right-4 top-full mt-1.5 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 overflow-hidden max-h-60 overflow-y-auto animate-saas-fade">
+                          <div className="absolute left-3.5 right-3.5 top-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl z-50 overflow-hidden max-h-56 overflow-y-auto animate-saas-fade">
                                {searchResults.length > 0 ? (
-                                    <div className="divide-y divide-slate-50">
+                                    <div className="divide-y divide-slate-100 dark:divide-slate-700">
                                          {searchResults.map((item, idx) => (
                                               <div
                                                    key={idx}
@@ -212,11 +236,11 @@ const SidebarContent = ({ collapsed = false, toggleCollapse, isMobile = false, c
                                                        setSelectedMaterial(item);
                                                        clearSearch();
                                                    }}
-                                                   className="p-3 hover:bg-[#F8FAFC] transition-colors cursor-pointer text-left flex flex-col gap-0.5"
+                                                   className="p-2.5 hover:bg-blue-50/50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer text-left flex flex-col gap-0.5"
                                               >
-                                                   <p className="text-xs font-bold text-slate-800 truncate">{item.material_name}</p>
-                                                   <div className="flex items-center justify-between text-[10px] font-bold text-slate-400">
-                                                        <span className="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100">
+                                                   <p className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">{item.material_name}</p>
+                                                   <div className="flex items-center justify-between text-[10px] font-medium text-slate-500">
+                                                        <span className="bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded border border-blue-200/60 font-semibold">
                                                              {item.rack_location || 'Not Assigned'}
                                                         </span>
                                                         <span>{item.quantity} KG</span>
@@ -225,7 +249,7 @@ const SidebarContent = ({ collapsed = false, toggleCollapse, isMobile = false, c
                                          ))}
                                     </div>
                                ) : (
-                                    <div className="p-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                                    <div className="p-3 text-center text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
                                          {!isSearching ? "No materials found" : "Searching..."}
                                     </div>
                                )}
@@ -234,45 +258,88 @@ const SidebarContent = ({ collapsed = false, toggleCollapse, isMobile = false, c
                 </div>
             )}
 
-            {/* Navigation */}
-            <div className="flex-1 overflow-y-auto py-6 px-3 space-y-1">
-                {visibleNavItems.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = location.pathname === item.path;
+            {/* Main Navigation Links */}
+            <div className="flex-1 overflow-y-auto py-4 px-3 space-y-4">
+                {navGroups.map((group) => {
+                    const groupItems = group.items.filter(item => !item.roles || item.roles.includes(role));
+                    if (groupItems.length === 0) return null;
+
                     return (
-                        <Link
-                            key={item.path}
-                            to={item.path}
-                            onClick={isMobile ? closeMobileMenu : undefined}
-                            className={cn(
-                                "saas-sidebar-item group",
-                                isActive ? "saas-sidebar-item-active" : "saas-sidebar-item-inactive",
-                                collapsed && "justify-center px-0"
+                        <div key={group.category} className="space-y-1">
+                            {!collapsed && (
+                                <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                                    {group.category}
+                                </p>
                             )}
-                        >
-                            <Icon size={20} className={cn("transition-all duration-200", isActive ? "text-[#4F8CFF]" : "text-slate-400 group-hover:text-slate-600")} />
-                            {!collapsed && <span className="tracking-tight">{item.label}</span>}
-                        </Link>
+                            {groupItems.map((item) => {
+                                const Icon = item.icon;
+                                const isActive = location.pathname === item.path;
+                                return (
+                                    <Link
+                                        key={item.path}
+                                        to={item.path}
+                                        onClick={isMobile ? closeMobileMenu : undefined}
+                                        className={cn(
+                                            "saas-sidebar-item group",
+                                            isActive ? "saas-sidebar-item-active" : "saas-sidebar-item-inactive",
+                                            collapsed && "justify-center px-0"
+                                        )}
+                                        title={collapsed ? item.label : undefined}
+                                    >
+                                        <Icon size={18} className={cn("transition-colors", isActive ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-200")} />
+                                        {!collapsed && <span className="tracking-tight">{item.label}</span>}
+                                    </Link>
+                                );
+                            })}
+                        </div>
                     );
                 })}
+
+                {/* Bottom items */}
+                <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1">
+                    {!collapsed && (
+                        <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                            System
+                        </p>
+                    )}
+                    {bottomItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = location.pathname === item.path;
+                        return (
+                            <Link
+                                key={item.path}
+                                to={item.path}
+                                onClick={isMobile ? closeMobileMenu : undefined}
+                                className={cn(
+                                    "saas-sidebar-item group",
+                                    isActive ? "saas-sidebar-item-active" : "saas-sidebar-item-inactive",
+                                    collapsed && "justify-center px-0"
+                                )}
+                            >
+                                <Icon size={18} className={cn("transition-colors", isActive ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-200")} />
+                                {!collapsed && <span className="tracking-tight">{item.label}</span>}
+                            </Link>
+                        );
+                    })}
+                </div>
             </div>
 
-            {/* Bottom Section */}
-            <div className="mt-auto border-t border-slate-50 p-6">
+            {/* Profile & Logout */}
+            <div className="mt-auto border-t border-slate-100 dark:border-slate-800 p-4">
                 {!collapsed ? (
-                    <div className="flex items-center gap-3 px-2 mb-6">
-                        <div className="h-10 w-10 rounded-full bg-[#F0F7FF] flex items-center justify-center border border-[#4F8CFF]/10 text-[#4F8CFF]">
-                            <User size={20} />
+                    <div className="flex items-center gap-3 px-1 mb-3">
+                        <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-950 flex items-center justify-center border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 font-bold text-xs">
+                            {profileName ? profileName.charAt(0).toUpperCase() : 'U'}
                         </div>
                         <div className="flex-1 min-w-0">
-                             <p className="text-sm font-bold text-slate-900 truncate tracking-tight">{profileName || 'User'}</p>
-                             <p className="text-[11px] font-medium text-slate-400 capitalize">{role}</p>
+                             <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate tracking-tight">{profileName || 'User'}</p>
+                             <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 capitalize">{role}</p>
                         </div>
                     </div>
                 ) : (
-                    <div className="flex justify-center mb-6">
-                        <div className="h-10 w-10 rounded-full bg-[#F0F7FF] flex items-center justify-center border border-[#4F8CFF]/10 text-[#4F8CFF]">
-                            <User size={20} />
+                    <div className="flex justify-center mb-3">
+                        <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-950 flex items-center justify-center border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 font-bold text-xs">
+                            {profileName ? profileName.charAt(0).toUpperCase() : 'U'}
                         </div>
                     </div>
                 )}
@@ -281,126 +348,89 @@ const SidebarContent = ({ collapsed = false, toggleCollapse, isMobile = false, c
                     to="/login"
                     onClick={isMobile ? closeMobileMenu : undefined}
                     className={cn(
-                        "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:bg-red-50 hover:text-red-600",
+                        "flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-slate-500 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400",
                         collapsed && "justify-center"
                     )}
                 >
-                    <LogOut size={20} />
-                    {!collapsed && <span className="tracking-tight">Logout</span>}
+                    <LogOut size={16} />
+                    {!collapsed && <span className="tracking-tight">Sign Out</span>}
                 </Link>
             </div>
 
-            {/* Material Location details Modal */}
+            {/* Material Finder Modal */}
             {selectedMaterial && (
-                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-                     <div className="bg-white rounded-3xl border border-slate-100 max-w-md w-full shadow-2xl p-6 animate-in zoom-in-95 duration-200 text-slate-900">
+                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-[9999] flex items-center justify-center p-4">
+                     <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full shadow-2xl p-6 animate-in zoom-in-95 duration-200 text-slate-900 dark:text-white">
                           <div className="flex justify-between items-start">
                                <div>
-                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[10px] font-bold uppercase tracking-wider border border-blue-100">
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wider border border-blue-200 dark:border-blue-800">
                                          <MapPin size={10} />
-                                         Material Location Finder
+                                         Storage Location Finder
                                     </span>
-                                    <h3 className="text-xl font-extrabold text-slate-900 tracking-tight mt-3">
+                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight mt-2">
                                          {selectedMaterial.material_name}
                                     </h3>
                                </div>
                                <button 
                                    onClick={() => setSelectedMaterial(null)} 
-                                   className="p-2 hover:bg-slate-50 rounded-xl text-slate-400 hover:text-slate-600 transition-colors"
+                                   className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-400 hover:text-slate-600 transition-colors"
                                >
-                                    <X size={18} />
+                                    <X size={16} />
                                </button>
                           </div>
 
-                          <div className="mt-6 space-y-4">
-                               {/* Rack Location Highlight Panel */}
-                               <div className="bg-slate-50 border border-slate-150/50 p-4 rounded-2xl flex items-center justify-between">
+                          <div className="mt-4 space-y-3">
+                               <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-3.5 rounded-xl flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                         <div className="p-3 bg-blue-500 text-white rounded-xl shadow-md shadow-blue-500/10">
-                                              <MapPin size={20} />
+                                         <div className="p-2.5 bg-blue-600 text-white rounded-lg shadow-xs">
+                                              <MapPin size={18} />
                                          </div>
                                          <div>
-                                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Storage Slot</p>
-                                              <p className="text-base font-black text-slate-800 mt-0.5">
+                                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Rack Slot</p>
+                                              <p className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
                                                    {selectedMaterial.rack_location || 'Not Assigned'}
                                               </p>
                                          </div>
                                     </div>
                                     <span className={cn(
-                                         "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
+                                         "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
                                          selectedMaterial.rack_location && selectedMaterial.rack_location !== 'Not Assigned'
-                                             ? "bg-emerald-50 text-emerald-600 border-emerald-200"
-                                             : "bg-amber-50 text-amber-600 border-amber-200 animate-pulse"
+                                             ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800"
+                                             : "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800"
                                     )}>
-                                         {selectedMaterial.rack_location && selectedMaterial.rack_location !== 'Not Assigned' ? "LOCATED" : "PENDING STORAGE"}
+                                         {selectedMaterial.rack_location && selectedMaterial.rack_location !== 'Not Assigned' ? "LOCATED" : "PENDING"}
                                     </span>
                                </div>
 
-                               <div className="grid grid-cols-2 gap-4">
-                                    {/* Current Stock */}
-                                    <div className="bg-slate-50 border border-slate-150/30 p-4 rounded-2xl">
-                                         <div className="flex items-center gap-2 text-slate-400 mb-1.5">
-                                              <Database size={14} />
-                                              <span className="text-[9px] font-black uppercase tracking-widest">Current Stock</span>
-                                         </div>
-                                         <p className="text-lg font-black text-slate-800">
+                               <div className="grid grid-cols-2 gap-3">
+                                    <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-3 rounded-xl">
+                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Current Stock</p>
+                                         <p className="text-base font-bold text-slate-900 dark:text-white mt-1">
                                               {parseFloat(selectedMaterial.quantity).toLocaleString()} KG
                                          </p>
                                     </div>
-
-                                    {/* Batch Number */}
-                                    <div className="bg-slate-50 border border-slate-150/30 p-4 rounded-2xl">
-                                         <div className="flex items-center gap-2 text-slate-400 mb-1.5">
-                                              <Clock size={14} />
-                                              <span className="text-[9px] font-black uppercase tracking-widest">Batch Number</span>
-                                         </div>
-                                         <p className="text-sm font-black text-slate-800 truncate">
+                                    <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-3 rounded-xl">
+                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Batch Number</p>
+                                         <p className="text-xs font-bold text-slate-900 dark:text-white mt-1 truncate">
                                               {selectedMaterial.batch_number || 'N/A'}
                                          </p>
                                     </div>
                                </div>
-
-                               {/* Manufacturing Date */}
-                               <div className="bg-slate-50 border border-slate-150/30 p-4 rounded-2xl">
-                                    <div className="flex items-center gap-2 text-slate-400 mb-1.5">
-                                         <Calendar size={14} />
-                                         <span className="text-[9px] font-black uppercase tracking-widest">Registered Date</span>
-                                    </div>
-                                    <p className="text-sm font-bold text-slate-800">
-                                         {selectedMaterial.manufacturing_date 
-                                             ? new Date(selectedMaterial.manufacturing_date).toLocaleString('en-US', {
-                                                   dateStyle: 'medium',
-                                                   timeStyle: 'short'
-                                               })
-                                             : 'N/A'
-                                         }
-                                    </p>
-                               </div>
-
-                               {/* Barcode Identity Info */}
-                               <div className="bg-slate-50 border border-slate-150/30 p-4 rounded-2xl flex items-center justify-between">
-                                    <div>
-                                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Barcode SKU</p>
-                                         <code className="text-xs font-mono font-bold text-slate-700 mt-1 block">
-                                              {selectedMaterial.barcode}
-                                         </code>
-                                    </div>
-                               </div>
                           </div>
 
-                          <div className="mt-6 flex gap-3">
+                          <div className="mt-5 flex gap-2.5">
                                <button
                                    type="button"
                                    onClick={() => setSelectedMaterial(null)}
-                                   className="flex-1 py-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 rounded-xl font-bold text-xs transition-colors"
+                                   className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-semibold text-xs transition-colors"
                                >
-                                    Close Finder
+                                    Close
                                </button>
                                {selectedMaterial.rack_location && selectedMaterial.rack_location !== 'Not Assigned' && (
                                     <Link
                                         to="/map"
                                         onClick={() => setSelectedMaterial(null)}
-                                        className="flex-1 py-3.5 bg-primary hover:opacity-95 text-white rounded-xl font-bold text-xs shadow-lg shadow-primary/20 text-center flex items-center justify-center gap-2 transition-all active:scale-95"
+                                        className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-xs text-center flex items-center justify-center gap-1.5 transition-all shadow-xs"
                                     >
                                          View Rack Map
                                     </Link>
@@ -425,12 +455,12 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }: SidebarProps) => {
             <>
                 {isOpen && (
                     <div
-                        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+                        className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs"
                         onClick={() => setIsOpen(false)}
                     />
                 )}
                 <div className={cn(
-                    "fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out glass-panel",
+                    "fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out bg-white dark:bg-slate-900",
                     isOpen ? "translate-x-0" : "-translate-x-full"
                 )}>
                     <SidebarContent isMobile={true} closeMobileMenu={() => setIsOpen(false)} />
@@ -439,10 +469,9 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }: SidebarProps) => {
         )
     }
 
-    // Desktop Sidebar
     return (
         <div className={cn(
-            "hidden md:block h-screen sticky top-0 transition-all duration-300",
+            "hidden md:block h-screen sticky top-0 transition-all duration-300 z-30",
             collapsed ? "w-20" : "w-64"
         )}>
             <SidebarContent collapsed={collapsed} toggleCollapse={toggleCollapse} />

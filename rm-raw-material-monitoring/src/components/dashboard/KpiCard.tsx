@@ -14,52 +14,44 @@ export interface KpiCardProps {
 
 const colorClasses = {
   blue: {
-    bg: 'bg-blue-50',
-    text: 'text-blue-600',
-    border: 'border-blue-100',
-    badge: 'bg-blue-50 text-blue-700 border-blue-200'
+    bg: 'bg-blue-50 dark:bg-blue-950/60',
+    text: 'text-blue-600 dark:text-blue-400',
+    border: 'border-blue-100 dark:border-blue-800/60'
   },
   indigo: {
-    bg: 'bg-indigo-50',
-    text: 'text-indigo-600',
-    border: 'border-indigo-100',
-    badge: 'bg-indigo-50 text-indigo-700 border-indigo-200'
+    bg: 'bg-indigo-50 dark:bg-indigo-950/60',
+    text: 'text-indigo-600 dark:text-indigo-400',
+    border: 'border-indigo-100 dark:border-indigo-800/60'
   },
   emerald: {
-    bg: 'bg-emerald-50',
-    text: 'text-emerald-600',
-    border: 'border-emerald-100',
-    badge: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+    bg: 'bg-emerald-50 dark:bg-emerald-950/60',
+    text: 'text-emerald-600 dark:text-emerald-400',
+    border: 'border-emerald-100 dark:border-emerald-800/60'
   },
   amber: {
-    bg: 'bg-amber-50',
-    text: 'text-amber-600',
-    border: 'border-amber-100',
-    badge: 'bg-amber-50 text-amber-700 border-amber-200'
+    bg: 'bg-amber-50 dark:bg-amber-950/60',
+    text: 'text-amber-600 dark:text-amber-400',
+    border: 'border-amber-100 dark:border-amber-800/60'
   },
   violet: {
-    bg: 'bg-violet-50',
-    text: 'text-violet-600',
-    border: 'border-violet-100',
-    badge: 'bg-violet-50 text-violet-700 border-violet-200'
+    bg: 'bg-violet-50 dark:bg-violet-950/60',
+    text: 'text-violet-600 dark:text-violet-400',
+    border: 'border-violet-100 dark:border-violet-800/60'
   },
   cyan: {
-    bg: 'bg-cyan-50',
-    text: 'text-cyan-600',
-    border: 'border-cyan-100',
-    badge: 'bg-cyan-50 text-cyan-700 border-cyan-200'
+    bg: 'bg-cyan-50 dark:bg-cyan-950/60',
+    text: 'text-cyan-600 dark:text-cyan-400',
+    border: 'border-cyan-100 dark:border-cyan-800/60'
   },
   rose: {
-    bg: 'bg-rose-50',
-    text: 'text-rose-600',
-    border: 'border-rose-100',
-    badge: 'bg-rose-50 text-rose-700 border-rose-200'
+    bg: 'bg-rose-50 dark:bg-rose-950/60',
+    text: 'text-rose-600 dark:text-rose-400',
+    border: 'border-rose-100 dark:border-rose-800/60'
   },
   slate: {
-    bg: 'bg-slate-100',
-    text: 'text-slate-700',
-    border: 'border-slate-200',
-    badge: 'bg-slate-100 text-slate-700 border-slate-200'
+    bg: 'bg-slate-100 dark:bg-slate-800',
+    text: 'text-slate-700 dark:text-slate-300',
+    border: 'border-slate-200 dark:border-slate-700'
   }
 };
 
@@ -75,7 +67,7 @@ export const KpiCard: React.FC<KpiCardProps> = ({
   const scheme = colorClasses[colorScheme] || colorClasses.blue;
 
   return (
-    <div className="saas-card p-5 flex flex-col justify-between bg-white border border-slate-200/70 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
+    <div className="saas-card p-5 flex flex-col justify-between bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl shadow-2xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
       <div>
         <div className="flex items-center justify-between gap-2 mb-3">
           <div className={`p-2.5 rounded-xl ${scheme.bg} ${scheme.text} ${scheme.border} border`}>
@@ -84,10 +76,10 @@ export const KpiCard: React.FC<KpiCardProps> = ({
           {trend && (
             <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md text-[11px] font-bold border ${
               trendType === 'up' 
-                ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800' 
                 : trendType === 'down' 
-                ? 'bg-rose-50 text-rose-700 border-rose-200' 
-                : 'bg-slate-50 text-slate-600 border-slate-200'
+                ? 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950 dark:text-rose-400 dark:border-rose-800' 
+                : 'bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
             }`}>
               {trendType === 'up' && <ArrowUpRight className="w-3 h-3" />}
               {trendType === 'down' && <ArrowDownRight className="w-3 h-3" />}
@@ -97,16 +89,16 @@ export const KpiCard: React.FC<KpiCardProps> = ({
           )}
         </div>
 
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
           {title}
         </p>
 
-        <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight font-mono">
+        <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight font-mono">
           {value}
         </h3>
       </div>
 
-      <p className="text-xs text-slate-500 mt-3 pt-3 border-t border-slate-100 font-medium">
+      <p className="text-xs text-slate-500 dark:text-slate-400 mt-3 pt-3 border-t border-slate-100 dark:border-slate-700/60 font-medium">
         {description}
       </p>
     </div>

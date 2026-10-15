@@ -13,7 +13,7 @@ export interface ClassifiedMaterialItem {
   healthCategory: StockHealthCategory;
   recommendedStatus: string;
   actionRequired: string;
-  urgencyRank: number; // 1 (Highest/Critical) to 4 (Lowest/Healthy)
+  urgencyRank: number; 
   batchNumber?: string;
 }
 
@@ -25,22 +25,19 @@ export interface HealthCategoryCounts {
   total: number;
 }
 
-/**
- * Dynamically classifies a material record based on its current stock vs min/max thresholds.
- */
 export const classifyMaterialItem = (rawMaterial: any): ClassifiedMaterialItem => {
   const stock = typeof rawMaterial.stock === 'number' ? rawMaterial.stock : parseFloat(rawMaterial.stock) || 0;
   const minThreshold = typeof rawMaterial.minLimit === 'number' 
     ? rawMaterial.minLimit 
     : (parseFloat(rawMaterial.min_limit || rawMaterial.threshold_limit) || 10);
   
-  // Calculate dynamic max threshold if not explicitly set
+  
   let maxThreshold = typeof rawMaterial.maxLimit === 'number'
     ? rawMaterial.maxLimit
     : (parseFloat(rawMaterial.max_capacity || rawMaterial.maxLimit) || 0);
 
   if (!maxThreshold || maxThreshold >= 99999999) {
-    // Dynamic rule: max threshold defaults to 4x min threshold for standard inventory buffers
+    
     maxThreshold = Math.max(100, minThreshold * 4);
   }
 
@@ -94,9 +91,6 @@ export const classifyMaterialItem = (rawMaterial: any): ClassifiedMaterialItem =
   };
 };
 
-/**
- * Calculates aggregate category counts from classified items.
- */
 export const calculateHealthCategoryCounts = (items: ClassifiedMaterialItem[]): HealthCategoryCounts => {
   const counts: HealthCategoryCounts = {
     critical: 0,

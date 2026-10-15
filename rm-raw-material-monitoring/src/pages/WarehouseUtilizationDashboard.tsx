@@ -26,7 +26,7 @@ const WarehouseUtilizationDashboard: React.FC = () => {
   const [filterMode, setFilterMode] = useState<'all' | 'occupied' | 'empty'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Auto-refresh interval (polls every 15s to update automatically after inventory changes)
+  
   useEffect(() => {
     const interval = setInterval(() => {
       refreshData();
@@ -34,7 +34,7 @@ const WarehouseUtilizationDashboard: React.FC = () => {
     return () => clearInterval(interval);
   }, [refreshData]);
 
-  // Compute overall utilization metrics dynamically from racks and warehouseStats
+  
   const metrics: UtilizationMetrics = useMemo(() => {
     const totalRackCount = racks.length;
     const emptyRackCount = racks.filter((r) => (parseFloat(String(r.quantity)) || 0) === 0).length;
@@ -59,7 +59,7 @@ const WarehouseUtilizationDashboard: React.FC = () => {
     };
   }, [racks, warehouseStats]);
 
-  // Format rack data items for top capacity charts
+  
   const racksChartData: RackCapacityItem[] = useMemo(() => {
     return racks.map((r) => {
       const q = parseFloat(String(r.quantity)) || 0;
@@ -75,7 +75,7 @@ const WarehouseUtilizationDashboard: React.FC = () => {
     });
   }, [racks]);
 
-  // Filtered racks for grid view
+  
   const filteredRacks = useMemo(() => {
     return racks.filter((r) => {
       const qty = parseFloat(String(r.quantity)) || 0;
@@ -95,7 +95,7 @@ const WarehouseUtilizationDashboard: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-fade-in pb-16">
-      {/* Header */}
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -123,17 +123,17 @@ const WarehouseUtilizationDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* 6 Summary Metric Cards */}
+      
       <UtilizationMetricCards metrics={metrics} loading={loading} />
 
-      {/* Utilization Visual Charts */}
+      
       <UtilizationChartsSection
         metrics={metrics}
         racksData={racksChartData}
         loading={loading}
       />
 
-      {/* Interactive Rack Inspection Grid */}
+      
       <div className="rounded-3xl border border-slate-800/80 bg-slate-900/80 p-6 backdrop-blur-md transition-all shadow-xl space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-4 gap-4">
           <div>
@@ -146,9 +146,9 @@ const WarehouseUtilizationDashboard: React.FC = () => {
             </p>
           </div>
 
-          {/* Controls: Search & Filter Tabs */}
+          
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            {/* Search Input */}
+            
             <div className="relative flex-1 md:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
               <input
@@ -160,7 +160,7 @@ const WarehouseUtilizationDashboard: React.FC = () => {
               />
             </div>
 
-            {/* Filter Tabs */}
+            
             <div className="flex items-center gap-1 rounded-xl border border-slate-800 bg-slate-950/60 p-1 text-xs">
               <button
                 onClick={() => setFilterMode('all')}
@@ -196,7 +196,7 @@ const WarehouseUtilizationDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Rack Grid */}
+        
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredRacks.map((rack) => {
             const qty = parseFloat(String(rack.quantity)) || 0;
@@ -231,7 +231,7 @@ const WarehouseUtilizationDashboard: React.FC = () => {
                     : 'border-slate-800 bg-slate-950/80 hover:border-cyan-500/50'
                 }`}
               >
-                {/* Header */}
+                
                 <div className="flex items-center justify-between mb-3">
                   <span className="font-mono text-xs font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">
                     Rack {rack.rack_code}
@@ -249,7 +249,7 @@ const WarehouseUtilizationDashboard: React.FC = () => {
                   </span>
                 </div>
 
-                {/* Stored Material */}
+                
                 <div className="space-y-1">
                   <p className="text-xs font-bold text-slate-200 truncate group-hover:text-cyan-300 transition-colors">
                     {rack.material_name || 'Empty Slot'}
@@ -259,7 +259,7 @@ const WarehouseUtilizationDashboard: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Occupancy Fill Bar */}
+                
                 <div className="mt-4 space-y-1">
                   <div className="flex justify-between text-[10px] text-slate-400 font-mono">
                     <span>{qty.toLocaleString()} Units</span>
@@ -280,7 +280,7 @@ const WarehouseUtilizationDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Drill-Down Inspection Modal */}
+      
       <RackDrillDownModal
         rack={selectedRack}
         onClose={() => setSelectedRack(null)}

@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
-    const [role, setRole] = useState<UserRole>('store'); // Default fallback
+    const [role, setRole] = useState<UserRole>('store'); 
     const [profileName, setProfileName] = useState('');
     const [isLoading, setIsLoading] = useState(true);
 

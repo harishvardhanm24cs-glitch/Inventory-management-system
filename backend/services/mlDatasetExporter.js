@@ -1,19 +1,7 @@
-/**
- * mlDatasetExporter.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Export Adapter Engine for ML Frameworks.
- *
- * Formats preprocessed ML feature matrices for future AI model training in:
- * • TensorFlow (Float32 tensor arrays, shapes, batch specifications)
- * • PyTorch (PyTorch tensor dictionaries, dtype torch.float32, shape metadata)
- * • Scikit-Learn (Matrix X, vector y, Pandas-style CSV arrays)
- * • ONNX (ONNX input/output graph tensor schema & serialized inputs)
- */
+
 
 export const mlDatasetExporter = {
-  /**
-   * Helper: Flatten inventory feature records into numerical feature vectors
-   */
+  
   extractNumericalMatrix(inventoryRecords) {
     const featureNames = [
       'current_stock',
@@ -35,7 +23,7 @@ export const mlDatasetExporter = {
       r.is_below_threshold || 0
     ]);
 
-    // Target label y: 1 if below threshold / depleted, else 0
+    
     const y = (inventoryRecords || []).map(r => (r.is_below_threshold || r.is_depleted ? 1 : 0));
 
     return {
@@ -47,9 +35,7 @@ export const mlDatasetExporter = {
     };
   },
 
-  /**
-   * 1. Export Dataset for TensorFlow
-   */
+  
   exportTensorFlow(preprocessedData) {
     const inv = preprocessedData?.preprocessed_features?.inventory || [];
     const { featureNames, X, y, rowCount, featureCount } = this.extractNumericalMatrix(inv);
@@ -80,9 +66,7 @@ dataset = tf.data.Dataset.from_tensor_slices((X, y)).batch(32)
     };
   },
 
-  /**
-   * 2. Export Dataset for PyTorch
-   */
+  
   exportPyTorch(preprocessedData) {
     const inv = preprocessedData?.preprocessed_features?.inventory || [];
     const { featureNames, X, y, rowCount, featureCount } = this.extractNumericalMatrix(inv);
@@ -120,14 +104,12 @@ loader = DataLoader(dataset, batch_size=32, shuffle=True)
     };
   },
 
-  /**
-   * 3. Export Dataset for Scikit-Learn
-   */
+  
   exportScikitLearn(preprocessedData) {
     const inv = preprocessedData?.preprocessed_features?.inventory || [];
     const { featureNames, X, y, rowCount, featureCount } = this.extractNumericalMatrix(inv);
 
-    // Build CSV formatted text
+    
     const csvHeader = ['material_id', ...featureNames, 'target_reorder_flag'].join(',');
     const csvRows = (inv || []).map((r, idx) => {
       const rowX = X[idx] || [];
@@ -161,9 +143,7 @@ print("Accuracy:", clf.score(X_test, y_test))
     };
   },
 
-  /**
-   * 4. Export Dataset for ONNX
-   */
+  
   exportONNX(preprocessedData) {
     const inv = preprocessedData?.preprocessed_features?.inventory || [];
     const { featureNames, X, rowCount, featureCount } = this.extractNumericalMatrix(inv);
@@ -207,9 +187,7 @@ outputs = session.run(None, inputs)
     };
   },
 
-  /**
-   * Unified Framework Exporter
-   */
+  
   exportForFramework(frameworkName, preprocessedData) {
     const fw = String(frameworkName).toLowerCase();
     if (fw.includes('tf') || fw.includes('tensorflow')) {

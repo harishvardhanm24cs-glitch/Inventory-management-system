@@ -24,23 +24,18 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import api from '../services/api';
 import type { Rack } from '../context/InventoryContext';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 export interface RackSyncState {
-    /** Latest rack array from the server */
+    
     racks: Rack[];
     /** True while an in-flight GET /api/racks request is pending */
     isSyncing: boolean;
-    /** ISO timestamp of the last successful sync */
+    
     lastSyncedAt: string | null;
-    /** rack_code of the most recently changed rack (from event detail) */
+    
     affectedRackCode: string | null;
 }
 
-// ─── Event name constant (mirrors what Scanner.tsx dispatches) ────────────────
 const RACK_UPDATE_EVENT = 'rack-inventory-update';
-
-// ─── Hook ─────────────────────────────────────────────────────────────────────
 
 /**
  * @param debounceMs  Minimum ms between successive fetches (default 300)
@@ -51,13 +46,13 @@ export function useRackSync(debounceMs = 300): RackSyncState {
     const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
     const [affectedRackCode, setAffectedRackCode] = useState<string | null>(null);
 
-    // Debounce timer ref — prevents burst-fetching on rapid scans
+    
     const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // Track whether component is still mounted to avoid state updates after unmount
+    
     const isMountedRef = useRef(true);
 
-    // ── Core fetch function ──────────────────────────────────────────────────
+    
     const fetchRacks = useCallback(async (rackCode?: string | null) => {
         if (!isMountedRef.current) return;
 
@@ -71,8 +66,8 @@ export function useRackSync(debounceMs = 300): RackSyncState {
 
             if (!isMountedRef.current) return;
 
-            // api.getRacks() returns the raw axios response which InventoryContext
-            // maps. Here we replicate the mapping used in InventoryContext.fetchData().
+            
+            
             let rawRacks: any[] = [];
             if (response && response.racks) {
                 rawRacks = response.racks;
@@ -113,7 +108,7 @@ export function useRackSync(debounceMs = 300): RackSyncState {
         } finally {
             if (isMountedRef.current) {
                 setIsSyncing(false);
-                // Clear the affected rack highlight after 2 s
+                
                 setTimeout(() => {
                     if (isMountedRef.current) {
                         setAffectedRackCode(null);
@@ -123,7 +118,7 @@ export function useRackSync(debounceMs = 300): RackSyncState {
         }
     }, []);
 
-    // ── Debounced fetch ──────────────────────────────────────────────────────
+    
     const debouncedFetch = useCallback(
         (rackCode?: string | null) => {
             if (debounceTimer.current) {
@@ -136,10 +131,10 @@ export function useRackSync(debounceMs = 300): RackSyncState {
         [fetchRacks, debounceMs]
     );
 
-    // ── Event listener ───────────────────────────────────────────────────────
+    
     useEffect(() => {
         const handleRackUpdate = (event: Event) => {
-            // Extract rackCode from the event detail if provided by the scanner
+            
             const detail = (event as CustomEvent).detail;
             const rackCode: string | null =
                 detail && typeof detail.rackCode === 'string' ? detail.rackCode : null;
@@ -149,7 +144,7 @@ export function useRackSync(debounceMs = 300): RackSyncState {
 
         window.addEventListener(RACK_UPDATE_EVENT, handleRackUpdate);
 
-        // Initial fetch on mount
+        
         fetchRacks(null);
 
         return () => {
@@ -160,7 +155,7 @@ export function useRackSync(debounceMs = 300): RackSyncState {
         };
     }, [fetchRacks, debouncedFetch]);
 
-    // ── Cleanup on unmount ───────────────────────────────────────────────────
+    
     useEffect(() => {
         isMountedRef.current = true;
         return () => {

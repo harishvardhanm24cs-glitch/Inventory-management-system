@@ -1,0 +1,24 @@
+{
+  "winner_model": "Gradient Boosting",
+  "overall_score": 99.95,
+  "metrics": {
+    "model": "Gradient Boosting",
+    "training_time_sec": 0.0692,
+    "prediction_time_sec": 0.0016,
+    "mae": 0.4008,
+    "mse": 5.3814,
+    "rmse": 2.3198,
+    "mape_pct": 30.08,
+    "r2_score": 0.9842,
+    "adj_r2_score": 0.4802,
+    "cv_r2": 0.9573,
+    "cv_rmse": 18.9616,
+    "train_r2": 1.0,
+    "generalization_gap": 0.0427,
+    "fit_status": "Excellent",
+    "model_size_kb": 116.82,
+    "overall_score": 99.95,
+    "rank": 1
+  },
+  "justification": "Gradient Boosting achieved the highest weighted score (99.95/100) with a CV R\u00b2 of 0.9573, test RMSE of 2.3198 KG, and healthy generalization gap (0.0427)."
+}

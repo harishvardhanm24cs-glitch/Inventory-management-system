@@ -14,7 +14,6 @@ import datetime
 import importlib
 from pathlib import Path
 
-# Insert sys.path for internal imports
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -39,7 +38,6 @@ except ImportError:
 os.makedirs(LOGS_DIR, exist_ok=True)
 os.makedirs(EXPORT_MODEL_DIR, exist_ok=True)
 
-
 def format_bytes(size_bytes):
     if size_bytes < 1024:
         return f"{size_bytes} Bytes"
@@ -47,7 +45,6 @@ def format_bytes(size_bytes):
         return f"{size_bytes / 1024:.2f} KB"
     else:
         return f"{size_bytes / (1024 * 1024):.2f} MB"
-
 
 class PreTrainingVerifier:
     def __init__(self):
@@ -273,7 +270,6 @@ class PreTrainingVerifier:
             "packages": {}
         }
 
-        # Check venv
         venv_dir = AI_TRAINING_DIR / "venv"
         if os.path.exists(venv_dir):
             env_status["virtual_environment"] = f"VERIFIED ({venv_dir})"
@@ -326,12 +322,10 @@ class PreTrainingVerifier:
         return self.results
 
     def generate_reports(self):
-        # 1. Save JSON Report
         json_report_path = LOGS_DIR / "pre_training_readiness_report.json"
         with open(json_report_path, "w", encoding="utf-8") as f:
             json.dump(self.results, f, indent=2)
 
-        # 2. Save Markdown Report
         md_report_path = LOGS_DIR / "pre_training_readiness_report.md"
         status_symbol = "[OK]" if self.results["overall_status"] == "PASSED" else "[FAIL]"
         
@@ -434,7 +428,6 @@ class PreTrainingVerifier:
         print(f"  • MD   : '{md_report_path}'")
         return md_report_path, json_report_path
 
-
 def print_cli_summary(results):
     print("=" * 80)
     print("      RM MONITOR PRE-TRAINING VERIFICATION SYSTEM READINESS REPORT")
@@ -486,7 +479,6 @@ def print_cli_summary(results):
     else:
         print(f"FAILED: {len(results['issues'])} issues detected.")
     print("=" * 80)
-
 
 if __name__ == "__main__":
     verifier = PreTrainingVerifier()

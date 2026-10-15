@@ -19,6 +19,12 @@ import ModelManagementConsole from '../components/ModelManagementConsole';
 import RecommendationConsole from '../components/RecommendationConsole';
 import XaiExplorerConsole from '../components/XaiExplorerConsole';
 import AiMonitoringConsole from '../components/AiMonitoringConsole';
+import DataCollectionConsole from '../components/DataCollectionConsole';
+import DatasetVersionConsole from '../components/DatasetVersionConsole';
+import ModelRegistryConsole from '../components/ModelRegistryConsole';
+import ModelComparisonConsole from '../components/ModelComparisonConsole';
+import DeploymentDecisionConsole from '../components/DeploymentDecisionConsole';
+import RollbackManagerConsole from '../components/RollbackManagerConsole';
 
 const initialFilters: AnalyticsFilterParams = {
   dateRange: '30d',
@@ -34,7 +40,7 @@ const Analytics = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Extract unique materials & racks for filter dropdowns
+  
   const availableMaterials = useMemo(() => {
     return Array.from(new Set(materials.map((m) => m.name).filter(Boolean))).sort();
   }, [materials]);
@@ -73,7 +79,7 @@ const Analytics = () => {
 
   return (
     <div className="space-y-8 animate-fade-in pb-16">
-      {/* Top Header */}
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -103,7 +109,7 @@ const Analytics = () => {
         </div>
       </div>
 
-      {/* Filter Control Bar */}
+      
       <AnalyticsFilterBar
         filters={filters}
         onFilterChange={setFilters}
@@ -112,26 +118,44 @@ const Analytics = () => {
         onReset={handleResetFilters}
       />
 
-      {/* Module 1: AI Prediction Engine Analytics Report */}
+      
       <PredictionAnalyticsReport />
 
-      {/* Module 2: Machine Learning Data Pipeline Console */}
+      
       <MlPipelineConsole />
 
-      {/* Module 3: Feature Engineering Console */}
+      
       <FeatureEngineeringExplorer />
 
-      {/* Module 4: AI Model Management Console */}
+      
       <ModelManagementConsole />
 
-      {/* Module 5: AI Recommendation Engine Console */}
+      
       <RecommendationConsole />
 
-      {/* Module 6: Explainable AI (XAI) Console */}
+      
       <XaiExplorerConsole />
 
-      {/* Module 7: AI Monitoring System Console */}
+      
       <AiMonitoringConsole />
+
+      
+      <DataCollectionConsole />
+
+      
+      <DatasetVersionConsole />
+
+      
+      <ModelRegistryConsole />
+
+      
+      <ModelComparisonConsole />
+
+      
+      <DeploymentDecisionConsole />
+
+      
+      <RollbackManagerConsole />
 
       {error && (
         <div className="rounded-xl border border-rose-500/30 bg-rose-950/20 p-4 text-xs font-medium text-rose-300">
@@ -139,7 +163,7 @@ const Analytics = () => {
         </div>
       )}
 
-      {/* Analytics Grid Section 1: Core Utilization & Stock Metrics */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <WarehouseUtilizationChart
           data={analyticsData?.warehouseUtilization || null}
@@ -155,7 +179,7 @@ const Analytics = () => {
         />
       </div>
 
-      {/* Analytics Grid Section 2: Spatial Rack & Daily Throughput */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <InventoryByRackChart
           data={analyticsData?.inventoryByRack || []}
@@ -167,7 +191,7 @@ const Analytics = () => {
         />
       </div>
 
-      {/* Analytics Grid Section 3: Periodic Weekly & Monthly Trends */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <WeeklyTransactionsChart
           data={analyticsData?.weeklyTransactions || []}

@@ -1,18 +1,4 @@
-/**
- * warehouseHealthScoreIntelligence.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 10 – Warehouse Health Score Client Engine
- *
- * Client-side service module for warehouse health score.
- * Consumes overall 0-100 score, health status classification (OPTIMAL, MONITOR, ATTENTION, CRITICAL),
- * sub-score breakdowns, priority issues, recommendations, and recent improvements.
- *
- * Exposes score to:
- * • Dashboard (Executive & Operations)
- * • Digital Twin (Map Header & Status Inspector)
- * • Reports & Analytics Engine
- * • Manager Home Screen (ManagerDashboard)
- */
+
 
 import api from './api';
 
@@ -40,9 +26,7 @@ export interface WarehouseHealthScorePayload {
 }
 
 class ClientWarehouseHealthScoreIntelligence {
-  /**
-   * Fetch live overall warehouse health score
-   */
+  
   async getHealthScore(): Promise<WarehouseHealthScorePayload> {
     try {
       const res: any = await api.getWarehouseHealthScore();

@@ -21,7 +21,7 @@ export const getRecentMovements = async (req, res, next) => {
       LIMIT 20
     `);
 
-    // Map DB actions to movement fields expected by frontend
+    
     const movements = rows.map(row => {
       const actionUpper = (row.action || '').toUpperCase();
       const isOutward = ['OUTWARD', 'USED'].includes(actionUpper);
@@ -71,7 +71,7 @@ export const createMovement = async (req, res, next) => {
 
     console.log('[DEBUG] createMovement Request Body:', req.body);
 
-    // Validate required fields
+    
     if (!barcode_id) {
       return res.status(400).json({ status: 'error', message: 'barcode_id is required' });
     }
@@ -90,7 +90,7 @@ export const createMovement = async (req, res, next) => {
 
     const remarks = `Moved from ${source_location} to ${destination_location}`;
     
-    // Determine rack code based on movement direction
+    
     let rackCode = null;
     const typeUpper = movement_type.toUpperCase();
     if (typeUpper === 'OUTWARD') {
@@ -99,13 +99,13 @@ export const createMovement = async (req, res, next) => {
       rackCode = destination_location ? destination_location.replace('Rack ', '').trim() : null;
     }
 
-    // Map movement_type to action ENUM if valid, otherwise fallback to 'MOVED'
+    
     let dbAction = 'MOVED';
     if (['INWARD', 'OUTWARD', 'MOVED', 'USED', 'GENERATED', 'SCANNED'].includes(typeUpper)) {
       dbAction = typeUpper;
     }
 
-    // Resolve user name safely from DB to prevent undefined parameter issues
+    
     let userName = 'System';
     if (req.user) {
       if (req.user.id) {
@@ -138,7 +138,7 @@ export const createMovement = async (req, res, next) => {
 
     await db.query(sqlQuery, sqlParams);
 
-    // Identify if this is a transfer between racks or initial assignment
+    
     let actionType = 'Rack Assignment';
     if (
       source_location.toLowerCase().includes('rack') && 
@@ -155,6 +155,20 @@ export const createMovement = async (req, res, next) => {
       user_name: userName,
       action_details: `Transferred material ${material_name} from ${source_location} to ${destination_location}`
     });
+
+    
+    import('../services/aiDataCollectionService.js').then(async ({ aiDataCollectionService }) => {
+      
+      const [mats] = await db.query('SELECT id, quantity FROM materials WHERE barcode = ? OR material_name = ? LIMIT 1', [barcode_id, material_name]);
+      const matId = mats.length > 0 ? mats[0].id : 1;
+      const qty = mats.length > 0 ? Number(mats[0].quantity) : 10;
+      aiDataCollectionService.captureTransaction({
+        material_id: matId,
+        quantity: qty,
+        movement_type: 'TRANSFER',
+        created_at: new Date().toISOString()
+      });
+    }).catch(() => {});
 
     res.status(201).json({
       status: 'success',

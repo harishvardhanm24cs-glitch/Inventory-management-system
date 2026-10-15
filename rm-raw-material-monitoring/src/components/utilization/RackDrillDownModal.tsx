@@ -42,7 +42,7 @@ export const RackDrillDownModal: React.FC<RackDrillDownModalProps> = ({ rack, on
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md animate-fade-in">
       <div className="w-full max-w-lg rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-2xl space-y-6 text-slate-200 animate-in zoom-in-95 duration-200">
-        {/* Header */}
+        
         <div className="flex items-start justify-between border-b border-slate-800 pb-4">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-inner">
@@ -65,7 +65,7 @@ export const RackDrillDownModal: React.FC<RackDrillDownModalProps> = ({ rack, on
           </button>
         </div>
 
-        {/* Primary Status Banner */}
+        
         <div
           className={`flex items-center justify-between rounded-2xl border p-4 backdrop-blur-md ${
             isEmpty
@@ -99,7 +99,7 @@ export const RackDrillDownModal: React.FC<RackDrillDownModalProps> = ({ rack, on
           <span className="font-mono text-sm font-bold">{pct}% Fill</span>
         </div>
 
-        {/* Occupancy Fill Progress Bar */}
+        
         <div className="space-y-1.5 rounded-2xl border border-slate-800/80 bg-slate-950/60 p-4">
           <div className="flex justify-between text-xs font-medium">
             <span className="text-slate-400">Volume Occupancy Progress</span>
@@ -119,7 +119,7 @@ export const RackDrillDownModal: React.FC<RackDrillDownModalProps> = ({ rack, on
           </div>
         </div>
 
-        {/* Material & Batch Metadata Details Grid */}
+        
         <div className="grid grid-cols-2 gap-3 text-xs">
           <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-3.5 space-y-1">
             <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -158,7 +158,7 @@ export const RackDrillDownModal: React.FC<RackDrillDownModalProps> = ({ rack, on
           </div>
         </div>
 
-        {/* Footer Actions */}
+        
         <div className="flex items-center justify-end gap-3 pt-2">
           <button
             onClick={onClose}

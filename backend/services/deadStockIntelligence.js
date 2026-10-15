@@ -1,20 +1,11 @@
 import db from '../config/db.js';
 
-/**
- * deadStockIntelligence.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 5 – Dead Stock Intelligence Engine
- *
- * Reuses existing inventory, rack assignments, and movement transaction history
- * without creating duplicate database tables.
- */
-
 class DeadStockIntelligenceEngine {
   async analyzeAll(config = {}) {
     const activeMaxDays = config.activeMaxDays !== undefined ? config.activeMaxDays : 15;
     const idleMaxDays = config.idleMaxDays !== undefined ? config.idleMaxDays : 45;
 
-    // 1. Query Materials with associated Rack Code
+    
     const [materials] = await db.query(`
       SELECT 
         m.id, 
@@ -29,7 +20,7 @@ class DeadStockIntelligenceEngine {
       ORDER BY m.material_name ASC
     `);
 
-    // 2. Query Movement History across transactions, material_usage_history, and qr_history
+    
     let allMovements = [];
     try {
       const [rows] = await db.query(`
@@ -77,7 +68,7 @@ class DeadStockIntelligenceEngine {
       const unitStr = mat.unit || 'KG';
       const rackLoc = mat.rack_code || 'Not Assigned';
 
-      // Classification Logic
+      
       let classification = 'Active';
       let suggested_action_type = 'NO_ACTION';
       let recommended_action = '';

@@ -49,16 +49,16 @@ const MaterialSearchModal: React.FC<MaterialSearchModalProps> = ({ isOpen, onClo
 
     return (
         <>
-            {/* Backdrop */}
+            
             <div
                 className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[999] transition-opacity"
                 onClick={onClose}
             />
 
-            {/* Modal Container */}
+            
             <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
                 <div className="glass-panel max-w-2xl w-full rounded-3xl shadow-2xl transform transition-all overflow-hidden flex flex-col max-h-[85vh] bg-white border border-slate-100 animate-in zoom-in-95 duration-200">
-                    {/* Header */}
+                    
                     <div className="flex items-center justify-between p-6 border-b border-slate-100">
                         <div>
                             <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">Material Locator</h3>
@@ -72,7 +72,7 @@ const MaterialSearchModal: React.FC<MaterialSearchModalProps> = ({ isOpen, onClo
                         </button>
                     </div>
 
-                    {/* Search Form */}
+                    
                     <div className="p-6 border-b border-slate-100 bg-slate-50/50">
                         <form onSubmit={handleSearch} className="flex gap-3">
                             <div className="relative flex-1">
@@ -96,7 +96,7 @@ const MaterialSearchModal: React.FC<MaterialSearchModalProps> = ({ isOpen, onClo
                         </form>
                     </div>
 
-                    {/* Results Container */}
+                    
                     <div className="flex-1 overflow-y-auto p-6 space-y-4">
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-16 space-y-3">

@@ -22,7 +22,6 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import KFold
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-# Configure sys.stdout for UTF-8 encoding if supported
 if hasattr(sys.stdout, "reconfigure"):
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -58,7 +57,6 @@ except ImportError:
     from ai_training.model_registry import ModelRegistryManager
     from ai_training.training_logger import TrainingLogger
 
-
 class RetrainingPipeline:
     def __init__(self):
         self.reports_dir = Path(REPORTS_DIR)
@@ -71,9 +69,6 @@ class RetrainingPipeline:
         print("   RM MONITOR - PHASE 8B MODULE 4 RETRAINING & MODULE 4.1 VALIDATION")
         print("=" * 80)
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 1: LOAD DATASET & VERIFY STATISTICS
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 1: LOADING & AUDITING DATASET ('feature_dataset.csv')...")
         csv_path = Path(FEATURE_DATASET_CSV)
         if not csv_path.exists():
@@ -119,9 +114,6 @@ class RetrainingPipeline:
         print(f"   • Non-Zero Count    : {non_zero_count}")
         print(f"   • Range & Mean      : Min={min_val:.4f}, Max={max_val:.4f}, Mean={mean_val:.4f}")
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 2: PREPROCESSING & TRAIN/TEST SPLIT
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 2: PREPROCESSING & FEATURE MATRIX ENCODING...")
         preprocessor = DataPreprocessor(target_column=TARGET_COLUMN)
         X, y, feature_names = preprocessor.preprocess_dataset(df)
@@ -135,9 +127,6 @@ class RetrainingPipeline:
         print(f"   • Training Set Samples : {len(X_train)} (80%)")
         print(f"   • Testing Set Samples  : {len(X_test)} (20%)")
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 3: MODEL TRAINING & EXPORT
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 3: RETRAINING RANDOMFORESTREGRESSOR MODEL...")
         rf_params = {
             "n_estimators": 100,
@@ -153,15 +142,11 @@ class RetrainingPipeline:
 
         print(f"   • Model Training Time: {training_time_sec:.4f} seconds")
 
-        # Export model
         exporter = ModelExporter()
         export_info = exporter.export(rf_model, model_prefix=MODEL_NAME_PREFIX)
         model_version = export_info["model_version"]
         export_path = export_info["export_path"]
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 4: EVALUATION & 5-FOLD CROSS VALIDATION
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 4: EVALUATION & 5-FOLD CROSS VALIDATION...")
         predict_start = time.time()
         y_test_pred = rf_model.predict(X_test)
@@ -176,7 +161,6 @@ class RetrainingPipeline:
         print(f"   • R² Score       : {r2:.4f}")
         print(f"   • Prediction Time: {prediction_time_sec:.6f} seconds")
 
-        # 5-Fold Cross Validation
         kf = KFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
         cv_mae_scores, cv_rmse_scores, cv_r2_scores = [], [], []
 
@@ -203,7 +187,6 @@ class RetrainingPipeline:
         print(f"   • 5-Fold CV Mean RMSE : {cv_mean_rmse:.4f} ± {cv_std_rmse:.4f}")
         print(f"   • 5-Fold CV Mean R²   : {cv_mean_r2:.4f} ± {cv_std_r2:.4f}")
 
-        # Update model_registry.json
         registry_mgr = ModelRegistryManager()
         registry_entry = registry_mgr.register_trained_model(
             model_name="RM Monitor Material Usage Regressor",
@@ -225,9 +208,6 @@ class RetrainingPipeline:
             model_path=export_path
         )
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 5: FEATURE IMPORTANCE COMPUTATION & RANKING
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 5: COMPUTING & RANKING FEATURE IMPORTANCE...")
         importances = rf_model.feature_importances_
         fi_df = pd.DataFrame({
@@ -245,13 +225,9 @@ class RetrainingPipeline:
             print(f"{int(row['rank']):<6} | {row['feature_name']:<35} | {row['importance']:<12.6f} | {pct:<6.2f}%")
         print("-" * 65)
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 6: VALIDATION & 20 PREDICTION SAMPLES
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 6: VALIDATING MODEL PREDICTIONS & FEATURE IMPORTANCE...")
         all_importances_zero = bool(np.all(importances == 0.0))
 
-        # Select 20 random prediction samples using seed 42
         np.random.seed(RANDOM_STATE)
         sample_indices = np.random.choice(len(X), size=min(20, len(X)), replace=False)
         sample_indices.sort()
@@ -294,12 +270,8 @@ class RetrainingPipeline:
         print(f"   • Validation Status               : {'PASSED' if validation_passed else 'FAILED'}")
         print(f"   • Overall Readiness               : {readiness_status}")
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 7: GENERATE 7 REPORT FILES IN ai_training/reports/
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 7: GENERATING 7 REPORT ARTIFACTS IN ai_training/reports/...")
 
-        # 1. feature_importance.csv & feature_importance.json
         fi_csv_path = self.reports_dir / "feature_importance.csv"
         fi_df.to_csv(fi_csv_path, index=False)
 
@@ -307,11 +279,9 @@ class RetrainingPipeline:
         with open(fi_json_path, "w", encoding="utf-8") as f:
             json.dump(fi_df.to_dict(orient="records"), f, indent=2)
 
-        # 2. prediction_samples.csv
         pred_csv_path = self.reports_dir / "prediction_samples.csv"
         pred_samples_df.to_csv(pred_csv_path, index=False)
 
-        # 3. training_metrics.json
         metrics_json_data = {
             "timestamp": self.timestamp,
             "model_version": model_version,
@@ -344,7 +314,6 @@ class RetrainingPipeline:
         with open(metrics_json_path, "w", encoding="utf-8") as f:
             json.dump(metrics_json_data, f, indent=2)
 
-        # 4. validation_report.json
         val_json_data = {
             "timestamp": self.timestamp,
             "model_version": model_version,
@@ -361,7 +330,6 @@ class RetrainingPipeline:
         with open(val_json_path, "w", encoding="utf-8") as f:
             json.dump(val_json_data, f, indent=2)
 
-        # 5. training_report.md
         train_md_lines = [
             "# RM Monitor - Retrained ML Model Report",
             "",
@@ -406,7 +374,6 @@ class RetrainingPipeline:
         with open(train_md_path, "w", encoding="utf-8") as f:
             f.write("\n".join(train_md_lines))
 
-        # 6. validation_report.md
         val_md_lines = [
             "# RM Monitor - Module 4.1 Retraining Validation Report",
             "",
@@ -452,9 +419,6 @@ class RetrainingPipeline:
         print(f"   • Saved '{train_md_path.name}'")
         print(f"   • Saved '{val_md_path.name}'")
 
-        # ──────────────────────────────────────────────────────────────────────
-        # FINAL REQUIRED OUTPUT DISPLAY
-        # ──────────────────────────────────────────────────────────────────────
         print("\n" + "=" * 80)
         print("                  FINAL RETRAINING & VALIDATION SUMMARY")
         print("=" * 80)
@@ -475,7 +439,6 @@ class RetrainingPipeline:
         print("=" * 80)
 
         return readiness_status
-
 
 if __name__ == "__main__":
     pipeline = RetrainingPipeline()

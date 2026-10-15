@@ -1,18 +1,4 @@
-/**
- * consumptionIntelligence.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 4 – Consumption Intelligence Client Engine
- *
- * Dedicated client-side module for material consumption intelligence.
- * Calculates daily, weekly, monthly consumption rates, consumption trend vectors
- * (Increasing, Stable, Decreasing), and most/least consumed material rankings.
- *
- * Provides reusable client APIs for:
- * • Dashboard Analytics Charts & KPI Widgets
- * • Inventory & Material Analytics Reports
- * • Digital Twin Material Flow Corridors
- * • AI Recommendation Engine
- */
+
 
 import api from './api';
 
@@ -48,9 +34,7 @@ export interface ConsumptionReportPayload {
 }
 
 class ClientConsumptionIntelligence {
-  /**
-   * Fetch complete consumption intelligence report
-   */
+  
   async getReport(): Promise<ConsumptionReportPayload> {
     try {
       const res: any = await api.getConsumptionIntelligence();
@@ -88,17 +72,13 @@ class ClientConsumptionIntelligence {
     }
   }
 
-  /**
-   * Fetch top 5 most consumed materials
-   */
+  
   async getMostConsumed(): Promise<MaterialConsumptionItem[]> {
     const report = await this.getReport();
     return report.most_consumed || [];
   }
 
-  /**
-   * Fetch top 5 least consumed materials
-   */
+  
   async getLeastConsumed(): Promise<MaterialConsumptionItem[]> {
     const report = await this.getReport();
     return report.least_consumed || [];

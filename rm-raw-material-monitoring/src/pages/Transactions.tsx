@@ -90,7 +90,7 @@ const Transactions = () => {
 
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-fade-in text-slate-900 p-4 md:p-8">
-            {/* Header section */}
+            
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wider border border-blue-100 w-fit mb-3">
@@ -123,10 +123,10 @@ const Transactions = () => {
                 </div>
             </div>
 
-            {/* Filters and Search toolbar */}
+            
             <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 bg-white/60 border border-slate-150 rounded-3xl p-4 shadow-sm backdrop-blur-md">
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-1">
-                    {/* Search Field */}
+                    
                     <div className="relative flex-1">
                         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                         <input
@@ -138,7 +138,7 @@ const Transactions = () => {
                         />
                     </div>
 
-                    {/* Time Filter Buttons */}
+                    
                     <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200">
                         {(['all', 'today', 'week', 'month'] as const).map((mode) => (
                             <button
@@ -163,7 +163,7 @@ const Transactions = () => {
                 </div>
             </div>
 
-            {/* Transactions Ledger Card */}
+            
             <Card className="border-none shadow-sm rounded-3xl overflow-hidden bg-white/80 backdrop-blur-md">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
@@ -185,7 +185,7 @@ const Transactions = () => {
 
                                 return (
                                     <tr key={trx.id} className="group hover:bg-slate-50/30 transition-colors">
-                                        {/* Date & Time */}
+                                        
                                         <td className="px-6 py-4.5 whitespace-nowrap">
                                             <div className="flex items-center gap-2 text-slate-600 font-bold text-xs">
                                                 <Clock size={14} className="text-slate-350" />
@@ -198,7 +198,7 @@ const Transactions = () => {
                                             </div>
                                         </td>
 
-                                        {/* Barcode */}
+                                        
                                         <td className="px-6 py-4.5 whitespace-nowrap">
                                             <div className="flex items-center gap-1.5 text-slate-500 font-mono text-[10.5px] bg-slate-50 border border-slate-150 px-2 py-0.5 rounded-lg w-fit">
                                                 <Tag size={12} className="text-slate-400" />
@@ -208,7 +208,7 @@ const Transactions = () => {
                                             </div>
                                         </td>
 
-                                        {/* Material */}
+                                        
                                         <td className="px-6 py-4.5">
                                             <div className="flex flex-col max-w-[200px]">
                                                 <span className="font-extrabold text-slate-900 leading-tight truncate">
@@ -220,7 +220,7 @@ const Transactions = () => {
                                             </div>
                                         </td>
 
-                                        {/* Rack */}
+                                        
                                         <td className="px-6 py-4.5 whitespace-nowrap">
                                             <div className="flex items-center gap-1.5 text-slate-700 font-semibold text-xs">
                                                 <Layers size={13} className="text-[#4F8CFF] shrink-0" />
@@ -230,7 +230,7 @@ const Transactions = () => {
                                             </div>
                                         </td>
 
-                                        {/* Transaction Type */}
+                                        
                                         <td className="px-6 py-4.5 whitespace-nowrap">
                                             <span className={cn(
                                                 "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border",
@@ -243,7 +243,7 @@ const Transactions = () => {
                                             </span>
                                         </td>
 
-                                        {/* Quantity */}
+                                        
                                         <td className="px-6 py-4.5 text-right whitespace-nowrap">
                                             <span className={cn(
                                                 "font-black text-sm",
@@ -253,7 +253,7 @@ const Transactions = () => {
                                             </span>
                                         </td>
 
-                                        {/* Operator */}
+                                        
                                         <td className="px-6 py-4.5 whitespace-nowrap">
                                             <div className="flex items-center gap-2 text-slate-700">
                                                 <div className="w-6 h-6 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">

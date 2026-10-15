@@ -13,7 +13,6 @@ try:
 except ImportError:
     from ai_training.config import EXPORT_MODEL_DIR, LOCAL_STAGING_MODEL_DIR, MODEL_NAME_PREFIX
 
-
 class ModelExporter:
     """
     ModelExporter
@@ -55,7 +54,6 @@ class ModelExporter:
         target_path = self.export_dir / filename
         staging_path = self.staging_dir / filename
 
-        # Safeguard against accidental overwrite
         counter = ver_num
         while target_path.exists():
             counter += 1
@@ -64,7 +62,6 @@ class ModelExporter:
             target_path = self.export_dir / filename
             staging_path = self.staging_dir / filename
 
-        # Save model using joblib
         joblib.dump(model_object, target_path)
         joblib.dump(model_object, staging_path)
 
@@ -79,7 +76,6 @@ class ModelExporter:
             "export_path": str(target_path),
             "staging_path": str(staging_path)
         }
-
 
 if __name__ == "__main__":
     exporter = ModelExporter()

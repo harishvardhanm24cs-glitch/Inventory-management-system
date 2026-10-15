@@ -30,10 +30,10 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, onClose }
 
     return (
         <>
-            {/* Backdrop */}
+            
             <div className="fixed inset-0 z-40" onClick={onClose} />
             
-            {/* Panel */}
+            
             <div className="absolute top-16 right-0 w-80 max-h-[480px] bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
                 <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
                     <div className="flex items-center gap-2">

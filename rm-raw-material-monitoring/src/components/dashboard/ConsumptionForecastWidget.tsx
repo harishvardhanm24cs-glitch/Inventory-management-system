@@ -45,10 +45,10 @@ export const ConsumptionForecastWidget: React.FC = memo(() => {
 
   return (
     <div className="bg-slate-900/90 border border-slate-800/80 rounded-2xl p-6 shadow-2xl backdrop-blur-xl relative overflow-hidden group hover:border-cyan-500/30 transition-all duration-300">
-      {/* Glow Accent */}
+      
       <div className="absolute -right-10 -top-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-cyan-500/20 transition-all duration-500" />
 
-      {/* Header */}
+      
       <div className="flex items-center justify-between mb-5 border-b border-slate-800/80 pb-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20">
@@ -61,7 +61,7 @@ export const ConsumptionForecastWidget: React.FC = memo(() => {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Timeframe Toggle Buttons */}
+          
           <div className="flex bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-[11px] font-semibold">
             {(['7d', '14d', '30d'] as const).map((tf) => (
               <button
@@ -94,7 +94,7 @@ export const ConsumptionForecastWidget: React.FC = memo(() => {
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Summary Metric */}
+          
           <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
             <div>
               <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
@@ -111,7 +111,7 @@ export const ConsumptionForecastWidget: React.FC = memo(() => {
             </div>
           </div>
 
-          {/* Top Demand Items List */}
+          
           <div className="space-y-2 max-h-[190px] overflow-y-auto pr-1 custom-scrollbar">
             {demandList.slice(0, 4).map((item) => {
               const val = timeframe === '7d' ? item.forecast_7d : timeframe === '14d' ? item.forecast_14d : item.forecast_30d;

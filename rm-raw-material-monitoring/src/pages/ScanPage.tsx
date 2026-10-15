@@ -27,11 +27,11 @@ const ScanPage = () => {
 
     return (
         <div className="min-h-screen bg-[#0B0F1A] text-white animate-fade-in relative overflow-hidden pb-32">
-            {/* Cyber Grid Background */}
+            
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
             <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-cyan-700 opacity-20 blur-[100px]" />
             
-            {/* Header */}
+            
             <div className="bg-[#0B0F1A]/80 backdrop-blur-xl border-b border-cyan-500/20 px-8 py-5 flex items-center justify-between sticky top-0 z-50">
                 <div className="flex items-center gap-8">
                     <Link to="/" className="p-3 bg-white/5 hover:bg-cyan-500/20 rounded-2xl text-cyan-400 group transition-all duration-300 border border-transparent hover:border-cyan-500/50">
@@ -47,7 +47,7 @@ const ScanPage = () => {
             </div>
 
             <div className="max-w-4xl mx-auto px-6 pt-10 space-y-10 relative z-10">
-                {/* Transaction Mode Selector */}
+                
                 <div className="flex justify-center">
                     <div className="bg-white/5 p-2 rounded-3xl border border-white/10 flex items-center shadow-2xl backdrop-blur-md">
                         <button
@@ -75,7 +75,7 @@ const ScanPage = () => {
                     </div>
                 </div>
 
-                {/* Hardware Toggle */}
+                
                 <div className="flex justify-center border-b border-white/5 pb-10">
                     <div className="flex gap-4">
                         {[
@@ -100,7 +100,7 @@ const ScanPage = () => {
                     </div>
                 </div>
 
-                {/* Primary Scanner Viewport */}
+                
                 <div className="bg-[#0B0F1A]/80 border border-white/10 rounded-[2.5rem] p-4 md:p-8 shadow-2xl relative overflow-hidden backdrop-blur-xl">
                     <div className="absolute top-0 right-0 m-8 z-20 hidden md:block">
                         <div className={cn(
@@ -144,7 +144,7 @@ const ScanPage = () => {
                         />
                     </div>
 
-                    {/* Floating Result Card */}
+                    
                     {scanResult && (
                         <div className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in fade-in zoom-in duration-300">
                             <div className="bg-[#0B0F1A] border border-cyan-500/50 p-8 rounded-3xl shadow-[0_0_40px_rgba(6,182,212,0.3)] max-w-sm w-full text-center relative overflow-hidden">

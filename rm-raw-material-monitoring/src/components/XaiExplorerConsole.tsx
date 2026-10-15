@@ -29,7 +29,7 @@ export const XaiExplorerConsole: React.FC = () => {
     refresh
   } = useXai();
 
-  // Extract explanation list based on portal adapter
+  
   let explanationsList: any[] = [];
   if (activePortal === 'Dashboard' && portalData?.summary) {
     if (portalData.summary.inventory_health_explanation) explanationsList.push(portalData.summary.inventory_health_explanation);
@@ -44,7 +44,7 @@ export const XaiExplorerConsole: React.FC = () => {
 
   return (
     <div className="bg-slate-900/90 border border-slate-800 rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden text-slate-100">
-      {/* Header */}
+      
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 border-b border-slate-800 gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-700 shadow-lg shadow-indigo-500/20">
@@ -80,7 +80,7 @@ export const XaiExplorerConsole: React.FC = () => {
           </div>
         )}
 
-        {/* Portal Adapter Tabs */}
+        
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {(Object.keys(PORTAL_CONFIG) as XaiPortal[]).map(pKey => {
             const conf = PORTAL_CONFIG[pKey];
@@ -105,7 +105,7 @@ export const XaiExplorerConsole: React.FC = () => {
           })}
         </div>
 
-        {/* Current Portal Description Banner */}
+        
         <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <Sparkles className="w-4 h-4 text-indigo-400" />
@@ -116,7 +116,7 @@ export const XaiExplorerConsole: React.FC = () => {
           <span className="text-[10px] font-mono text-slate-500">{explanationsList.length} items explained</span>
         </div>
 
-        {/* Explanations Grid */}
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {explanationsList.length === 0 ? (
             <div className="col-span-2 p-8 text-center rounded-xl bg-slate-950/40 border border-slate-800 text-slate-400 text-xs">
@@ -166,7 +166,7 @@ export const XaiExplorerConsole: React.FC = () => {
         </div>
       </div>
 
-      {/* Reusable Audit Modal */}
+      
       <XaiExplainerModal
         explanation={selectedExplanation}
         isOpen={modalOpen}

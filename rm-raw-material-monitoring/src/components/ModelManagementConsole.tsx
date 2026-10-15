@@ -34,7 +34,7 @@ export const ModelManagementConsole: React.FC = () => {
       setShowRegisterModal(false);
       setFormData({ name: '', framework: 'TensorFlow', version: 'v2.0.0', author: '', description: '', modelPath: '' });
     } catch {
-      // Error handled by hook
+      
     }
   };
 
@@ -42,7 +42,7 @@ export const ModelManagementConsole: React.FC = () => {
 
   return (
     <div className="bg-slate-900/90 border border-slate-800 rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden text-slate-100">
-      {/* Header */}
+      
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 border-b border-slate-800 gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 shadow-lg shadow-blue-500/20">
@@ -84,7 +84,7 @@ export const ModelManagementConsole: React.FC = () => {
           </div>
         )}
 
-        {/* Active Strategy Banner */}
+        
         <div className="p-4 rounded-xl bg-gradient-to-r from-blue-950/60 via-slate-900 to-indigo-950/60 border border-blue-500/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-blue-500/20 border border-blue-500/40 text-blue-400">
@@ -113,7 +113,7 @@ export const ModelManagementConsole: React.FC = () => {
           </div>
         </div>
 
-        {/* Framework Adapters Bar */}
+        
         <div>
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
             <Layers className="w-3.5 h-3.5 text-indigo-400" /> Supported Framework Adapters
@@ -140,7 +140,7 @@ export const ModelManagementConsole: React.FC = () => {
           </div>
         </div>
 
-        {/* Registered Models Registry Table */}
+        
         <div>
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center justify-between">
             <span className="flex items-center gap-2"><Cpu className="w-3.5 h-3.5 text-blue-400" /> Registered AI Model Catalog ({models.length})</span>
@@ -211,7 +211,7 @@ export const ModelManagementConsole: React.FC = () => {
           </div>
         </div>
 
-        {/* Fallback Guarantee Operational Notice */}
+        
         <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/40 border border-slate-700/60 text-xs text-slate-400">
           <ShieldCheck className="w-5 h-5 shrink-0 text-emerald-400 mt-0.5" />
           <div>
@@ -220,7 +220,7 @@ export const ModelManagementConsole: React.FC = () => {
         </div>
       </div>
 
-      {/* Register New Model Modal */}
+      
       {showRegisterModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden text-slate-100">

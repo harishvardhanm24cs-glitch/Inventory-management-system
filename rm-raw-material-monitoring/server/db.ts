@@ -2,7 +2,6 @@ import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Load env from current directory
 dotenv.config();
 
 const pool = mysql.createPool({
@@ -17,7 +16,7 @@ const pool = mysql.createPool({
 
 export const initDB = async () => {
     try {
-        // First connection without DB selection to create it if missing
+        
         const prelimConn = await mysql.createConnection({
             host: process.env.DB_HOST || 'localhost',
             user: process.env.DB_USER || 'root',
@@ -30,7 +29,7 @@ export const initDB = async () => {
         const connection = await pool.getConnection();
         console.log('MySQL Connected to Pool...');
 
-        // 1. SKU Registry Table
+        
         await connection.query(`
             CREATE TABLE IF NOT EXISTS sku_registry (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -46,7 +45,7 @@ export const initDB = async () => {
             )
         `);
 
-        // 2. Inventory Table
+        
         await connection.query(`
             CREATE TABLE IF NOT EXISTS inventory (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -60,7 +59,7 @@ export const initDB = async () => {
             )
         `);
 
-        // 3. Auto-Migration for Inventory Columns
+        
         const [invCols]: any = await connection.query('SHOW COLUMNS FROM inventory');
         const existingCols = invCols.map((c: any) => c.Field);
         
@@ -77,7 +76,7 @@ export const initDB = async () => {
             await connection.query('ALTER TABLE inventory ADD COLUMN critical_limit DECIMAL(10, 2) DEFAULT 10.00 AFTER min_limit');
         }
 
-        // 4. Scan Logs Table (Enhanced with Context)
+        
         await connection.query(`
             CREATE TABLE IF NOT EXISTS scan_logs (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -90,7 +89,7 @@ export const initDB = async () => {
             )
         `);
 
-        // 5. Auto-Migration for Scan Logs Columns
+        
         const [logCols]: any = await connection.query('SHOW COLUMNS FROM scan_logs');
         const existingLogCols = logCols.map((c: any) => c.Field);
 
@@ -101,7 +100,7 @@ export const initDB = async () => {
             await connection.query('ALTER TABLE scan_logs ADD COLUMN location VARCHAR(100) AFTER batch_number');
         }
 
-        // 6. Material Movements Table (Phase 4 Step 1)
+        
         await connection.query(`
             CREATE TABLE IF NOT EXISTS material_movements (
                 id INT AUTO_INCREMENT PRIMARY KEY,

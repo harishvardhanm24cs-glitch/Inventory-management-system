@@ -1,26 +1,6 @@
 import featureEngineeringService from './featureEngineeringService.js';
 import aiPredictionEngine from './aiPredictionEngine.js';
 
-/**
- * recommendationEngineService.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 5: AI Recommendation Engine
- *
- * Synthesizes dynamic, prioritized warehouse recommendations across 6 categories:
- * 1. LOW_STOCK
- * 2. DEAD_STOCK
- * 3. WAREHOUSE_HEALTH
- * 4. RACK_OPTIMIZATION
- * 5. CONSUMPTION_TREND
- * 6. INVENTORY_EFFICIENCY
- *
- * Every recommendation strictly contains 7 attributes:
- * - title, priority, reason, confidence_score, suggested_action, timestamp, category.
- *
- * Design Pattern: Strategy Pattern (IRecommendationStrategy)
- * Allows future ML models (Deep RL, Multi-Armed Bandit) to plug in & re-rank recommendations.
- */
-
 export class IRecommendationStrategy {
   constructor(name = 'AbstractRecommendationStrategy') {
     this.name = name;
@@ -31,9 +11,6 @@ export class IRecommendationStrategy {
   }
 }
 
-/**
- * Default Rule & Heuristic Recommendation Strategy
- */
 export class DefaultRuleHeuristicRecommendationStrategy extends IRecommendationStrategy {
   constructor() {
     super('DefaultRuleHeuristicRecommendationStrategy');
@@ -44,7 +21,7 @@ export class DefaultRuleHeuristicRecommendationStrategy extends IRecommendationS
     const recommendations = [];
     const nowISO = new Date().toISOString();
 
-    // --- Category 1: LOW_STOCK Recommendations ---
+    
     (materialFeatures || []).forEach(m => {
       const stock = m.current_stock || 0;
       const threshold = m.threshold_limit || 0;
@@ -78,7 +55,7 @@ export class DefaultRuleHeuristicRecommendationStrategy extends IRecommendationS
       }
     });
 
-    // Add predicted depletion warnings from AI Prediction Engine
+    
     const depletionPreds = predictions?.depletion || [];
     depletionPreds.forEach(p => {
       if (p.days_until_depletion !== null && p.days_until_depletion > 0 && p.days_until_depletion <= 14 && p.current_stock > p.threshold_limit) {
@@ -96,7 +73,7 @@ export class DefaultRuleHeuristicRecommendationStrategy extends IRecommendationS
       }
     });
 
-    // --- Category 2: DEAD_STOCK Recommendations ---
+    
     (materialFeatures || []).forEach(m => {
       const stock = m.current_stock || 0;
       const events30d = m.movement_events_30d || 0;
@@ -117,7 +94,7 @@ export class DefaultRuleHeuristicRecommendationStrategy extends IRecommendationS
       }
     });
 
-    // --- Category 3: WAREHOUSE_HEALTH Recommendations ---
+    
     const healthScore = warehouseFeatures?.healthScore ?? 85;
     const racksList = Array.isArray(rackFeatures) ? rackFeatures : (rackFeatures?.racks || []);
     const overloadedRacksCount = racksList.filter(r => (r.occupancy_percentage || 0) >= 85).length;
@@ -137,7 +114,7 @@ export class DefaultRuleHeuristicRecommendationStrategy extends IRecommendationS
       });
     }
 
-    // --- Category 4: RACK_OPTIMIZATION Recommendations ---
+    
     const racks = Array.isArray(rackFeatures) ? rackFeatures : (rackFeatures?.racks || []);
     const overloadedRacks = racks.filter(r => (r.occupancy_percentage || 0) >= 85);
     const underutilizedRacks = racks.filter(r => (r.occupancy_percentage || 0) <= 15);
@@ -171,7 +148,7 @@ export class DefaultRuleHeuristicRecommendationStrategy extends IRecommendationS
       });
     });
 
-    // --- Category 5: CONSUMPTION_TREND Recommendations ---
+    
     const trendPreds = predictions?.consumption_trend || [];
     trendPreds.forEach(t => {
       if (t.anomaly_detected || t.trend_slope_pct > 20.0) {
@@ -189,7 +166,7 @@ export class DefaultRuleHeuristicRecommendationStrategy extends IRecommendationS
       }
     });
 
-    // --- Category 6: INVENTORY_EFFICIENCY Recommendations ---
+    
     (materialFeatures || []).forEach(m => {
       const turnover = m.turnover_ratio || 0;
       const stock = m.current_stock || 0;
@@ -213,9 +190,6 @@ export class DefaultRuleHeuristicRecommendationStrategy extends IRecommendationS
   }
 }
 
-/**
- * Recommendation Strategy Registry for Dynamic ML Model Integration
- */
 export class RecommendationRegistry {
   constructor() {
     this.strategies = new Map();
@@ -251,9 +225,7 @@ export class RecommendationRegistry {
 export const recommendationRegistry = new RecommendationRegistry();
 
 export const recommendationEngineService = {
-  /**
-   * Complete multi-source recommendation synthesis
-   */
+  
   async generateRecommendations() {
     const [features, predictions] = await Promise.all([
       featureEngineeringService.generateAllFeatures(),
@@ -270,7 +242,7 @@ export const recommendationEngineService = {
     const strategy = recommendationRegistry.getActiveStrategy();
     const rawRecommendations = await strategy.generateRecommendations(contextData);
 
-    // Group recommendations by the 6 mandatory categories
+    
     const categoriesMap = {
       LOW_STOCK: [],
       DEAD_STOCK: [],

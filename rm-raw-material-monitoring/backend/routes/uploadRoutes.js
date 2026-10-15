@@ -3,9 +3,6 @@ const router = express.Router();
 const upload = require('../middleware/uploadMiddleware');
 const { protect } = require('../middleware/authMiddleware');
 
-// @route   POST /api/upload
-// @desc    Upload a document or image (e.g., invoices)
-// @access  Private
 router.post('/', protect, upload.single('document'), (req, res) => {
   if (!req.file) {
     res.status(400);

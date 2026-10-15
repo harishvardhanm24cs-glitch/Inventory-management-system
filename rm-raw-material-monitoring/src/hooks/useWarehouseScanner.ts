@@ -1,8 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import jsQR from 'jsqr';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 export type CameraStatus =
   | 'connecting'
   | 'scanning'
@@ -11,12 +9,9 @@ export type CameraStatus =
   | 'permission_denied';
 
 export interface UseWarehouseScannerOptions {
-  /** Called exactly once per unique code (respecting dedupMs window). */
+  
   onDetected: (code: string) => void;
-  /**
-   * Milliseconds during which the same code will be silently ignored
-   * after a successful detection. Defaults to 2500ms.
-   */
+  
   dedupMs?: number;
 }
 
@@ -26,19 +21,17 @@ export interface UseWarehouseScannerReturn {
   cameraStatus: CameraStatus;
   isPaused: boolean;
   togglePause: () => void;
-  /** Resume the scan loop (call after your processing is complete). */
+  
   resumeScanning: () => void;
-  /** Pause the scan loop (called internally on detection, exposed for manual control). */
+  
   pauseScanning: () => void;
 }
-
-// ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export function useWarehouseScanner({
   onDetected,
   dedupMs = 2500,
 }: UseWarehouseScannerOptions): UseWarehouseScannerReturn {
-  // Stable refs — never cause re-renders
+  
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -47,7 +40,7 @@ export function useWarehouseScanner({
   const mountedRef = useRef<boolean>(true);
   const lastScanRef = useRef<{ code: string; time: number }>({ code: '', time: 0 });
 
-  // Keep the consumer callback fresh without destabilising the scan loop
+  
   const onDetectedRef = useRef(onDetected);
   useEffect(() => {
     onDetectedRef.current = onDetected;
@@ -56,7 +49,7 @@ export function useWarehouseScanner({
   const [cameraStatus, setCameraStatus] = useState<CameraStatus>('connecting');
   const [isPaused, setIsPaused] = useState<boolean>(false);
 
-  // ── Loop control ──────────────────────────────────────────────────────────
+  
 
   const stopLoop = useCallback(() => {
     activeLoopRef.current = false;
@@ -106,12 +99,12 @@ export function useWarehouseScanner({
           const now = Date.now();
           const { code: lastCode, time: lastTime } = lastScanRef.current;
 
-          // Dedup check: same code within dedupMs window → skip
+          
           if (text !== lastCode || now - lastTime >= dedupMs) {
             lastScanRef.current = { code: text, time: now };
-            activeLoopRef.current = false; // auto-pause on detection
+            activeLoopRef.current = false; 
             onDetectedRef.current(text);
-            return; // do NOT schedule next frame — caller decides when to resume
+            return; 
           }
         }
       }
@@ -122,7 +115,7 @@ export function useWarehouseScanner({
     rafRef.current = requestAnimationFrame(tick);
   }, [dedupMs, stopLoop]);
 
-  // ── Camera lifecycle ──────────────────────────────────────────────────────
+  
 
   const startCamera = useCallback(async () => {
     if (!mountedRef.current) return;
@@ -176,11 +169,11 @@ export function useWarehouseScanner({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Public controls ────────────────────────────────────────────────────────
+  
 
   const resumeScanning = useCallback(() => {
     if (!mountedRef.current) return;
-    // Reset dedup so the same code can be scanned again on the next item
+    
     lastScanRef.current = { code: '', time: 0 };
     setIsPaused(false);
     setCameraStatus('scanning');

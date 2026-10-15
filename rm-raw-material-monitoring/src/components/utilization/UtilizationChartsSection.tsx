@@ -67,7 +67,7 @@ export const UtilizationChartsSection: React.FC<UtilizationChartsSectionProps> =
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 min-h-0 min-w-0">
-      {/* 1. Capacity Donut Gauge */}
+      
       <div className="lg:col-span-5 rounded-2xl border border-slate-800/80 bg-slate-900/80 p-6 backdrop-blur-md transition-all hover:border-slate-700/60 shadow-md flex flex-col justify-between min-h-0 min-w-0">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
@@ -122,7 +122,7 @@ export const UtilizationChartsSection: React.FC<UtilizationChartsSectionProps> =
           </div>
         </div>
 
-        {/* Rack Status Breakdown Progress Bar */}
+        
         <div className="space-y-2 pt-3 border-t border-slate-800/80">
           <div className="flex items-center justify-between text-xs font-medium">
             <span className="text-slate-400 flex items-center gap-1">
@@ -139,7 +139,7 @@ export const UtilizationChartsSection: React.FC<UtilizationChartsSectionProps> =
         </div>
       </div>
 
-      {/* 2. Top Racks by Occupancy Bar Chart */}
+      
       <div className="lg:col-span-7 rounded-2xl border border-slate-800/80 bg-slate-900/80 p-6 backdrop-blur-md transition-all hover:border-slate-700/60 shadow-md flex flex-col justify-between min-h-0 min-w-0">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">

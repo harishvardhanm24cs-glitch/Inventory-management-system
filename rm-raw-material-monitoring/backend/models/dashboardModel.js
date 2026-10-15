@@ -2,12 +2,12 @@ const db = require('../config/db');
 
 const Dashboard = {
   async getOverviewStats() {
-    // Aggregate multiple basic stats using parallel queries
+    
     const [[{ total_materials }]] = await db.query('SELECT COUNT(*) as total_materials FROM materials');
     const [[{ low_stock }]] = await db.query('SELECT COUNT(*) as low_stock FROM materials WHERE quantity <= threshold_limit');
     const [[{ active_alerts }]] = await db.query('SELECT COUNT(*) as active_alerts FROM alerts WHERE is_resolved = FALSE');
     
-    // Get today's total inward/outward movement
+    
     const [[today_stats]] = await db.query(`
       SELECT 
         SUM(CASE WHEN type = 'inward' THEN quantity ELSE 0 END) as today_inward,
@@ -26,7 +26,7 @@ const Dashboard = {
   },
 
   async getDailyTrends() {
-    // Group transactions by date for the last 7 days
+    
     const [rows] = await db.query(`
       SELECT 
         DATE(created_at) as date,
@@ -41,7 +41,7 @@ const Dashboard = {
   },
 
   async getTopConsumed() {
-    // Top 5 materials consumed (outward) in the last 30 days
+    
     const [rows] = await db.query(`
       SELECT 
         m.material_name,

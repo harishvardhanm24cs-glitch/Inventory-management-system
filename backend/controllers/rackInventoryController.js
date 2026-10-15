@@ -7,7 +7,7 @@ import { logAudit } from '../utils/auditLogger.js';
  */
 export const getRackInventory = async (req, res, next) => {
   try {
-    // 1. Audit GET /api/rack-inventory and query directly from rack_inventory table
+    
     const [racks] = await db.query(`
       SELECT 
         rack_code, 
@@ -20,7 +20,7 @@ export const getRackInventory = async (req, res, next) => {
       ORDER BY rack_code ASC
     `);
 
-    // 2. Fetch all scanned materials that are placed in racks to construct nested materials for frontend compatibility
+    
     const [materialsInRacks] = await db.query(`
       SELECT 
         m.id,
@@ -38,7 +38,7 @@ export const getRackInventory = async (req, res, next) => {
       WHERE q.status = 'used'
     `);
 
-    // Group materials by rack_code
+    
     const materialsByRack = {};
     materialsInRacks.forEach(m => {
       if (!materialsByRack[m.rack_code]) {
@@ -57,13 +57,13 @@ export const getRackInventory = async (req, res, next) => {
       });
     });
 
-    // 3. Construct mapped racks list with nested materials and calculated status color
+    
     const mappedRacks = racks.map(rack => {
       const qty = parseFloat(rack.current_capacity) || 0;
-      const maxCap = parseFloat(rack.max_capacity); // No hardcoded fallback
+      const maxCap = parseFloat(rack.max_capacity); 
       const occPercent = parseFloat(rack.occupancy_percentage) || 0;
       
-      // Determine color code dynamically
+      
       let color_status = 'GRAY';
       if (occPercent === 0) {
         color_status = 'GRAY';
@@ -89,7 +89,7 @@ export const getRackInventory = async (req, res, next) => {
       };
     });
 
-    // 4. Fetch highest traffic rack today based on qr_history movements count
+    
     let highTrafficZone = null;
     try {
       const [trafficResult] = await db.query(`
@@ -138,7 +138,7 @@ export const getRackInventory = async (req, res, next) => {
       highTrafficZone
     };
 
-    // 5. Log API response
+    
     console.log('[API GET /api/rack-inventory Success] Status: 200, Rows returned:', mappedRacks.length);
     console.log('[API Response Payload]:', JSON.stringify(responseBody));
 
@@ -194,7 +194,7 @@ export const updateRackInventory = async (req, res, next) => {
       [newCurrent, newMax, newOcc, rackCode]
     );
 
-    // Also sync back to racks table if present to keep consistency
+    
     await db.query(
       'UPDATE racks SET quantity = ?, max_capacity = ? WHERE rack_code = ?',
       [newCurrent, newMax, rackCode]

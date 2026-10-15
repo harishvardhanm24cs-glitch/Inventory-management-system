@@ -1,0 +1,31 @@
+{
+  "datasetGenerator": {
+    "pass": true,
+    "rowsGenerated": 170,
+    "columnsGenerated": 26,
+    "duplicateRecords": 1,
+    "missingValues": 0,
+    "dateRange": "2026-05-31 to 2026-07-27",
+    "outputFile": "D:\\atendence-main\\backend\\ml_datasets\\warehouse_production_ml_dataset_v2026.07.27_205401.csv"
+  },
+  "dataCleaning": {
+    "pass": true,
+    "rowsBefore": 170,
+    "rowsAfter": 170,
+    "duplicatesRemoved": 0,
+    "missingValuesFixed": 0,
+    "cleaningWarnings": 0,
+    "outputFile": "D:\\atendence-main\\backend\\ml_datasets\\clean_warehouse_dataset.csv"
+  },
+  "featureEngineering": {
+    "pass": true,
+    "rowsProcessed": 170,
+    "engineeredFeaturesCreated": 75,
+    "constantFeatures": 12,
+    "nullFeatures": 0,
+    "featureCount": 75,
+    "targetColumnPresent": true,
+    "outputFile": "D:\\atendence-main\\backend\\ml_datasets\\feature_dataset.csv"
+  },
+  "overallStatus": "READY FOR FEATURE QUALITY AUDIT"
+}

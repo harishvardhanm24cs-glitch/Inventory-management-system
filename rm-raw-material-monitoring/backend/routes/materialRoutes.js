@@ -24,10 +24,8 @@ router.route('/')
     addMaterial
   );
 
-// Specific barcode fetching
 router.route('/:barcode').get(getMaterial);
 
-// ID based operations for updates and deletes
 router.route('/:id')
   .put(authorize('manager', 'engineer'), updateMaterial)
   .delete(authorize('manager'), deleteMaterial);

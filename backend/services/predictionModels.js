@@ -1,16 +1,5 @@
-/**
- * predictionModels.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Prediction Logic & Strategy Interface Layer.
- *
- * Separates ML model implementation details from core business logic & UI.
- * Provides a Strategy Pattern + Model Registry so custom ML models (Python, ONNX,
- * TensorFlow, Microservices) can be plugged in dynamically without modifying UI.
- */
 
-/**
- * Interface contract for Prediction Models (IPredictionModelStrategy)
- */
+
 export class IPredictionModelStrategy {
   constructor(name = 'AbstractPredictionStrategy') {
     this.name = name;
@@ -37,18 +26,12 @@ export class IPredictionModelStrategy {
   }
 }
 
-/**
- * Concrete Default Statistical ML Strategy
- * Combines Weighted Moving Averages, Linear Regression, and Multi-factor Heuristic Risk Scoring.
- */
 export class StatisticalMLPredictionStrategy extends IPredictionModelStrategy {
   constructor() {
     super('StatisticalMLPredictionStrategy');
   }
 
-  /**
-   * 1. Demand Prediction across 7, 14, and 30 day horizons
-   */
+  
   async predictDemand(materialFeatures) {
     return (materialFeatures || []).map(mat => {
       const avgDaily = mat.avg_daily_usage || 0;
@@ -58,7 +41,7 @@ export class StatisticalMLPredictionStrategy extends IPredictionModelStrategy {
       const forecast14d = parseFloat((avgDaily * 14 * varianceFactor).toFixed(2));
       const forecast30d = parseFloat((avgDaily * 30 * varianceFactor).toFixed(2));
 
-      // Confidence score based on sample size and recency
+      
       let confidenceScore = 90;
       if (mat.tx_count < 3) confidenceScore = 60;
       else if (mat.tx_count < 8) confidenceScore = 75;
@@ -82,9 +65,7 @@ export class StatisticalMLPredictionStrategy extends IPredictionModelStrategy {
     });
   }
 
-  /**
-   * 2. Inventory Depletion & Safety Threshold Breach Prediction
-   */
+  
   async predictDepletion(materialFeatures) {
     return (materialFeatures || []).map(mat => {
       const current = mat.current_stock;
@@ -131,15 +112,13 @@ export class StatisticalMLPredictionStrategy extends IPredictionModelStrategy {
     });
   }
 
-  /**
-   * 3. Rack Utilization & Overload Prediction
-   */
+  
   async predictRackUtilization(rackFeatures) {
     return (rackFeatures || []).map(rack => {
       const occ = rack.occupancy_percentage;
       const activity = rack.activity_count_30d;
 
-      // Project occupancy growth based on activity frequency
+      
       let projected_growth_rate = 0;
       if (activity > 20) projected_growth_rate = 1.15;
       else if (activity > 5) projected_growth_rate = 1.05;
@@ -169,9 +148,7 @@ export class StatisticalMLPredictionStrategy extends IPredictionModelStrategy {
     });
   }
 
-  /**
-   * 4. Warehouse Operational Risk Prediction (0-100 score & classification)
-   */
+  
   async predictWarehouseRisk(warehouseFeatures, materialFeatures, rackFeatures) {
     const {
       totalMaterials,
@@ -182,7 +159,7 @@ export class StatisticalMLPredictionStrategy extends IPredictionModelStrategy {
       healthScore
     } = warehouseFeatures;
 
-    // Stock Risk Factor (0-40)
+    
     let stockRiskScore = 0;
     if (totalMaterials > 0) {
       const depletedPct = (depletedMaterials / totalMaterials) * 40;
@@ -190,11 +167,11 @@ export class StatisticalMLPredictionStrategy extends IPredictionModelStrategy {
       stockRiskScore = Math.min(40, Math.round(depletedPct + deficitPct));
     }
 
-    // Rack Risk Factor (0-30)
+    
     const totalRacks = rackFeatures ? rackFeatures.length : 1;
     const rackRiskScore = totalRacks > 0 ? Math.min(30, Math.round((overloadedRacks / totalRacks) * 30)) : 0;
 
-    // Alert & Health Risk Factor (0-30)
+    
     const alertRiskScore = Math.min(20, criticalAlertsCount * 5);
     const healthDeficit = Math.max(0, 100 - healthScore) * 0.1;
     const alertHealthRiskScore = Math.min(30, Math.round(alertRiskScore + healthDeficit));
@@ -224,9 +201,7 @@ export class StatisticalMLPredictionStrategy extends IPredictionModelStrategy {
     };
   }
 
-  /**
-   * 5. Consumption Trend Prediction (INCREASING, DECREASING, STABLE + slope %)
-   */
+  
   async predictConsumptionTrend(materialFeatures) {
     return (materialFeatures || []).map(mat => {
       const avgDaily = mat.avg_daily_usage;
@@ -269,9 +244,6 @@ export class StatisticalMLPredictionStrategy extends IPredictionModelStrategy {
 
 import modelManager from './modelManager.js';
 
-/**
- * Model Registry for Pluggable ML Model Management
- */
 class PredictionModelRegistry {
   registerModel(name, strategyInstance) {
     modelManager.registerNewModel({ id: name, name: strategyInstance.name, framework: 'Custom' });

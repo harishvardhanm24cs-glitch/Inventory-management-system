@@ -42,10 +42,10 @@ export const InventoryForecastWidget: React.FC = memo(() => {
 
   return (
     <div className="bg-slate-900/90 border border-slate-800/80 rounded-2xl p-6 shadow-2xl backdrop-blur-xl relative overflow-hidden group hover:border-amber-500/30 transition-all duration-300">
-      {/* Glow Accent */}
+      
       <div className="absolute -right-10 -top-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-500/20 transition-all duration-500" />
 
-      {/* Header */}
+      
       <div className="flex items-center justify-between mb-5 border-b border-slate-800/80 pb-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/20">
@@ -73,7 +73,7 @@ export const InventoryForecastWidget: React.FC = memo(() => {
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Status Counter Banner */}
+          
           <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
             <div>
               <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Depletion Risk Alert</span>
@@ -89,7 +89,7 @@ export const InventoryForecastWidget: React.FC = memo(() => {
             </div>
           </div>
 
-          {/* Depletion List */}
+          
           <div className="space-y-2 max-h-[190px] overflow-y-auto pr-1 custom-scrollbar">
             {depletionList.slice(0, 4).map((item) => {
               const status = item.depletion_status;

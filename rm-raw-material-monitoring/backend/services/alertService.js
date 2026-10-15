@@ -6,17 +6,17 @@ const checkAndGenerateAlert = async (material) => {
   if (parseFloat(material.quantity) <= parseFloat(material.threshold_limit)) {
     const message = `Raw material stock is below minimum threshold.`;
     
-    // Save to database
+    
     const alertId = await Alert.createAlert(material.id, message);
     
-    // If a new alert was created, send an email
+    
     if (alertId) {
       try {
-        // Fetch all managers, engineers, and workers to notify
+        
         const [users] = await db.query('SELECT email FROM users WHERE role IN ("manager", "engineer", "worker")');
         const recipients = users.map(u => u.email).join(', ');
 
-        // HTML Email Template
+        
         const htmlTemplate = `
           <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px; max-width: 600px;">
             <h2 style="color: #d9534f;">⚠️ Low Stock Alert</h2>
@@ -34,7 +34,7 @@ const checkAndGenerateAlert = async (material) => {
         `;
 
         await sendEmail({
-          email: recipients, // Sends to all matching roles dynamically
+          email: recipients, 
           subject: `⚠️ URGENT: Low Stock Alert - ${material.material_name}`,
           html: htmlTemplate
         });
@@ -45,7 +45,7 @@ const checkAndGenerateAlert = async (material) => {
       }
     }
   } else {
-    // If stock is above threshold, auto-resolve any active alerts
+    
     await db.query(
       'UPDATE alerts SET is_resolved = TRUE WHERE material_id = ? AND is_resolved = FALSE',
       [material.id]

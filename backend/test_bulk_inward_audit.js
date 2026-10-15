@@ -14,27 +14,27 @@ async function runAuditTest() {
 
   console.log('--- STARTING BULK QR INWARD AUDIT INTEGRATION TEST ---');
   
-  // 1. Database Cleanup and Reset for PI003 (adjustStock test) and PI004 (autoStore test)
+  
   console.log('\n[Step 1] Resetting database state for PI003 and PI004...');
   
-  // Reset qr_codes status
+  
   await db.query("UPDATE qr_codes SET status = 'unused', scanned_at = NULL, scanned_by = NULL WHERE barcode_id IN ('PI003', 'PI004')");
   
-  // Delete existing transaction logs
+  
   await db.query("DELETE FROM transactions WHERE material_id IN (SELECT id FROM materials WHERE barcode IN ('PI003', 'PI004'))");
   
-  // Delete existing QR history logs
+  
   await db.query("DELETE FROM qr_history WHERE barcode_id IN ('PI003', 'PI004')");
 
-  // Keep PI003 in materials, but reset its quantity to 30.00
+  
   await db.query("UPDATE materials SET quantity = 30.00 WHERE barcode = 'PI003'");
   
-  // Delete PI004 from materials to simulate initial inward of unregistered material
+  
   await db.query("DELETE FROM materials WHERE barcode = 'PI004'");
   
   console.log('Database state initialized.');
 
-  // Get material ID for PI003
+  
   const [[pi003Mat]] = await db.query("SELECT id FROM materials WHERE barcode = 'PI003'");
   if (!pi003Mat) {
     console.error('❌ Error: PI003 material record not found in DB!');
@@ -43,7 +43,7 @@ async function runAuditTest() {
   const pi003Id = pi003Mat.id;
   console.log(`PI003 material ID: ${pi003Id}`);
 
-  // 2. Test autoStore (Path A) with PI004 (New barcode inward)
+  
   console.log('\n[Step 2] Simulating autoStore scan for PI004 (New barcode)...');
   const resPI004 = await fetch(`${BASE_URL}/scanner/auto-store`, {
     method: 'POST',
@@ -62,7 +62,7 @@ async function runAuditTest() {
   const jsonPI004 = await resPI004.json();
   console.log('autoStore response:', jsonPI004);
 
-  // 3. Test adjustStock (Path B) with PI003 (Existing barcode stock adjustment)
+  
   console.log(`\n[Step 3] Simulating adjustStock scan for PI003 (Existing barcode, ID: ${pi003Id})...`);
   const resPI003 = await fetch(`${BASE_URL}/materials/${pi003Id}/stock`, {
     method: 'POST',
@@ -79,10 +79,10 @@ async function runAuditTest() {
   const jsonPI003 = await resPI003.json();
   console.log('adjustStock response:', jsonPI003);
 
-  // 4. Verify Database State
+  
   console.log('\n[Step 4] Verifying database states...');
   
-  // Verify qr_codes status
+  
   const [qrs] = await db.query("SELECT barcode_id, status FROM qr_codes WHERE barcode_id IN ('PI003', 'PI004')");
   console.log('QR codes status in DB:');
   console.table(qrs);
@@ -96,7 +96,7 @@ async function runAuditTest() {
   }
   console.log('✓ Success: QR statuses correctly remained "unused".');
 
-  // Verify qr_history logs
+  
   const [history] = await db.query("SELECT barcode_id, action, remarks FROM qr_history WHERE barcode_id IN ('PI003', 'PI004') ORDER BY id ASC");
   console.log('\nQR History logged:');
   console.table(history);
@@ -110,7 +110,7 @@ async function runAuditTest() {
   }
   console.log('✓ Success: SCANNED and INWARD history records logged.');
 
-  // 5. Test repeated scan accumulation (PI004 autoStore path)
+  
   console.log('\n[Step 5] Simulating repeated autoStore scan for PI004 (expecting quantity accumulation)...');
   const resDupPI004 = await fetch(`${BASE_URL}/scanner/auto-store`, {
     method: 'POST',
@@ -133,7 +133,7 @@ async function runAuditTest() {
   }
   console.log('✓ Success: Repeated scan for PI004 succeeded.');
 
-  // 6. Test repeated stock adjustment accumulation (PI003 adjustStock path)
+  
   console.log('\n[Step 6] Simulating repeated adjustStock scan for PI003 (expecting quantity accumulation)...');
   const resDupPI003 = await fetch(`${BASE_URL}/materials/${pi003Id}/stock`, {
     method: 'POST',
@@ -154,7 +154,7 @@ async function runAuditTest() {
   }
   console.log('✓ Success: Repeated scan for PI003 succeeded.');
 
-  // Verify PI003 final quantity in DB
+  
   const [[pi003Final]] = await db.query("SELECT quantity FROM materials WHERE barcode = 'PI003'");
   console.log('PI003 final quantity in DB:', pi003Final?.quantity);
   if (parseFloat(pi003Final?.quantity) !== 90.00) {

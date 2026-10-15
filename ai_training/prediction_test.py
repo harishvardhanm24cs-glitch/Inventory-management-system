@@ -4,7 +4,6 @@ prediction_test.py
 RM Monitor Prediction Inference Test Helper.
 """
 
-
 def test_prediction_inference(model_path=None, sample_input=None):
     """
     Test prediction inference pipeline placeholder.
@@ -15,7 +14,6 @@ def test_prediction_inference(model_path=None, sample_input=None):
         "predicted_risk_score": 15.0,
         "predicted_stockout_days": 12
     }
-
 
 if __name__ == "__main__":
     res = test_prediction_inference()

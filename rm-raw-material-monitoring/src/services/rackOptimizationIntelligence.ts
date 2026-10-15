@@ -1,27 +1,4 @@
-/**
- * rackOptimizationIntelligence.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 6 – Rack Optimization Intelligence Client Engine
- *
- * Dedicated client-side module for rack optimization.
- * Analyzes rack occupancy, available capacity, material frequency, category,
- * and zone utilization.
- *
- * Advisory-Only Safety Guarantee:
- * • Never automatically moves materials or mutates DB allocations.
- * • Generates advisory recommendations only.
- *
- * Recommendations:
- * • Better rack placement
- * • Rack nearing full capacity
- * • Rack underutilized
- * • Improve warehouse flow
- *
- * Reusable by:
- * • Dashboard (Executive & Operations)
- * • Digital Twin (WarehouseTwin Slot Inspector & Heatmaps)
- * • Manager Panel (Rack View)
- */
+
 
 import api from './api';
 
@@ -57,9 +34,7 @@ export interface RackOptimizationReportPayload {
 }
 
 class ClientRackOptimizationIntelligence {
-  /**
-   * Fetch complete rack optimization report
-   */
+  
   async getReport(): Promise<RackOptimizationReportPayload> {
     try {
       const res: any = await api.getRackOptimizationIntelligence();
@@ -91,17 +66,13 @@ class ClientRackOptimizationIntelligence {
     }
   }
 
-  /**
-   * Fetch placement suggestions specifically
-   */
+  
   async getPlacementSuggestions(): Promise<RackOptimizationItem[]> {
     const report = await this.getReport();
     return (report.optimizations || []).filter(o => o.optimization_type === 'BETTER_PLACEMENT');
   }
 
-  /**
-   * Fetch near-full capacity rack alerts
-   */
+  
   async getNearFullRacks(): Promise<RackOptimizationItem[]> {
     const report = await this.getReport();
     return (report.optimizations || []).filter(o => o.optimization_type === 'NEAR_FULL_CAPACITY');

@@ -6,7 +6,7 @@ import db from '../config/db.js';
  */
 export const getDigitalTwinData = async (req, res, next) => {
   try {
-    // 1. Fetch all racks left-joining rack_inventory for occupancy
+    
     const [racks] = await db.query(`
       SELECT 
         r.rack_code, 
@@ -21,7 +21,7 @@ export const getDigitalTwinData = async (req, res, next) => {
       ORDER BY r.rack_code ASC
     `);
 
-    // 2. Fetch all scanned materials that are placed in racks
+    
     const [materialsInRacks] = await db.query(`
       SELECT 
         m.id,
@@ -37,7 +37,7 @@ export const getDigitalTwinData = async (req, res, next) => {
       WHERE q.status = 'used'
     `);
 
-    // Group materials by rack_code
+    
     const materialsByRack = {};
     materialsInRacks.forEach(m => {
       if (!materialsByRack[m.rack_code]) {
@@ -54,21 +54,21 @@ export const getDigitalTwinData = async (req, res, next) => {
       });
     });
 
-    // 3. Construct mapped racks list with nested materials and calculated status color
+    
     const mappedRacks = racks.map(rack => {
       const qty = parseFloat(rack.current_capacity) || 0;
       const maxCap = parseFloat(rack.max_capacity);
       
-      // Calculate occupancy percentage
+      
       const occPercent = rack.occupancy_percentage !== undefined && rack.occupancy_percentage !== null
         ? parseFloat(rack.occupancy_percentage)
         : (maxCap > 0 ? parseFloat(((qty / maxCap) * 100).toFixed(2)) : 0.00);
 
-      // Determine color code:
-      // 0% occupancy -> GRAY (empty rack)
-      // 0-40% -> GREEN
-      // 41-80% -> YELLOW
-      // 81-100% -> RED
+      
+      
+      
+      
+      
       let statusColor = 'GREEN';
       if (occPercent === 0) {
         statusColor = 'GRAY';
@@ -95,7 +95,7 @@ export const getDigitalTwinData = async (req, res, next) => {
       };
     });
 
-    // 4. Fetch highest traffic rack today based on qr_history movements count
+    
     let highTrafficZone = null;
     try {
       const [trafficResult] = await db.query(`
@@ -116,7 +116,7 @@ export const getDigitalTwinData = async (req, res, next) => {
           count: parseInt(trafficResult[0].count, 10)
         };
       } else {
-        // Fallback: get the overall highest active rack across all time to ensure visual demo works
+        
         const [fallbackResult] = await db.query(`
           SELECT rack_code, COUNT(*) AS count
           FROM qr_history

@@ -1,0 +1,105 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "RM Monitor AI REST API Specification",
+    "version": "1.0.0",
+    "description": "Production REST APIs for RM Monitor Gradient Boosting Raw Material Depletion Prediction Engine."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api/ai",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/predict": {
+      "post": {
+        "summary": "Predict quantity_used for one material",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "current_stock": 100,
+                "quantity": 25,
+                "movement_type": "OUTWARD"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Single prediction successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "prediction": 25.0,
+                    "unit": "KG",
+                    "confidence": "HIGH (R² 0.9842)",
+                    "execution_time_ms": 12.5,
+                    "model_version": "v2026.07.28",
+                    "top_contributing_features": ["norm_quantity", "ohe_mov_OUTWARD"]
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid input payload" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/predict/batch": {
+      "post": {
+        "summary": "Predict quantity_used for multiple materials (Manager/Admin Only)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": [
+                { "current_stock": 100, "quantity": 25, "movement_type": "OUTWARD" },
+                { "current_stock": 500, "quantity": 100, "movement_type": "INWARD" }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Batch prediction successful" },
+          "403": { "description": "Forbidden - Role unauthorized" }
+        }
+      }
+    },
+    "/model/status": {
+      "get": {
+        "summary": "Get AI Model health and status",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Model health returned" }
+        }
+      }
+    },
+    "/features": {
+      "get": {
+        "summary": "Get expected feature schema and field rules",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Feature schema returned" }
+        }
+      }
+    },
+    "/validate": {
+      "post": {
+        "summary": "Validate prediction payload without running inference",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Payload valid" },
+          "400": { "description": "Payload invalid" }
+        }
+      }
+    }
+  }
+}

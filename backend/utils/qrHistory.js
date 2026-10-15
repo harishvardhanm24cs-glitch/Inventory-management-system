@@ -16,7 +16,7 @@ export const logQrHistory = async (connectionOrPool, { barcode_id, material_name
   try {
     const conn = connectionOrPool || db;
 
-    // Resolve user_name from user_id if provided
+    
     let user_name = 'System';
     if (user_id) {
       const [users] = await conn.query('SELECT name FROM users WHERE id = ?', [user_id]);

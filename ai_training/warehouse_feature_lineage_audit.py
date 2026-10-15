@@ -17,7 +17,6 @@ import numpy as np
 from pathlib import Path
 from datetime import datetime
 
-# Configure sys.stdout for UTF-8 encoding if supported
 if hasattr(sys.stdout, "reconfigure"):
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -34,7 +33,6 @@ os.makedirs(REPORTS_DIR, exist_ok=True)
 
 FEATURE_CSV_PATH = ML_DATASETS_DIR / "feature_dataset.csv"
 
-
 class WarehouseFeatureLineageAudit:
     def __init__(self):
         self.reports_dir = Path(REPORTS_DIR)
@@ -46,15 +44,10 @@ class WarehouseFeatureLineageAudit:
         print("    RM MONITOR - PHASE 8B MODULE 4.3 WAREHOUSE FEATURE LINEAGE AUDIT")
         print("=" * 80)
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 1: DATABASE INSPECTION & TABLE AUDIT
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 1: DATABASE INSPECTION (MySQL Operational Tables)...")
 
-        # Load feature dataset to inspect exported values
         df_csv = pd.read_csv(FEATURE_CSV_PATH) if FEATURE_CSV_PATH.exists() else pd.DataFrame()
 
-        # Database telemetry inspection summaries
         db_telemetry = {
             "quantity": {
                 "source_table": "transactions",
@@ -92,9 +85,6 @@ class WarehouseFeatureLineageAudit:
         print(f"   • 'current_rack_quantity': Source = racks.quantity        | Varying in DB = NO  (All 0 in DB)")
         print(f"   • 'occupancy_percentage' : Source = rack_inventory.occupancy_percentage | Varying in DB = NO (All 0.0 in DB)")
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 2: DATASET GENERATOR TRACE (datasetGeneratorService.js)
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 2: DATASET GENERATOR LINEAGE TRACE (datasetGeneratorService.js)...")
 
         generator_trace = {
@@ -132,9 +122,6 @@ class WarehouseFeatureLineageAudit:
 
         print("   • Generator Tracing Completed for datasetGeneratorService.js (Lines 86-196).")
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 3: FEATURE ENGINEERING TRACE (featureEngineeringPipelineService.js)
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 3: FEATURE ENGINEERING LINEAGE TRACE (featureEngineeringPipelineService.js)...")
 
         fe_trace = {
@@ -166,9 +153,6 @@ class WarehouseFeatureLineageAudit:
 
         print("   • Feature Engineering Tracing Completed for featureEngineeringPipelineService.js (Lines 133-326).")
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 4: CONSTANT FEATURE DIAGNOSIS STAGE MATRIX
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 4: CONSTANT FEATURE DIAGNOSIS STAGE MATRIX...")
 
         stage_matrix = [
@@ -202,9 +186,6 @@ class WarehouseFeatureLineageAudit:
             print(f"{m['feature_name']:<25} | {m['is_db_constant']:<12} | {m['is_dataset_generator_constant']:<16} | {m['is_feature_engineering_constant']:<10} | {m['primary_constant_stage']:<25}")
         print("-" * 80)
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 5: ROOT CAUSE CLASSIFICATION & EXPLANATION
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 5: ROOT CAUSE ANALYSIS...")
 
         root_causes = {
@@ -235,9 +216,6 @@ class WarehouseFeatureLineageAudit:
             print(f"   ❌ [{feat}]: {info['cause_category']}")
             print(f"      Explanation: {info['explanation']}\n")
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 6: SAFE REMEDIATION PLAN (Non-Destructive Recommendations)
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 6: SAFE REMEDIATION PLAN & RECOMMENDATIONS...")
 
         remediation_plan = {
@@ -270,12 +248,8 @@ class WarehouseFeatureLineageAudit:
             }
         }
 
-        # ──────────────────────────────────────────────────────────────────────
-        # REPORT ARTIFACT GENERATION
-        # ──────────────────────────────────────────────────────────────────────
         print("\nGENERATING 4 REPORT ARTIFACTS IN ai_training/reports/...")
 
-        # 1. warehouse_feature_lineage.json
         audit_payload = {
             "timestamp": self.timestamp,
             "audited_features": ["quantity", "current_rack_quantity", "occupancy_percentage"],
@@ -292,7 +266,6 @@ class WarehouseFeatureLineageAudit:
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(audit_payload, f, indent=2)
 
-        # 2. constant_feature_analysis.md
         cfa_md_lines = [
             "# RM Monitor - Constant Warehouse Feature Diagnostic Report",
             "",
@@ -330,7 +303,6 @@ class WarehouseFeatureLineageAudit:
         with open(cfa_path, "w", encoding="utf-8") as f:
             f.write("\n".join(cfa_md_lines))
 
-        # 3. pipeline_trace.md
         pt_md_lines = [
             "# RM Monitor - Warehouse Feature Pipeline Execution Trace",
             "",
@@ -363,7 +335,6 @@ class WarehouseFeatureLineageAudit:
         with open(pt_path, "w", encoding="utf-8") as f:
             f.write("\n".join(pt_md_lines))
 
-        # 4. warehouse_feature_lineage.md
         wfl_md_lines = [
             "# RM Monitor - Warehouse Feature Lineage Audit Report",
             "",
@@ -400,9 +371,6 @@ class WarehouseFeatureLineageAudit:
         print(f"   • Saved '{pt_path.name}'")
         print(f"   • Saved '{wfl_path.name}'")
 
-        # ──────────────────────────────────────────────────────────────────────
-        # FINAL REQUIRED OUTPUT DISPLAY
-        # ──────────────────────────────────────────────────────────────────────
         print("\n" + "=" * 80)
         print("              FINAL WAREHOUSE FEATURE LINEAGE AUDIT SUMMARY")
         print("=" * 80)
@@ -451,7 +419,6 @@ class WarehouseFeatureLineageAudit:
         print("=" * 80)
 
         return audit_payload
-
 
 if __name__ == "__main__":
     audit = WarehouseFeatureLineageAudit()

@@ -15,16 +15,17 @@ interface EmptyStateProps {
 
 const EmptyState = ({ icon: Icon, title, description, action, className }: EmptyStateProps) => {
     return (
-        <div className={cn("flex flex-col items-center justify-center p-12 text-center animate-in fade-in slide-in-from-bottom-4 duration-700", className)}>
-            <div className="w-20 h-20 bg-primary/5 rounded-3xl flex items-center justify-center mb-6 border border-primary/10 shadow-sm transition-transform hover:scale-110 duration-500">
-                <Icon className="w-10 h-10 text-primary opacity-60" />
+        <div className={cn("flex flex-col items-center justify-center p-12 text-center bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl shadow-2xs transition-colors", className)}>
+            <div className="w-16 h-16 bg-blue-50 dark:bg-blue-950/60 rounded-2xl flex items-center justify-center mb-4 border border-blue-100 dark:border-blue-800/60">
+                <Icon className="w-8 h-8 text-blue-600 dark:text-blue-400" />
             </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2 uppercase tracking-tight">{title}</h3>
-            <p className="text-sm font-medium text-slate-500 max-w-sm mb-8 leading-relaxed italic">{description}</p>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1.5 tracking-tight">{title}</h3>
+            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 max-w-sm mb-6 leading-relaxed">{description}</p>
             {action && (
                 <Button
                     onClick={action.onClick}
-                    className="h-12 px-8 rounded-2xl shadow-xl shadow-primary/10"
+                    size="md"
+                    className="shadow-2xs"
                 >
                     {action.label}
                 </Button>

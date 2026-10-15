@@ -14,12 +14,12 @@ async function runAlertTest() {
 
   console.log('\n--- STARTING RACK ALERT ENGINE INTEGRATION TESTS ---');
 
-  // Test setup names
+  
   const testBarcode = 'ALERT-BARCODE-001';
   const testMatName = 'Alert Test Material';
   const testRackCode = 'RACK-ALERT-TEST-A1';
 
-  // 1. Cleanup
+  
   console.log('Cleaning up old test data...');
   await db.query("DELETE FROM alerts WHERE material_id IN (SELECT id FROM materials WHERE barcode = ?)", [testBarcode]);
   await db.query("DELETE FROM transactions WHERE material_id IN (SELECT id FROM materials WHERE barcode = ?)", [testBarcode]);
@@ -27,14 +27,14 @@ async function runAlertTest() {
   await db.query("DELETE FROM racks WHERE rack_code = ?", [testRackCode]);
   await db.query("DELETE FROM alerts WHERE message LIKE ?", [`%${testRackCode}%`]);
 
-  // Create a test rack with max_capacity = 100
+  
   console.log(`Creating test rack ${testRackCode} with capacity 100...`);
   await db.query(
     "INSERT INTO racks (rack_code, max_capacity, threshold_limit, quantity) VALUES (?, 100.00, 10.00, 0.00)",
     [testRackCode]
   );
 
-  // 2. Create material (Stock is 15, which is above threshold 10)
+  
   console.log('\n[Test 1] Creating material above threshold...');
   const createResponse = await fetch(`${BASE_URL}/materials`, {
     method: 'POST',
@@ -60,7 +60,7 @@ async function runAlertTest() {
   const materialId = createResult.material.id;
   console.log(`✓ Material created successfully. ID: ${materialId}`);
 
-  // Fetch the rack code assigned to this material automatically
+  
   const [assignedRacks] = await db.query("SELECT rack_code FROM racks WHERE material_name = ?", [testMatName]);
   if (assignedRacks.length === 0) {
     console.error('❌ Failure: Material was not assigned to any rack!');
@@ -69,7 +69,7 @@ async function runAlertTest() {
   const assignedRack = assignedRacks[0].rack_code;
   console.log(`Material was auto-assigned to rack: ${assignedRack}`);
 
-  // Check alerts table (Should be empty for this material)
+  
   const [alerts1] = await db.query("SELECT * FROM alerts WHERE material_id = ? AND alert_status = 'active'", [materialId]);
   console.log(`Active alerts count (Expected: 0): ${alerts1.length}`);
   if (alerts1.length !== 0) {
@@ -78,7 +78,7 @@ async function runAlertTest() {
   }
   console.log('✓ No active alerts created when quantity is above threshold');
 
-  // 3. Adjust stock below threshold (Adjust to 5, which is < threshold 10)
+  
   console.log('\n[Test 2] Adjusting stock below threshold (Outward 10)...');
   const outwardResponse = await fetch(`${BASE_URL}/materials/${materialId}/stock`, {
     method: 'POST',
@@ -96,7 +96,7 @@ async function runAlertTest() {
     process.exit(1);
   }
 
-  // Check alerts table (Should contain active low stock alert)
+  
   const [alerts2] = await db.query(
     "SELECT * FROM alerts WHERE material_id = ? AND message LIKE 'Low Stock Warning%' AND alert_status = 'active'",
     [materialId]
@@ -108,7 +108,7 @@ async function runAlertTest() {
   }
   console.log(`✓ Active alert: "${alerts2[0].message}"`);
 
-  // 4. Adjust stock above threshold (Inward 10, total 15, which is >= threshold 10)
+  
   console.log('\n[Test 3] Adjusting stock back above threshold (Inward 10)...');
   const inwardResponse = await fetch(`${BASE_URL}/materials/${materialId}/stock`, {
     method: 'POST',
@@ -126,7 +126,7 @@ async function runAlertTest() {
     process.exit(1);
   }
 
-  // Check alerts table (Alert should be resolved)
+  
   const [alerts3] = await db.query("SELECT * FROM alerts WHERE material_id = ? AND alert_status = 'active'", [materialId]);
   const [resolvedAlerts3] = await db.query(
     "SELECT * FROM alerts WHERE material_id = ? AND message LIKE 'Low Stock Warning%' AND alert_status = 'resolved'",
@@ -140,7 +140,7 @@ async function runAlertTest() {
   }
   console.log('✓ Low stock alert resolved successfully!');
 
-  // DELETE FIRST MATERIAL TO FREE UP THE RACK
+  
   console.log('\n[Test 3.5] Deleting first material to free up test rack...');
   const delete1Res = await fetch(`${BASE_URL}/materials/${materialId}`, {
     method: 'DELETE',
@@ -154,18 +154,18 @@ async function runAlertTest() {
   }
   console.log('✓ First material deleted successfully, rack freed.');
 
-  // 5. Test Rack Occupancy Alert (> 90%)
+  
   const testBarcode2 = 'ALERT-BARCODE-002';
   const testMatName2 = 'Alert Test Material 2';
 
   console.log(`\n[Test 4] Testing rack occupancy alert (>90%) for rack ${testRackCode}...`);
-  // Update rack to be assigned to testMatName2 initially with 5.00 quantity
+  
   await db.query(
     "UPDATE racks SET material_name = ?, quantity = 5.00 WHERE rack_code = ?",
     [testMatName2, testRackCode]
   );
   
-  // Cleanup for mat 2
+  
   await db.query("DELETE FROM transactions WHERE material_id IN (SELECT id FROM materials WHERE barcode = ?)", [testBarcode2]);
   await db.query("DELETE FROM materials WHERE barcode = ?", [testBarcode2]);
 
@@ -197,7 +197,7 @@ async function runAlertTest() {
     },
     body: JSON.stringify({
       material_id: mat2Id,
-      quantity: 90.00, // Mat 2 initial is 5, adding 90 makes it 95 total on the rack
+      quantity: 90.00, 
       rack_code: testRackCode
     })
   });
@@ -206,11 +206,11 @@ async function runAlertTest() {
     process.exit(1);
   }
 
-  // Query rack_inventory to check occupancy_percentage is 95%
+  
   const [rackInv] = await db.query("SELECT occupancy_percentage FROM rack_inventory WHERE rack_code = ?", [testRackCode]);
   console.log(`Rack occupancy percentage: ${rackInv[0]?.occupancy_percentage}%`);
 
-  // Check alerts table (Should contain active rack almost full alert)
+  
   const [alerts4] = await db.query(
     "SELECT * FROM alerts WHERE message LIKE ? AND alert_status = 'active'",
     [`%Rack Almost Full: Rack ${testRackCode}%`]
@@ -222,9 +222,9 @@ async function runAlertTest() {
   }
   console.log(`✓ Active rack alert: "${alerts4[0].message}"`);
 
-  // 6. Adjust quantity on the rack back <= 90%
+  
   console.log('\n[Test 5] Lowering rack occupancy <= 90% (Outward stock adjustment)...');
-  // Mat 2 is at 95.00, adjustStock outward 15.00 makes it 80.00 (80% occupancy)
+  
   const outwardMat2Response = await fetch(`${BASE_URL}/materials/${mat2Id}/stock`, {
     method: 'POST',
     headers: {
@@ -250,7 +250,7 @@ async function runAlertTest() {
   const [rackInv2] = await db.query("SELECT occupancy_percentage FROM rack_inventory WHERE rack_code = ?", [testRackCode]);
   console.log(`Rack occupancy percentage after outward: ${rackInv2[0]?.occupancy_percentage}%`);
 
-  // Check alerts table (Alert should be resolved)
+  
   const [alerts5] = await db.query(
     "SELECT * FROM alerts WHERE message LIKE ? AND alert_status = 'active'",
     [`%Rack Almost Full: Rack ${testRackCode}%`]
@@ -267,7 +267,7 @@ async function runAlertTest() {
   }
   console.log('✓ Rack occupancy alert resolved successfully!');
 
-  // 7. Delete Material containing alert and verify ON DELETE SET NULL on material_id
+  
   console.log('\n[Test 6] Deleting material to test ON DELETE SET NULL constraint...');
   const deleteResponse = await fetch(`${BASE_URL}/materials/${mat2Id}`, {
     method: 'DELETE',
@@ -280,7 +280,7 @@ async function runAlertTest() {
     process.exit(1);
   }
 
-  // Verify that the alert is still in the database but material_id is now NULL
+  
   const [alerts6] = await db.query(
     "SELECT * FROM alerts WHERE message LIKE ? AND material_id IS NULL",
     [`%Rack ${testRackCode}%`]
@@ -292,7 +292,7 @@ async function runAlertTest() {
   }
   console.log('✓ Alert was preserved with material_id = NULL on material deletion.');
 
-  // 8. Verify Warehouse Stats includes new metrics
+  
   console.log('\n[Test 7] Verifying /api/warehouse/stats returns the new QR and Alert metrics...');
   const statsResponse = await fetch(`${BASE_URL}/warehouse/stats`, {
     headers: {
@@ -324,10 +324,10 @@ async function runAlertTest() {
   }
   console.log('✓ All new warehouse analytics properties are present in the response!');
 
-  // 9. Test QR Code Traceability End-to-End Flow
+  
   console.log('\n[Test 8] Testing QR Code Traceability End-to-End Flow...');
   
-  // 9a. Generate QR Code
+  
   const qrGenResponse = await fetch(`${BASE_URL}/generate-qr`, {
     method: 'POST',
     headers: {
@@ -350,7 +350,7 @@ async function runAlertTest() {
   const traceBarcode = qrGenData.barcode_id;
   console.log(`✓ Generated trace QR Code with Barcode: ${traceBarcode}`);
 
-  // 9b. Trace immediately (should be unused and no transactions)
+  
   const trace1Response = await fetch(`${BASE_URL}/qr/trace/${traceBarcode}`, {
     headers: { 'Authorization': authHeader }
   });
@@ -366,7 +366,7 @@ async function runAlertTest() {
   }
   console.log('✓ Initial trace shows "unused" and empty transaction ledger');
 
-  // 9c. Perform scan / auto-store to mark it used
+  
   console.log('Scanning QR via auto-store...');
   const autoStoreResponse = await fetch(`${BASE_URL}/scanner/auto-store`, {
     method: 'POST',
@@ -387,7 +387,7 @@ async function runAlertTest() {
     process.exit(1);
   }
 
-  // 9d. Trace again (should be used, scanned_by_name = "User" or similar, and 1 inward transaction)
+  
   const trace2Response = await fetch(`${BASE_URL}/qr/trace/${traceBarcode}`, {
     headers: { 'Authorization': authHeader }
   });
@@ -405,7 +405,7 @@ async function runAlertTest() {
   console.log(`✓ Used trace verified! Status is used, scanned by: "${trace2Data.data.qrCode.scanned_by_name}", scan timestamp: ${trace2Data.data.qrCode.scanned_at}`);
   console.log(`✓ Ledger contains inward transaction logged by: "${trace2Data.data.transactions[0].user_name}"`);
 
-  // Cleanup trace data
+  
   const [createdMaterials] = await db.query('SELECT id FROM materials WHERE barcode = ?', [traceBarcode]);
   if (createdMaterials.length > 0) {
     const traceMatId = createdMaterials[0].id;
@@ -414,7 +414,7 @@ async function runAlertTest() {
   }
   await db.query('DELETE FROM qr_codes WHERE barcode_id = ?', [traceBarcode]);
 
-  // 10. Test Digital Twin Warehouse API
+  
   console.log('\n[Test 9] Testing Digital Twin Warehouse API...');
   const twinResponse = await fetch(`${BASE_URL}/digital-twin`, {
     headers: { 'Authorization': authHeader }
@@ -442,14 +442,14 @@ async function runAlertTest() {
   }
   console.log('✓ Digital Twin API response contains all required fields!');
 
-  // Clean up mat 2 and test mat
+  
   await db.query("DELETE FROM alerts WHERE id IN (?)", [alerts6.map(a => a.id)]);
   await db.query("DELETE FROM materials WHERE id = ?", [materialId]);
   await db.query("DELETE FROM racks WHERE rack_code = ?", [testRackCode]);
 
   console.log('\n--- ALL RACK ALERT ENGINE INTEGRATION TESTS PASSED SUCCESSFULLY! ---');
 
-  // Add 1 second delay to ensure nodemailer or database processes complete cleanly before process exit
+  
   await new Promise(resolve => setTimeout(resolve, 1000));
   await db.end();
   process.exit(0);

@@ -8,18 +8,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const reportsDir = path.join(__dirname, '../reports');
 
-// Ensure reports directory exists
 if (!fs.existsSync(reportsDir)) {
   fs.mkdirSync(reportsDir, { recursive: true });
 }
 
-// CSV/Excel Formatter Helpers
 const convertToCSV = (headers, rows) => {
   const csvRows = [];
-  // Add headers
+  
   csvRows.push(headers.map(h => `"${String(h).replace(/"/g, '""')}"`).join(','));
   
-  // Add rows
+  
   rows.forEach(row => {
     csvRows.push(row.map(cell => {
       const val = cell !== null && cell !== undefined ? String(cell) : '';
@@ -46,40 +44,37 @@ const serveAndSaveCSV = (csvContent, baseFilename, req, res, isExcel = false) =>
   res.send(csvContent);
 };
 
-// Draw professional logo, headers, and metadata info
 const drawHeader = (doc, title) => {
-  // Draw primary blue color top bar
+  
   doc.rect(0, 0, 612, 15).fill('#4F8CFF');
 
-  // Draw logo placeholder graphics (vector style logo)
+  
   doc.circle(60, 48, 14).fill('#4F8CFF');
   doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(11).text('RM', 52, 43);
 
-  // Logo Typography
+  
   doc.fillColor('#1E293B').font('Helvetica-Bold').fontSize(14).text('Paint RM Monitor Co.', 85, 38);
   doc.fontSize(8).font('Helvetica').fillColor('#64748B').text('Warehouse Control & Traceability Unit', 85, 53);
 
-  // Document Title Header
+  
   doc.font('Helvetica-Bold').fontSize(16).fillColor('#0F172A').text(title, 60, 85);
   doc.fontSize(8).font('Helvetica-Oblique').fillColor('#64748B').text(`Generated on: ${new Date().toLocaleString()}`, 60, 105);
 
-  // Header separator line
+  
   doc.moveTo(60, 120).lineTo(552, 120).stroke('#E2E8F0');
 };
 
-// Draw page footer
 const drawFooter = (doc) => {
   doc.fontSize(7).font('Helvetica').fillColor('#94A3B8').text('Confidential - Paint RM Monitor Warehouse Management System', 60, 750, { align: 'center' });
 };
 
-// Reusable table drawer with page-break boundaries
 const drawTable = (doc, headers, rows, startX, startY, columnWidths) => {
   let currentY = startY;
 
-  // Header background
+  
   doc.rect(startX, currentY - 4, columnWidths.reduce((a, b) => a + b, 0), 18).fill('#F8FAFC');
   
-  // Headers text
+  
   doc.font('Helvetica-Bold').fontSize(8).fillColor('#4F8CFF');
   headers.forEach((header, index) => {
     const xPos = startX + columnWidths.slice(0, index).reduce((a, b) => a + b, 0) + 4;
@@ -90,15 +85,15 @@ const drawTable = (doc, headers, rows, startX, startY, columnWidths) => {
   doc.moveTo(startX, currentY - 2).lineTo(startX + columnWidths.reduce((a, b) => a + b, 0), currentY - 2).stroke('#E2E8F0');
   currentY += 6;
   
-  // Rows content
+  
   doc.font('Helvetica').fontSize(8).fillColor('#374151');
   rows.forEach(row => {
-    // Auto page-break handling when approaching page margins
+    
     if (currentY > 700) {
       doc.addPage();
       currentY = 50;
       
-      // Redraw table headers on new page
+      
       doc.rect(startX, currentY - 4, columnWidths.reduce((a, b) => a + b, 0), 18).fill('#F8FAFC');
       doc.font('Helvetica-Bold').fontSize(8).fillColor('#4F8CFF');
       headers.forEach((header, index) => {
@@ -124,22 +119,21 @@ const drawTable = (doc, headers, rows, startX, startY, columnWidths) => {
   return currentY;
 };
 
-// Stream to browser and save output to disk reports folder
 const serveAndSavePDF = (doc, baseFilename, req, res) => {
   const timestamp = Date.now();
   const filename = `${baseFilename}_${timestamp}.pdf`;
   const filePath = path.join(reportsDir, filename);
   
-  // Save PDF file in reports folder on disk
+  
   const writeStream = fs.createWriteStream(filePath);
   doc.pipe(writeStream);
   
-  // Set browser response headers
+  
   const disposition = req.query.action === 'download' ? 'attachment' : 'inline';
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', `${disposition}; filename="${filename}"`);
   
-  // Send output stream to browser
+  
   doc.pipe(res);
   doc.end();
 };
@@ -756,7 +750,7 @@ export const getQrRegistryReport = async (req, res, next) => {
     const doc = new PDFDocument({ size: 'LETTER', margin: 60 });
     drawHeader(doc, 'QR Code Tag Registry Index');
 
-    // Stats
+    
     doc.fillColor('#0F172A').font('Helvetica-Bold').fontSize(10).text('Report Highlights:', 60, 140);
     doc.font('Helvetica').fontSize(9).fillColor('#475569');
     doc.text(`Total Registered QR Labels: ${qrs.length}`, 60, 160);
@@ -764,7 +758,7 @@ export const getQrRegistryReport = async (req, res, next) => {
 
     doc.moveTo(60, 200).lineTo(552, 200).stroke('#E2E8F0');
 
-    // Table
+    
     const headers = ['Barcode ID', 'Material Name', 'Stored Volume', 'Rack Code', 'Status', 'Generated Date'];
     const rows = qrs.map(q => [
       q.barcode_id,
@@ -790,7 +784,7 @@ export const getQrRegistryReport = async (req, res, next) => {
  */
 export const getWarehouseSummaryReport = async (req, res, next) => {
   try {
-    // Retrieve metrics from all key tables
+    
     const [[{ total: materialsCount }]] = await db.query('SELECT COUNT(*) AS total FROM materials');
     const [[{ total: inventorySum }]] = await db.query('SELECT COALESCE(SUM(quantity), 0.00) AS total FROM materials');
     const [[{ total: racksCount }]] = await db.query('SELECT COUNT(*) AS total FROM rack_inventory');
@@ -811,26 +805,26 @@ export const getWarehouseSummaryReport = async (req, res, next) => {
 
     doc.fillColor('#0F172A').font('Helvetica-Bold').fontSize(11).text('Warehouse Operational Dashboard', 60, 140);
     
-    // Draw 4 distinct cards for sections (2x2 grid)
-    // Card 1: Material Stats
+    
+    
     doc.rect(60, 160, 230, 75).fill('#F8FAFC');
     doc.fillColor('#4F8CFF').font('Helvetica-Bold').fontSize(9).text('📦 MATERIALS METRICS', 70, 170);
     doc.fillColor('#334155').font('Helvetica').fontSize(8).text(`Catalog SKU Count: ${materialsCount}`, 70, 185);
     doc.text(`Total Stock Weight: ${parseFloat(inventorySum).toFixed(2)} KG`, 70, 200);
 
-    // Card 2: Rack Storage Stats
+    
     doc.rect(310, 160, 242, 75).fill('#F8FAFC');
     doc.fillColor('#4F8CFF').font('Helvetica-Bold').fontSize(9).text('🗄 STORAGE METRICS', 320, 170);
     doc.fillColor('#334155').font('Helvetica').fontSize(8).text(`Racks Capacity: ${occupiedCount} / ${racksCount} Slots`, 320, 185);
     doc.text(`Net Storage Utilization: ${utilization.toFixed(2)}%`, 320, 200);
 
-    // Card 3: Alert Registry
+    
     doc.rect(60, 250, 230, 75).fill('#F8FAFC');
     doc.fillColor('#4F8CFF').font('Helvetica-Bold').fontSize(9).text('⚠ ALERTS & ANOMALIES', 70, 260);
     doc.fillColor('#334155').font('Helvetica').fontSize(8).text(`Active Critical Breaches: ${activeAlerts}`, 70, 275);
     doc.text(`System Health: ${activeAlerts > 0 ? 'ATTENTION REQUIRED' : 'HEALTHY'}`, 70, 290);
 
-    // Card 4: QR Traceability
+    
     doc.rect(310, 250, 242, 75).fill('#F8FAFC');
     doc.fillColor('#4F8CFF').font('Helvetica-Bold').fontSize(9).text('🔳 QR CODE LIFE STATISTICS', 320, 260);
     doc.fillColor('#334155').font('Helvetica').fontSize(8).text(`Printed Barcodes: ${qrCodesCount}`, 320, 275);
@@ -838,7 +832,7 @@ export const getWarehouseSummaryReport = async (req, res, next) => {
 
     doc.moveTo(60, 345).lineTo(552, 345).stroke('#E2E8F0');
 
-    // Section 2: Critical alerts list if any
+    
     doc.fillColor('#0F172A').font('Helvetica-Bold').fontSize(11).text('Active Anomaly Monitoring', 60, 360);
 
     const [alertsList] = await db.query(

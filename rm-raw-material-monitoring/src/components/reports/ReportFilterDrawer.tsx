@@ -55,7 +55,7 @@ export const ReportFilterDrawer: React.FC<ReportFilterDrawerProps> = ({
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
-        {/* Start Date */}
+        
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
             <Calendar size={12} className="text-cyan-400" /> Start Date
@@ -68,7 +68,7 @@ export const ReportFilterDrawer: React.FC<ReportFilterDrawerProps> = ({
           />
         </div>
 
-        {/* End Date */}
+        
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
             <Calendar size={12} className="text-cyan-400" /> End Date
@@ -81,7 +81,7 @@ export const ReportFilterDrawer: React.FC<ReportFilterDrawerProps> = ({
           />
         </div>
 
-        {/* Material Name */}
+        
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
             <Box size={12} className="text-amber-400" /> Material
@@ -95,7 +95,7 @@ export const ReportFilterDrawer: React.FC<ReportFilterDrawerProps> = ({
           />
         </div>
 
-        {/* Worker / Operator */}
+        
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
             <User size={12} className="text-emerald-400" /> Worker / Operator
@@ -109,7 +109,7 @@ export const ReportFilterDrawer: React.FC<ReportFilterDrawerProps> = ({
           />
         </div>
 
-        {/* Rack Code */}
+        
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
             <MapPin size={12} className="text-indigo-400" /> Rack Code
@@ -123,7 +123,7 @@ export const ReportFilterDrawer: React.FC<ReportFilterDrawerProps> = ({
           />
         </div>
 
-        {/* Transaction Type */}
+        
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
             <ArrowRightLeft size={12} className="text-violet-400" /> Transaction Type

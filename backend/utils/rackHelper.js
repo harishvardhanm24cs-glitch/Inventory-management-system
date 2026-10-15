@@ -1,7 +1,4 @@
-/**
- * rackHelper.js
- * Utility helper functions for dynamic, Excel-style rack coordinate and naming conversions.
- */
+
 
 /**
  * Convert numeric row index (1-based) to Excel-style letters.
@@ -41,7 +38,7 @@ export function parseRackCode(code) {
  * @returns {string}
  */
 export function indexToRackCode(idx, colsPerRow = 4) {
-  const rowIdx = Math.floor(idx / colsPerRow) + 1; // 1-based index for getExcelColumnName
+  const rowIdx = Math.floor(idx / colsPerRow) + 1; 
   const colIdx = (idx % colsPerRow) + 1;
   return `${getExcelColumnName(rowIdx)}${colIdx}`;
 }

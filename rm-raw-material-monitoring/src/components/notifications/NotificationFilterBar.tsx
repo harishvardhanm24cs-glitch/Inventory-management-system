@@ -51,9 +51,9 @@ export const NotificationFilterBar: React.FC<NotificationFilterBarProps> = ({
 
   return (
     <div className="rounded-3xl border border-slate-800/80 bg-slate-900/80 p-6 backdrop-blur-md transition-all shadow-xl space-y-4">
-      {/* Search Input & Action Controls */}
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        {/* Search */}
+        
         <div className="relative flex-1 w-full md:max-w-md">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
@@ -65,9 +65,9 @@ export const NotificationFilterBar: React.FC<NotificationFilterBarProps> = ({
           />
         </div>
 
-        {/* Action Buttons */}
+        
         <div className="flex flex-wrap items-center gap-2">
-          {/* Push Notification Toggle Button */}
+          
           {pushPermissionState !== 'granted' && pushPermissionState !== 'unsupported' && (
             <button
               onClick={onRequestPushPermission}
@@ -78,7 +78,7 @@ export const NotificationFilterBar: React.FC<NotificationFilterBarProps> = ({
             </button>
           )}
 
-          {/* Mark All Read */}
+          
           <button
             onClick={onMarkAllAsRead}
             className="flex items-center gap-1.5 rounded-xl border border-slate-800 bg-slate-950 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 transition-all cursor-pointer"
@@ -87,7 +87,7 @@ export const NotificationFilterBar: React.FC<NotificationFilterBarProps> = ({
             Mark All Read
           </button>
 
-          {/* Clear Read */}
+          
           <button
             onClick={onClearRead}
             className="flex items-center gap-1.5 rounded-xl border border-slate-800 bg-slate-950 px-3 py-1.5 text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-rose-400 transition-all cursor-pointer"
@@ -98,9 +98,9 @@ export const NotificationFilterBar: React.FC<NotificationFilterBarProps> = ({
         </div>
       </div>
 
-      {/* Category Pills & Unread Toggle */}
+      
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-800/80 pt-4">
-        {/* Category Tabs */}
+        
         <div className="flex flex-wrap items-center gap-1.5">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -127,7 +127,7 @@ export const NotificationFilterBar: React.FC<NotificationFilterBarProps> = ({
           })}
         </div>
 
-        {/* Unread Only Switch */}
+        
         <button
           onClick={onToggleUnreadOnly}
           className={`flex items-center gap-2 rounded-xl px-3 py-1.5 text-xs font-semibold border transition-all cursor-pointer ${

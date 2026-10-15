@@ -27,7 +27,7 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
             generateQRCode(barcode)
                 .then(async (url) => {
                     setQrCodeUrl(url);
-                    // Phase 1: Archive to MongoDB
+                    
                     try {
                         await apiService.saveQR({
                             materialId,
@@ -60,16 +60,16 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
 
     return (
         <>
-            {/* Backdrop */}
+            
             <div
                 className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity"
                 onClick={onClose}
             />
 
-            {/* Modal */}
+            
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                 <div className="glass-panel max-w-md w-full rounded-2xl shadow-2xl transform transition-all">
-                    {/* Header */}
+                    
                     <div className="flex items-center justify-between p-6 border-b border-gray-200/50">
                         <div>
                             <h3 className="text-xl font-bold text-gray-900">{materialName}</h3>
@@ -83,7 +83,7 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
                         </button>
                     </div>
 
-                    {/* Content */}
+                    
                     <div className="p-6">
                         {isLoading ? (
                             <div className="flex items-center justify-center h-64">
@@ -91,7 +91,7 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
                             </div>
                         ) : (
                             <div className="space-y-4">
-                                {/* QR Code Display */}
+                                
                                 <div className="bg-white p-4 rounded-xl flex items-center justify-center">
                                     {qrCodeUrl && (
                                         <img
@@ -102,13 +102,13 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
                                     )}
                                 </div>
 
-                                {/* Barcode Info */}
+                                
                                 <div className="text-center">
                                     <p className="text-sm text-gray-600">Barcode</p>
                                     <p className="text-lg font-mono font-bold text-gray-900">{barcode}</p>
                                 </div>
 
-                                {/* Action Buttons */}
+                                
                                 <div className="grid grid-cols-2 gap-3">
                                     <button
                                         onClick={handleDownload}

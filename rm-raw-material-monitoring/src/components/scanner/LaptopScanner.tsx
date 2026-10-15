@@ -62,7 +62,7 @@ const LaptopScanner: React.FC<LaptopScannerProps> = ({ onScan, active }) => {
         return () => stopCamera();
     }, [active]);
 
-    // Continuous interval scanning loop (300ms) without stream interruption
+    
     useEffect(() => {
         if (status !== 'scanning' || !active) return;
 
@@ -125,7 +125,7 @@ const LaptopScanner: React.FC<LaptopScannerProps> = ({ onScan, active }) => {
             />
             <canvas ref={canvasRef} className="hidden" />
 
-            {/* Industrial Target Overlay */}
+            
             <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                 <div className="w-64 h-64 relative">
                     <div className={cn("absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 transition-colors duration-300", status === 'scanning' ? "border-cyan-400" : "border-slate-600")} />
@@ -141,7 +141,7 @@ const LaptopScanner: React.FC<LaptopScannerProps> = ({ onScan, active }) => {
                 </div>
             </div>
 
-            {/* Status Panel (HUD) */}
+            
             <div className="absolute top-6 left-6 z-10">
                 <div className="flex flex-col gap-1">
                     {status === 'connecting' && (

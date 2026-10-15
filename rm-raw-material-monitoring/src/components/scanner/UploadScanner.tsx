@@ -38,7 +38,7 @@ const UploadScanner: React.FC<UploadScannerProps> = ({ onScan, active }) => {
                 if (ctx) {
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     
-                    // Artificial matrix delay for UI UX 
+                    
                     setStatus('decoding');
                     setTimeout(async () => {
                         const decodedText = decodeFromCanvas(canvas);
@@ -47,7 +47,7 @@ const UploadScanner: React.FC<UploadScannerProps> = ({ onScan, active }) => {
                             const parsedData = parseQRData(decodedText);
                             const payload = await onScan(parsedData);
                             if (payload && payload.success) {
-                                // Keep the preview for 3 seconds of success block
+                                
                                 setTimeout(() => setPreview(null), 3000);
                             } else {
                                 setPreview(null);
@@ -58,7 +58,7 @@ const UploadScanner: React.FC<UploadScannerProps> = ({ onScan, active }) => {
                         }
                         setStatus('idle');
                         if (fileInputRef.current) fileInputRef.current.value = '';
-                    }, 800); // 800ms of fake decoding matrix for industrial feel
+                    }, 800); 
                 }
             };
             img.src = resultUrl;
@@ -84,7 +84,7 @@ const UploadScanner: React.FC<UploadScannerProps> = ({ onScan, active }) => {
             
             <canvas ref={canvasRef} className="hidden" />
 
-            {/* Industrial HUD Data Stream Background */}
+            
             {status === 'idle' && !preview && (
                 <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#06b6d4 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
             )}
@@ -95,7 +95,7 @@ const UploadScanner: React.FC<UploadScannerProps> = ({ onScan, active }) => {
                     
                     {(status === 'processing' || status === 'decoding') && (
                         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center overflow-hidden">
-                            {/* Scanning Matrix Overlay */}
+                            
                             <div className="absolute top-0 left-0 w-full h-full border-2 border-cyan-500/50 m-4 rounded-xl shadow-[inset_0_0_50px_rgba(6,182,212,0.2)]" />
                             <div className="absolute top-0 left-0 w-full h-1 bg-cyan-400 shadow-[0_0_15px_#22d3ee] animate-[scan_1s_linear_infinite]" />
                             

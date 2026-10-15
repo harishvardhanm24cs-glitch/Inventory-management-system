@@ -7,11 +7,9 @@ try:
 except ImportError:
     from ai_training.config import FEATURE_DATASET_CSV, CLEAN_DATASET_CSV, TARGET_COLUMN, MIN_ROWS_REQUIRED
 
-
 class DatasetValidationError(Exception):
     """Custom exception raised when dataset validation checks fail."""
     pass
-
 
 class DatasetLoader:
     """
@@ -102,7 +100,6 @@ class DatasetLoader:
         if not os.path.exists(CLEAN_DATASET_CSV):
             raise FileNotFoundError(f"Clean warehouse dataset not found at '{CLEAN_DATASET_CSV}'.")
         return pd.read_csv(CLEAN_DATASET_CSV)
-
 
 __all__ = ["DatasetLoader", "DatasetValidationError"]
 

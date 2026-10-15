@@ -2,9 +2,6 @@ import pool from '../config/db.js';
 import { modelManager } from '../services/modelManager.js';
 import { recommendationRegistry } from '../services/recommendationEngineService.js';
 
-/**
- * Standard Cloud-Ready Response Envelope Builder
- */
 const createEnvelope = (data, metaExtras = {}) => ({
   status: 'success',
   data,

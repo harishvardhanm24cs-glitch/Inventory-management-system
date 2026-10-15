@@ -23,7 +23,6 @@ os.makedirs(REPORTS_DIR, exist_ok=True)
 
 FEATURE_CSV_PATH = ML_DATASETS_DIR / "feature_dataset.csv"
 
-
 def verify_feature_dataset_fix():
     print("=" * 80)
     print("      FEATURE ENGINEERING PIPELINE FIX VERIFICATION AUDIT")
@@ -32,11 +31,9 @@ def verify_feature_dataset_fix():
     if not FEATURE_CSV_PATH.exists():
         raise FileNotFoundError(f"Feature dataset CSV not found at '{FEATURE_CSV_PATH}'")
 
-    # 1. Read raw text to check for 'undefined' string or empty commas
     raw_text = FEATURE_CSV_PATH.read_text(encoding="utf-8", errors="ignore")
     has_undefined_string = "undefined" in raw_text
 
-    # 2. Read dataframe via Pandas
     df = pd.read_csv(FEATURE_CSV_PATH)
     total_rows = len(df)
     total_cols = len(df.columns)
@@ -56,7 +53,6 @@ def verify_feature_dataset_fix():
     zero_cnt = int((numeric_target == 0.0).sum())
     non_zero_cnt = total_rows - zero_cnt
 
-    # Verify no empty CSV column (every row has a defined value)
     has_empty_csv_column = null_cnt == total_rows
 
     is_verified = col_exists and not has_undefined_string and not has_empty_csv_column
@@ -77,7 +73,6 @@ def verify_feature_dataset_fix():
     print(f"• Verification      : {'PASSED' if is_verified else 'FAILED'}")
     print("=" * 80)
 
-    # Generate Reports
     verification_data = {
         "timestamp": datetime.now().isoformat(),
         "file_modified": "backend/services/featureEngineeringPipelineService.js",
@@ -103,12 +98,10 @@ def verify_feature_dataset_fix():
         }
     }
 
-    # Save JSON Report
     json_path = REPORTS_DIR / "feature_pipeline_fix_verification.json"
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(verification_data, f, indent=2)
 
-    # Save MD Report
     md_lines = [
         "# RM Monitor - Feature Engineering Target Preservation Fix Verification",
         "",
@@ -155,7 +148,6 @@ def verify_feature_dataset_fix():
     print(f"  • MD  : {md_path}")
 
     return verification_data
-
 
 if __name__ == "__main__":
     verify_feature_dataset_fix()

@@ -18,7 +18,6 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 
-# Configure sys.stdout for UTF-8 encoding if supported
 if hasattr(sys.stdout, "reconfigure"):
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -36,7 +35,6 @@ os.makedirs(REPORTS_DIR, exist_ok=True)
 FEATURE_CSV_PATH = ML_DATASETS_DIR / "feature_dataset.csv"
 TARGET_COLUMN = "quantity_used"
 
-
 class FeatureQualityAudit:
     def __init__(self):
         self.reports_dir = Path(REPORTS_DIR)
@@ -48,9 +46,6 @@ class FeatureQualityAudit:
         print("         RM MONITOR - PHASE 8B MODULE 4.2 FEATURE QUALITY AUDIT")
         print("=" * 80)
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 1: DATASET OVERVIEW
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 1: DATASET OVERVIEW & CATALOG...")
         if not FEATURE_CSV_PATH.exists():
             raise FileNotFoundError(f"Feature dataset not found at '{FEATURE_CSV_PATH}'")
@@ -64,9 +59,6 @@ class FeatureQualityAudit:
         print(f"   • Total Columns : {total_cols} (25 Predictor Features + 1 Target)")
         print(f"   • Target Column : '{TARGET_COLUMN}'")
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 2: FEATURE STATISTICS
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 2: COMPUTING DETAILED FEATURE STATISTICAL PROFILES...")
         stats_list = []
         for col in df.columns:
@@ -106,9 +98,6 @@ class FeatureQualityAudit:
 
         stats_df = pd.DataFrame(stats_list)
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 3: LOW VARIANCE ANALYSIS
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 3: LOW VARIANCE & CONSTANT COLUMN ANALYSIS...")
         constant_cols = stats_df[stats_df["constant_feature"] == "Yes"]["feature_name"].tolist()
         near_constant_cols = []
@@ -124,9 +113,6 @@ class FeatureQualityAudit:
         print(f"   • Constant Features Count      : {len(constant_cols)} -> {constant_cols}")
         print(f"   • Near-Constant Features Count : {len(near_constant_cols)} -> {near_constant_cols}")
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 4: IDENTIFIER DETECTION
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 4: IDENTIFIER FEATURE DETECTION & STRATEGY...")
         id_cols = ["material_id", "barcode", "batch_number", "rack_code"]
         id_audit = []
@@ -142,9 +128,6 @@ class FeatureQualityAudit:
                     "rationale": reason
                 })
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 5: CATEGORICAL FEATURE ANALYSIS
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 5: CATEGORICAL FEATURE ANALYSIS & FREQUENCY DISTRIBUTION...")
         cat_cols = ["transaction_type", "movement_type", "material_name", "source_location", "destination_location", "unit"]
         cat_audit = []
@@ -163,9 +146,6 @@ class FeatureQualityAudit:
                     "preprocessing_status": "Encoded via Label/OHE in pipeline"
                 })
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 6: NUMERICAL FEATURE ANALYSIS & OUTLIER AUDIT
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 6: NUMERICAL FEATURE DISTRIBUTION & OUTLIER AUDIT...")
         num_cols = ["quantity", "current_stock", "threshold", "occupancy_percentage", "current_rack_quantity", "weight"]
         num_audit = []
@@ -187,9 +167,6 @@ class FeatureQualityAudit:
                     "target_correlation": round(target_corr, 4)
                 })
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 7: TARGET CORRELATION MATRIX
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 7: PEARSON TARGET CORRELATION MATRIX & RANKING...")
         num_df = df.select_dtypes(include=[np.number])
         corrs = {}
@@ -205,9 +182,6 @@ class FeatureQualityAudit:
 
         corr_df = pd.DataFrame(list(corrs.values())).sort_values(by="abs_pearson_r", ascending=False).reset_index(drop=True)
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 8: FEATURE IMPORTANCE CROSS-CHECK (RF vs CORRELATION)
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 8: RANDOM FOREST IMPORTANCE VS PEARSON CORRELATION CROSS-CHECK...")
         fi_json_path = REPORTS_DIR / "feature_importance.json"
         rf_fi_map = {}
@@ -241,9 +215,6 @@ class FeatureQualityAudit:
 
         cross_df = pd.DataFrame(cross_check_list).sort_values(by="rf_importance", ascending=False).reset_index(drop=True)
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 9: FEATURE QUALITY SCORING (0-100) & CLASSIFICATION
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 9: COMPUTING FEATURE QUALITY SCORES (0-100) & GRADES...")
         quality_scores = []
         for feat in all_features:
@@ -253,15 +224,11 @@ class FeatureQualityAudit:
             abs_p = abs(corrs.get(feat, {}).get("pearson_r", 0.0))
 
             score = 0
-            # 1. Non-constancy & Variance (30 pts)
             if st["constant_feature"] == "No":
                 score += 30
-            # 2. Completeness (20 pts)
             score += int((1.0 - (st["null_count"] / total_rows)) * 20)
-            # 3. Predictive Value / Signal (30 pts)
             signal_score = min(30, int(rf_imp * 100 * 0.4 + abs_p * 20))
             score += signal_score
-            # 4. Domain Utility / Low Redundancy (20 pts)
             if feat in ["hour", "material_id", "current_stock", "weekend_flag", "month", "threshold", "quantity"]:
                 score += 20
             elif feat not in id_cols and st["constant_feature"] == "No":
@@ -293,9 +260,6 @@ class FeatureQualityAudit:
 
         overall_grade = "EXCELLENT" if overall_avg_score >= 80 else ("GOOD" if overall_avg_score >= 65 else "FAIR")
 
-        # ──────────────────────────────────────────────────────────────────────
-        # STEP 10: RECOMMENDATIONS & REPORT GENERATION
-        # ──────────────────────────────────────────────────────────────────────
         print("\nSTEP 10: GENERATING RECOMMENDATIONS & REPORT ARTIFACTS...")
 
         top_10_best = qs_df.head(10)["feature_name"].tolist()
@@ -309,15 +273,12 @@ class FeatureQualityAudit:
             "new_features_to_create": ["rolling_7d_consumption", "days_since_last_transaction", "stock_to_threshold_ratio"]
         }
 
-        # 1. Save feature_correlation.csv
         corr_csv_path = self.reports_dir / "feature_correlation.csv"
         corr_df.to_csv(corr_csv_path, index=False)
 
-        # 2. Save feature_quality_scores.csv
         qs_csv_path = self.reports_dir / "feature_quality_scores.csv"
         qs_df.to_csv(qs_csv_path, index=False)
 
-        # 3. Save feature_quality_audit.json
         audit_json = {
             "timestamp": self.timestamp,
             "dataset_summary": {
@@ -338,7 +299,6 @@ class FeatureQualityAudit:
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(audit_json, f, indent=2)
 
-        # 4. Save feature_quality_audit.md
         md_lines = [
             "# RM Monitor - Phase 8B Module 4.2 Feature Quality Audit Report",
             "",
@@ -361,7 +321,6 @@ class FeatureQualityAudit:
         with open(md_path, "w", encoding="utf-8") as f:
             f.write("\n".join(md_lines))
 
-        # 5. Save feature_recommendations.md
         rec_md_lines = [
             "# RM Monitor - Feature Quality Audit & Engineering Recommendations",
             "",
@@ -396,9 +355,6 @@ class FeatureQualityAudit:
         print(f"   • Saved '{md_path.name}'")
         print(f"   • Saved '{rec_md_path.name}'")
 
-        # ──────────────────────────────────────────────────────────────────────
-        # FINAL REQUIRED OUTPUT DISPLAY
-        # ──────────────────────────────────────────────────────────────────────
         print("\n" + "=" * 80)
         print("                  FINAL FEATURE QUALITY AUDIT SUMMARY")
         print("=" * 80)
@@ -413,7 +369,6 @@ class FeatureQualityAudit:
         print("=" * 80)
 
         return audit_json
-
 
 if __name__ == "__main__":
     audit = FeatureQualityAudit()

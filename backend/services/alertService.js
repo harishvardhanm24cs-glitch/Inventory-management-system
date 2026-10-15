@@ -11,7 +11,7 @@ import { logAudit } from '../utils/auditLogger.js';
 export const processThresholdCheck = async (connection, materialId) => {
   const conn = connection || db;
   try {
-    // 1. Fetch current quantity, threshold_limit, and material details
+    
     const [materials] = await conn.query(
       'SELECT id, material_name, quantity, threshold_limit, unit FROM materials WHERE id = ?',
       [materialId]
@@ -26,9 +26,9 @@ export const processThresholdCheck = async (connection, materialId) => {
     const qty = parseFloat(quantity);
     const limit = parseFloat(threshold_limit);
 
-    // 2. If quantity falls below or equal to threshold
+    
     if (qty <= limit) {
-      // Check if there is already an active alert
+      
       const [existingAlerts] = await conn.query(
         "SELECT id FROM alerts WHERE material_id = ? AND message LIKE 'Low Stock Warning%' AND alert_status = 'active'",
         [materialId]
@@ -43,7 +43,7 @@ export const processThresholdCheck = async (connection, materialId) => {
         );
         console.log(`[alertService] Created active low stock alert for material: ${material_name}`);
 
-        // Log threshold alert
+        
         await logAudit({
           action_type: 'Threshold Alert',
           material_name: material_name,
@@ -51,7 +51,7 @@ export const processThresholdCheck = async (connection, materialId) => {
           action_details: message
         });
 
-        // Send email notification
+        
         const recipient = process.env.EMAIL_USER || 'manager@gmail.com';
         const subject = `LOW STOCK ALERT - ${material_name}`;
         sendEmail(recipient, subject, message).then(result => {
@@ -75,7 +75,7 @@ export const processThresholdCheck = async (connection, materialId) => {
         return { alertGenerated: true, message: `Low Stock Warning: '${material_name}' has ${qty} ${unit} remaining (Threshold: ${limit} ${unit})` };
       }
     } else {
-      // Quantity is strictly above threshold, resolve any active alerts
+      
       const [activeAlerts] = await conn.query(
         "SELECT id FROM alerts WHERE material_id = ? AND message LIKE 'Low Stock Warning%' AND alert_status = 'active'",
         [materialId]
@@ -105,7 +105,7 @@ export const processThresholdCheck = async (connection, materialId) => {
 export const processRackOccupancyCheck = async (connection, rackCode) => {
   const conn = connection || db;
   try {
-    // 1. Fetch rack quantity and max capacity
+    
     const [racks] = await conn.query(
       'SELECT r.rack_code, r.material_name, r.quantity, r.max_capacity, ri.occupancy_percentage FROM racks r LEFT JOIN rack_inventory ri ON r.rack_code = ri.rack_code WHERE r.rack_code = ?',
       [rackCode]
@@ -123,7 +123,7 @@ export const processRackOccupancyCheck = async (connection, rackCode) => {
       ? parseFloat(rack.occupancy_percentage)
       : (maxCap > 0 ? (qty / maxCap) * 100 : 0);
 
-    // Get material_id of the material on the rack (if any)
+    
     let materialId = null;
     if (rack.material_name) {
       const [materials] = await conn.query(
@@ -135,9 +135,9 @@ export const processRackOccupancyCheck = async (connection, rackCode) => {
       }
     }
 
-    // 2. If occupancy is strictly greater than 90%
+    
     if (occupancy > 90) {
-      // Check if there is already an active occupancy alert for this rack
+      
       const [existingAlerts] = await conn.query(
         "SELECT id FROM alerts WHERE message LIKE ? AND alert_status = 'active'",
         [`%Rack Almost Full: Rack ${rackCode}%`]
@@ -152,7 +152,7 @@ export const processRackOccupancyCheck = async (connection, rackCode) => {
         );
         console.log(`[alertService] Created active occupancy alert for rack: ${rackCode}`);
 
-        // Log threshold alert
+        
         await logAudit({
           action_type: 'Threshold Alert',
           rack_code: rackCode,
@@ -161,7 +161,7 @@ export const processRackOccupancyCheck = async (connection, rackCode) => {
           action_details: message
         });
 
-        // Send email notification
+        
         const recipient = process.env.EMAIL_USER || 'manager@gmail.com';
         const subject = `RACK ALERT - Rack ${rackCode} Almost Full`;
         sendEmail(recipient, subject, message).then(result => {
@@ -184,7 +184,7 @@ export const processRackOccupancyCheck = async (connection, rackCode) => {
         return { alertGenerated: true, message };
       }
     } else {
-      // Occupancy is <= 90%, resolve any active alerts
+      
       const [activeAlerts] = await conn.query(
         "SELECT id FROM alerts WHERE message LIKE ? AND alert_status = 'active'",
         [`%Rack Almost Full: Rack ${rackCode}%`]

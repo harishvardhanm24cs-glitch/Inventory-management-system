@@ -7,14 +7,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const mlDatasetsDir = path.join(__dirname, '..', 'ml_datasets');
 
-// Ensure dedicated ml_datasets storage directory exists
 if (!fs.existsSync(mlDatasetsDir)) {
   fs.mkdirSync(mlDatasetsDir, { recursive: true });
 }
 
-/**
- * Helper to compute ISO week number
- */
 function getIsoWeekNumber(date) {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
   const dayNum = d.getUTCDay() || 7;
@@ -23,24 +19,9 @@ function getIsoWeekNumber(date) {
   return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
-/**
- * datasetGeneratorService.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Production-Ready AI Dataset Generator for RM Monitor.
- *
- * Reads operational warehouse data (materials, transactions, rack_inventory,
- * qr_history movements, alerts) and formats ML-ready dataset rows enriched with
- * Material Info, Inventory, Transactions, Rack Occupancy, Movement Tracking,
- * Usage Data, and Automated ML Time Features.
- *
- * Stores exported CSV and JSON datasets in `backend/ml_datasets/` outside
- * the operational database, and records metadata into `ml_datasets` AND `ml_dataset_versions`.
- */
 export class DatasetGeneratorService {
 
-  /**
-   * Ensure metadata tracking tables `ml_datasets` and `ml_dataset_versions` exist
-   */
+  
   async ensureMetadataTables() {
     try {
       await db.query(`
@@ -67,7 +48,7 @@ export class DatasetGeneratorService {
         )
       `);
 
-      // Column safeguards if tables existed previously
+      
       try { await db.query(`ALTER TABLE ml_dataset_versions ADD COLUMN row_count INT DEFAULT 0`); } catch {}
       try { await db.query(`ALTER TABLE ml_dataset_versions ADD COLUMN source_tables VARCHAR(255) NOT NULL DEFAULT 'materials, transactions, racks, rack_inventory, alerts'`); } catch {}
       try { await db.query(`ALTER TABLE ml_dataset_versions ADD COLUMN output_file_path VARCHAR(500)`); } catch {}
@@ -78,11 +59,9 @@ export class DatasetGeneratorService {
     }
   }
 
-  /**
-   * Extract historical warehouse activity dataset rows
-   */
+  
   async extractDatasetRows() {
-    // 1. Join transactions with materials, racks, and rack_inventory
+    
     const [transactions] = await db.query(`
       SELECT 
         t.id AS transaction_id,
@@ -110,7 +89,7 @@ export class DatasetGeneratorService {
       ORDER BY t.created_at ASC
     `);
 
-    // Fetch movements history from qr_history
+    
     let movementsHistory = [];
     try {
       const [movRows] = await db.query(`
@@ -122,7 +101,7 @@ export class DatasetGeneratorService {
       movementsHistory = [];
     }
 
-    // Fetch active alerts for alert status mapping
+    
     let activeAlerts = [];
     try {
       const [alertRows] = await db.query("SELECT * FROM alerts WHERE alert_status = 'active'");
@@ -133,7 +112,7 @@ export class DatasetGeneratorService {
 
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-    // 2. Map & enrich every row with Material, Inventory, Transaction, Rack, Movement, Usage, and ML features
+    
     let datasetRows = (transactions || []).map((t) => {
       const ts = t.timestamp ? new Date(t.timestamp) : new Date();
       const dayIndex = ts.getDay();
@@ -153,39 +132,39 @@ export class DatasetGeneratorService {
       const qtyUsed = isOutward ? parseFloat(t.quantity) || 0.0 : 0.0;
 
       return {
-        // Material Information
+        
         material_id: t.material_id,
         material_name: t.material_name || 'Unknown Material',
         barcode: t.barcode || 'N/A',
         batch_number: t.batch_number || 'N/A',
 
-        // Inventory Information
+        
         current_stock: parseFloat(t.current_stock) || 0.0,
         threshold: parseFloat(t.threshold) || 0.0,
         unit: t.unit || 'KG',
         weight: parseFloat(t.weight) || 0.0,
 
-        // Transaction Information
+        
         transaction_type: t.transaction_type || 'Inward',
         quantity: parseFloat(t.quantity) || 0.0,
         user_id: String(t.user_id),
         rack_code: t.rack_code || 'RACK-01',
         timestamp: ts.toISOString(),
 
-        // Rack Information
+        
         rack_capacity: maxCap,
         current_rack_quantity: rackQty,
         occupancy_percentage: occPct,
 
-        // Movement Information
+        
         movement_type: movementType,
         source_location: sourceLoc,
         destination_location: destLoc,
 
-        // Usage Information
+        
         quantity_used: qtyUsed,
 
-        // ML Time Features
+        
         day_of_week: dayNames[dayIndex],
         week_number: getIsoWeekNumber(ts),
         month: ts.getMonth() + 1,
@@ -195,7 +174,7 @@ export class DatasetGeneratorService {
       };
     });
 
-    // Fallback: If database has no transaction history yet, generate structured rows from materials table
+    
     if (datasetRows.length === 0) {
       const [materials] = await db.query('SELECT * FROM materials ORDER BY id ASC');
 
@@ -239,39 +218,10 @@ export class DatasetGeneratorService {
     return datasetRows;
   }
 
-  /**
-   * Convert dataset rows to CSV format with header row
-   */
+  
   convertToCSV(rows) {
     if (!rows || rows.length === 0) return '';
-    const headers = [
-      'material_id',
-      'material_name',
-      'barcode',
-      'batch_number',
-      'current_stock',
-      'threshold',
-      'unit',
-      'weight',
-      'transaction_type',
-      'quantity',
-      'user_id',
-      'rack_code',
-      'timestamp',
-      'rack_capacity',
-      'current_rack_quantity',
-      'occupancy_percentage',
-      'movement_type',
-      'source_location',
-      'destination_location',
-      'quantity_used',
-      'day_of_week',
-      'week_number',
-      'month',
-      'year',
-      'hour',
-      'weekend_flag'
-    ];
+    const headers = Object.keys(rows[0]);
 
     const csvLines = [headers.join(',')];
 

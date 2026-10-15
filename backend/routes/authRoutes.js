@@ -4,22 +4,14 @@ import { protect, managerOnly, workerOnly } from '../middleware/authMiddleware.j
 
 const router = express.Router();
 
-// Public routes
-// POST /api/auth/register
 router.post('/register', register);
 
-// POST /api/auth/login
 router.post('/login', login);
 
-// Protected routes
-// GET /api/auth/profile
 router.get('/profile', protect, getProfile);
 
-// POST /api/auth/logout
 router.post('/logout', protect, logout);
 
-// Role authorization testing routes
-// GET /api/auth/manager-only
 router.get('/manager-only', protect, managerOnly, (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -27,7 +19,6 @@ router.get('/manager-only', protect, managerOnly, (req, res) => {
   });
 });
 
-// GET /api/auth/worker-only
 router.get('/worker-only', protect, workerOnly, (req, res) => {
   res.status(200).json({
     status: 'success',

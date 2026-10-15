@@ -11,7 +11,6 @@ import sys
 import importlib
 from pathlib import Path
 
-# Add project root and ai_training to sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -32,7 +31,6 @@ except ImportError:
     EXPORT_MODEL_DIR = PROJECT_ROOT / "ai" / "models"
     PYTHON_VERSION = sys.version.split()[0]
 
-
 def verify_environment():
     report = {
         "python_version": PYTHON_VERSION,
@@ -44,14 +42,12 @@ def verify_environment():
         "overall_readiness": "UNKNOWN"
     }
 
-    # 1. Verify Virtual Environment
     venv_dir = AI_TRAINING_DIR / "venv"
     if os.path.exists(venv_dir):
         report["venv_status"] = f"VERIFIED ({venv_dir})"
     else:
         report["venv_status"] = "MISSING"
 
-    # 2. Verify Folder Structure (11 Subdirectories)
     required_folders = [
         "venv", "datasets", "preprocessing", "feature_engineering",
         "training", "evaluation", "experiments", "reports",
@@ -61,7 +57,6 @@ def verify_environment():
         folder_path = AI_TRAINING_DIR / folder
         report["folder_structure"][folder] = "VERIFIED" if os.path.exists(folder_path) else "MISSING"
 
-    # 3. Verify Required Python Packages
     required_packages = [
         "pandas", "numpy", "sklearn", "joblib", "scipy",
         "matplotlib", "dotenv", "tqdm", "yaml"
@@ -73,7 +68,6 @@ def verify_environment():
         except ImportError:
             report["packages"][pkg] = "NOT_INSTALLED (Optional / Extensible)"
 
-    # 4. Verify RM Monitor Dataset Ingestion Connection
     datasets_to_check = {
         "feature_dataset.csv": FEATURE_DATASET_CSV,
         "feature_registry.json": FEATURE_REGISTRY_JSON,
@@ -87,18 +81,15 @@ def verify_environment():
         if not exists:
             all_datasets_available = False
 
-    # 5. Verify Model Export Directory
     if os.path.exists(EXPORT_MODEL_DIR):
         report["model_export_directory"] = f"VERIFIED ({EXPORT_MODEL_DIR})"
     else:
         report["model_export_directory"] = "MISSING"
 
-    # Determine Overall Readiness
     folders_ok = all(v == "VERIFIED" for v in report["folder_structure"].values())
     report["overall_readiness"] = "100% READY FOR PHASE 8B MODULE 4" if (folders_ok and all_datasets_available) else "PARTIALLY READY"
 
     return report
-
 
 def print_readiness_report(report):
     print("=" * 80)
@@ -131,7 +122,6 @@ def print_readiness_report(report):
         print(f"  {symbol} {pkg:<28} : {status}")
 
     print("=" * 80)
-
 
 if __name__ == "__main__":
     rep = verify_environment()

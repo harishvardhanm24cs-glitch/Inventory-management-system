@@ -1,21 +1,4 @@
-/**
- * rackVisualizationRules.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * Warehouse Visualization Rule Engine
- *
- * Encapsulates all color-coding, status label evaluation, and design tokens
- * for physical rack displays across Rack View and Digital Twin.
- *
- * Rule Specifications:
- * • GRAY   (EMPTY)                 → Quantity === 0 or Occupancy === 0%
- * • GREEN  (HEALTHY)               → Healthy inventory, safely loaded
- * • YELLOW (APPROACHING_THRESHOLD) → Quantity near safety threshold or medium load (41-80%)
- * • RED    (CRITICAL_STOCK)        → Critical stock level (<= threshold) or high load / overload (>80%)
- *
- * Extensibility:
- * • Supports registering custom rule evaluators (e.g. temperature alerts, batch expiry, custom client rules)
- * • Completely decouples UI styling & visualization logic from backend inventory domain logic.
- */
+
 
 export type RackState = 'EMPTY' | 'HEALTHY' | 'APPROACHING_THRESHOLD' | 'CRITICAL_STOCK' | string;
 export type ColorCode = 'GRAY' | 'GREEN' | 'YELLOW' | 'RED' | string;
@@ -52,18 +35,14 @@ export type CustomRuleEvaluator = (input: RackVisualDataInput) => RackVisualConf
 class VisualizationEngine {
   private customEvaluators: CustomRuleEvaluator[] = [];
 
-  /**
-   * Register custom visualization rules for future expansion (e.g. Cold storage, Expiry alerts)
-   */
+  
   public registerRule(evaluator: CustomRuleEvaluator): void {
     this.customEvaluators.unshift(evaluator);
   }
 
-  /**
-   * Evaluate input data against registered custom rules and standard warehouse rules.
-   */
+  
   public evaluate(input: RackVisualDataInput): RackVisualConfig {
-    // 1. Try custom registered evaluators first
+    
     for (const customEval of this.customEvaluators) {
       const customConfig = customEval(input);
       if (customConfig) {
@@ -71,7 +50,7 @@ class VisualizationEngine {
       }
     }
 
-    // 2. Fall back to Standard Warehouse Visualization Rules
+    
     const qty = parseFloat(String(input.quantity ?? input.current_capacity ?? 0)) || 0;
     const maxCap = parseFloat(String(input.max_capacity ?? 100)) || 100;
     const limit = parseFloat(String(input.threshold_limit ?? 10)) || 10;
@@ -83,7 +62,7 @@ class VisualizationEngine {
       occ = parseFloat(((qty / maxCap) * 100).toFixed(2));
     }
 
-    // Check for critical material inside rack
+    
     let hasCriticalMaterial = false;
     if (input.materials && Array.isArray(input.materials)) {
       hasCriticalMaterial = input.materials.some(m => {
@@ -93,7 +72,7 @@ class VisualizationEngine {
       });
     }
 
-    // ── GRAY: Empty Rack (Strictly check quantity === 0) ──
+    
     if (qty === 0) {
       return {
         state: 'EMPTY',
@@ -112,7 +91,7 @@ class VisualizationEngine {
       };
     }
 
-    // ── RED: Critical Stock or Overload ──
+    
     if ((qty > 0 && qty <= limit) || hasCriticalMaterial || occ > 80 || input.status_color === 'RED') {
       const isCriticalStock = (qty > 0 && qty <= limit) || hasCriticalMaterial;
       return {
@@ -132,7 +111,7 @@ class VisualizationEngine {
       };
     }
 
-    // ── YELLOW: Approaching Threshold / Medium Load ──
+    
     if ((qty > limit && qty <= limit * 1.25) || (occ > 40 && occ <= 80) || input.status_color === 'YELLOW') {
       const isApproaching = qty > limit && qty <= limit * 1.25;
       return {
@@ -152,7 +131,7 @@ class VisualizationEngine {
       };
     }
 
-    // ── GREEN: Healthy Inventory ──
+    
     return {
       state: 'HEALTHY',
       color: 'GREEN',
@@ -171,5 +150,4 @@ class VisualizationEngine {
   }
 }
 
-// Global Singleton Instance
 export const rackVisualizationRules = new VisualizationEngine();

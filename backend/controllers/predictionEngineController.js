@@ -1,12 +1,6 @@
 import aiPredictionEngine from '../services/aiPredictionEngine.js';
 import recommendationEngine from '../services/recommendationEngine.js';
 
-/**
- * predictionEngineController.js
- * ─────────────────────────────────────────────────────────────────────────────
- * HTTP Controller exposing AI Prediction Engine endpoints.
- */
-
 export const getPredictionEngineOverview = async (req, res, next) => {
   try {
     const data = await aiPredictionEngine.getOverviewPredictions();

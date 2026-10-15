@@ -30,7 +30,7 @@ export const DigitalTwinPredictionOverlay: React.FC = () => {
           </div>
         </div>
 
-        {/* Time Horizon Selector */}
+        
         <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
           {(['7d', '14d', '30d'] as const).map(h => (
             <button
@@ -46,7 +46,7 @@ export const DigitalTwinPredictionOverlay: React.FC = () => {
         </div>
       </div>
 
-      {/* Grid of Rack Utilization Forecasts */}
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-4">
         {rackUtilization.slice(0, 6).map((rack, idx) => {
           const projOcc =
@@ -81,7 +81,7 @@ export const DigitalTwinPredictionOverlay: React.FC = () => {
                 {rack.material_name}
               </div>
 
-              {/* Progress Bar */}
+              
               <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden mb-1.5">
                 <div
                   className={`h-full transition-all duration-500 ${
@@ -100,7 +100,7 @@ export const DigitalTwinPredictionOverlay: React.FC = () => {
         })}
       </div>
 
-      {/* Critical Recommendations Footer */}
+      
       {criticalRacks.length > 0 ? (
         <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
           <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />

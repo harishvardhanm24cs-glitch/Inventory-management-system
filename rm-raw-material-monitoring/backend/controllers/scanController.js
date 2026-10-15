@@ -3,9 +3,6 @@ const { validationResult } = require('express-validator');
 const Material = require('../models/materialModel');
 const Transaction = require('../models/transactionModel');
 
-// @desc    Process inward stock scan
-// @route   POST /api/scan/inward
-// @access  Private
 const scanInward = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
@@ -22,10 +19,10 @@ const scanInward = asyncHandler(async (req, res) => {
   const previousStock = parseFloat(material.quantity);
   const newStock = previousStock + parsedQty;
 
-  // Update Material
+  
   await Material.update(material.id, { ...material, quantity: newStock });
 
-  // Log Transaction
+  
   await Transaction.logTransaction(material.id, req.user.id, 'inward', parsedQty, previousStock, newStock);
 
   const updatedMaterial = await Material.findById(material.id);
@@ -39,9 +36,6 @@ const scanInward = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Process outward stock scan
-// @route   POST /api/scan/outward
-// @access  Private
 const scanOutward = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
@@ -64,10 +58,10 @@ const scanOutward = asyncHandler(async (req, res) => {
 
   const newStock = previousStock - parsedQty;
 
-  // Update Material
+  
   await Material.update(material.id, { ...material, quantity: newStock });
 
-  // Log Transaction
+  
   await Transaction.logTransaction(material.id, req.user.id, 'outward', parsedQty, previousStock, newStock);
 
   const updatedMaterial = await Material.findById(material.id);

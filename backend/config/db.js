@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Create connection pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
@@ -15,13 +14,12 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// Verify the connection pool and set up required tables
 (async () => {
   try {
     const connection = await pool.getConnection();
     console.log('Database connected successfully');
     
-    // Create users table if it doesn't exist
+    
     const createUsersTableQuery = `
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -35,7 +33,7 @@ const pool = mysql.createPool({
     await connection.query(createUsersTableQuery);
     console.log('Users table verified/created successfully');
     
-    // Create materials table
+    
     const createMaterialsTableQuery = `
       CREATE TABLE IF NOT EXISTS materials (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -52,7 +50,7 @@ const pool = mysql.createPool({
     await connection.query(createMaterialsTableQuery);
     console.log('Materials table verified/created successfully');
 
-    // Auto-migration check: add qr_data column if table already exists without it
+    
     try {
       const [columns] = await connection.query('SHOW COLUMNS FROM materials');
       const colNames = columns.map(c => c.Field);
@@ -64,7 +62,7 @@ const pool = mysql.createPool({
       console.error('Failed to run materials schema migration:', e.message);
     }
 
-    // Create transactions table
+    
     const createTransactionsTableQuery = `
       CREATE TABLE IF NOT EXISTS transactions (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -80,7 +78,7 @@ const pool = mysql.createPool({
     await connection.query(createTransactionsTableQuery);
     console.log('Transactions table verified/created successfully');
 
-    // Create alerts table
+    
     const createAlertsTableQuery = `
       CREATE TABLE IF NOT EXISTS alerts (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -94,7 +92,7 @@ const pool = mysql.createPool({
     await connection.query(createAlertsTableQuery);
     console.log('Alerts table verified/created successfully');
 
-    // Auto-migration check: modify alerts table to make material_id nullable if not already
+    
     try {
       const [columns] = await connection.query('SHOW COLUMNS FROM alerts');
       const materialIdCol = columns.find(c => c.Field === 'material_id');
@@ -122,7 +120,7 @@ const pool = mysql.createPool({
       console.error('Failed to run alerts schema migration:', e.message);
     }
     
-    // Drop old racks table if it has incompatible columns
+    
     try {
       const [columns] = await connection.query('SHOW COLUMNS FROM racks');
       const colNames = columns.map(c => c.Field);
@@ -131,10 +129,10 @@ const pool = mysql.createPool({
         await connection.query('DROP TABLE IF EXISTS racks');
       }
     } catch (e) {
-      // Table doesn't exist yet, which is fine
+      
     }
 
-    // Create racks table
+    
     const createRacksTableQuery = `
       CREATE TABLE IF NOT EXISTS racks (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -152,7 +150,7 @@ const pool = mysql.createPool({
     await connection.query(createRacksTableQuery);
     console.log('Racks table verified/created successfully');
 
-    // Create qr_codes table
+    
     const createQrCodesTableQuery = `
       CREATE TABLE IF NOT EXISTS qr_codes (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -172,7 +170,7 @@ const pool = mysql.createPool({
     await connection.query(createQrCodesTableQuery);
     console.log('qr_codes table verified/created successfully');
 
-    // Auto-migration check: add status column to qr_codes if not exists
+    
     try {
       const [columns] = await connection.query('SHOW COLUMNS FROM qr_codes');
       const colNames = columns.map(c => c.Field);
@@ -193,7 +191,7 @@ const pool = mysql.createPool({
       console.error('Failed to run qr_codes schema migration:', e.message);
     }
 
-    // Auto-migration check: add user_id column to transactions if not exists
+    
     try {
       const [columns] = await connection.query('SHOW COLUMNS FROM transactions');
       const colNames = columns.map(c => c.Field);
@@ -206,7 +204,7 @@ const pool = mysql.createPool({
       console.error('Failed to run transactions schema migration:', e.message);
     }
 
-    // Create before_rack_insert trigger
+    
     await connection.query('DROP TRIGGER IF EXISTS before_rack_insert');
     const createInsertTriggerQuery = `
       CREATE TRIGGER before_rack_insert
@@ -237,7 +235,7 @@ const pool = mysql.createPool({
     `;
     await connection.query(createInsertTriggerQuery);
 
-    // Create before_rack_update trigger
+    
     await connection.query('DROP TRIGGER IF EXISTS before_rack_update');
     const createUpdateTriggerQuery = `
       CREATE TRIGGER before_rack_update
@@ -269,7 +267,7 @@ const pool = mysql.createPool({
     await connection.query(createUpdateTriggerQuery);
     console.log('Racks status triggers verified/created successfully');
 
-    // Create rack_inventory table
+    
     const createRackInventoryTableQuery = `
       CREATE TABLE IF NOT EXISTS rack_inventory (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -286,7 +284,7 @@ const pool = mysql.createPool({
     await connection.query(createRackInventoryTableQuery);
     console.log('rack_inventory table verified/created successfully');
 
-    // Auto-migration check: add zone_name and material_name if missing
+    
     try {
       const [columns] = await connection.query('SHOW COLUMNS FROM rack_inventory');
       const colNames = columns.map(c => c.Field);
@@ -302,7 +300,7 @@ const pool = mysql.createPool({
       console.error('Failed to run rack_inventory schema migration:', e.message);
     }
 
-    // Create qr_history table
+    
     const createQrHistoryTableQuery = `
       CREATE TABLE IF NOT EXISTS qr_history (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -319,7 +317,7 @@ const pool = mysql.createPool({
     await connection.query(createQrHistoryTableQuery);
     console.log('qr_history table verified/created successfully');
 
-    // Auto-migration check: add quantity column to qr_history if not exists
+    
     try {
       const [columns] = await connection.query('SHOW COLUMNS FROM qr_history');
       const colNames = columns.map(c => c.Field);
@@ -331,7 +329,7 @@ const pool = mysql.createPool({
       console.error('Failed to run qr_history schema migration:', e.message);
     }
 
-    // Create rack_overload_history table
+    
     const createRackOverloadHistoryTableQuery = `
       CREATE TABLE IF NOT EXISTS rack_overload_history (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -347,7 +345,7 @@ const pool = mysql.createPool({
     await connection.query(createRackOverloadHistoryTableQuery);
     console.log('rack_overload_history table verified/created successfully');
 
-    // Create audit_logs table
+    
     const createAuditLogsTableQuery = `
       CREATE TABLE IF NOT EXISTS audit_logs (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -363,7 +361,7 @@ const pool = mysql.createPool({
     await connection.query(createAuditLogsTableQuery);
     console.log('audit_logs table verified/created successfully');
 
-    // Sync existing racks to rack_inventory
+    
     await connection.query(`
       INSERT INTO rack_inventory (rack_code, max_capacity, current_capacity, occupancy_percentage, zone_name, material_name)
       SELECT 
@@ -386,7 +384,7 @@ const pool = mysql.createPool({
     `);
     console.log('rack_inventory synchronized with existing racks');
 
-    // Create AFTER triggers to keep rack_inventory synchronized automatically
+    
     await connection.query('DROP TRIGGER IF EXISTS after_rack_insert');
     await connection.query(`
       CREATE TRIGGER after_rack_insert
@@ -448,25 +446,233 @@ const pool = mysql.createPool({
     `);
     console.log('rack_inventory synchronization triggers verified/created successfully');
 
-    // Unlimited Inventory Mode Database Migrations
+    
+    const createTrainingDatasetTableQuery = `
+      CREATE TABLE IF NOT EXISTS training_dataset (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        transaction_id INT,
+        material_id INT NOT NULL,
+        quantity DECIMAL(20,2) NOT NULL,
+        movement_type VARCHAR(50) NOT NULL,
+        transaction_timestamp DATETIME NOT NULL,
+        ai_features JSON NOT NULL,
+        validation_status VARCHAR(20) NOT NULL DEFAULT 'VALIDATED',
+        validation_reason VARCHAR(255) NULL DEFAULT NULL,
+        collection_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        dataset_version VARCHAR(50) DEFAULT '2026.07.001',
+        hash_signature VARCHAR(64) UNIQUE NOT NULL
+      ) ENGINE=InnoDB;
+    `;
+    await connection.query(createTrainingDatasetTableQuery);
+    console.log('training_dataset table verified/created successfully');
+
+    
+    try {
+      const [columns] = await connection.query('SHOW COLUMNS FROM training_dataset');
+      const colNames = columns.map(c => c.Field);
+      if (!colNames.includes('validation_reason')) {
+        console.log('Adding validation_reason column to training_dataset table...');
+        await connection.query('ALTER TABLE training_dataset ADD COLUMN validation_reason VARCHAR(255) NULL DEFAULT NULL AFTER validation_status');
+      }
+    } catch (e) {
+      console.error('Failed to run training_dataset schema migration:', e.message);
+    }
+
+    
+    const createDatasetVersionsTableQuery = `
+      CREATE TABLE IF NOT EXISTS dataset_versions (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        version_tag VARCHAR(50) UNIQUE NOT NULL,
+        total_records INT DEFAULT 0,
+        status VARCHAR(20) DEFAULT 'ACTIVE',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB;
+    `;
+    await connection.query(createDatasetVersionsTableQuery);
+    console.log('dataset_versions table verified/created successfully');
+
+    
+    const createDatasetRegistryTableQuery = `
+      CREATE TABLE IF NOT EXISTS dataset_registry (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        dataset_id VARCHAR(100) UNIQUE NOT NULL,
+        dataset_version VARCHAR(50) UNIQUE NOT NULL,
+        dataset_name VARCHAR(150) NOT NULL,
+        status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_by VARCHAR(100) DEFAULT 'SYSTEM',
+        description TEXT,
+        source VARCHAR(100) DEFAULT 'CONTINUOUS_PIPELINE',
+        record_count INT DEFAULT 0,
+        feature_count INT DEFAULT 12,
+        validation_rate DECIMAL(5,2) DEFAULT 100.00,
+        duplicate_count INT DEFAULT 0,
+        rejected_count INT DEFAULT 0,
+        checksum VARCHAR(64) NOT NULL,
+        storage_path VARCHAR(255) NOT NULL,
+        snapshot_path VARCHAR(255),
+        collection_start DATETIME,
+        collection_end DATETIME,
+        integrity_status VARCHAR(20) DEFAULT 'VERIFIED',
+        last_verified DATETIME,
+        archive_date DATETIME,
+        restore_date DATETIME,
+        is_selected TINYINT(1) DEFAULT 0,
+        notes TEXT
+      ) ENGINE=InnoDB;
+    `;
+    await connection.query(createDatasetRegistryTableQuery);
+    console.log('dataset_registry table verified/created successfully');
+
+    
+    const createDatasetHistoryTableQuery = `
+      CREATE TABLE IF NOT EXISTS dataset_history (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        dataset_version VARCHAR(50) NOT NULL,
+        action VARCHAR(50) NOT NULL,
+        actor VARCHAR(100) DEFAULT 'SYSTEM',
+        details TEXT,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB;
+    `;
+    await connection.query(createDatasetHistoryTableQuery);
+    console.log('dataset_history table verified/created successfully');
+
+    
+    const createModelRegistryTableQuery = `
+      CREATE TABLE IF NOT EXISTS model_registry (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        model_id VARCHAR(100) UNIQUE NOT NULL,
+        model_name VARCHAR(150) NOT NULL,
+        model_version VARCHAR(50) UNIQUE NOT NULL,
+        algorithm VARCHAR(100) NOT NULL,
+        dataset_version VARCHAR(50) NOT NULL,
+        status VARCHAR(20) NOT NULL DEFAULT 'DEVELOPMENT',
+        is_production TINYINT(1) DEFAULT 0,
+        artifact_path VARCHAR(255) NOT NULL,
+        checksum VARCHAR(64) NOT NULL,
+        training_date DATETIME NOT NULL,
+        mae DECIMAL(10,4) DEFAULT 0.0000,
+        rmse DECIMAL(10,4) DEFAULT 0.0000,
+        r2_score DECIMAL(6,4) DEFAULT 0.0000,
+        cv_score DECIMAL(6,4) DEFAULT 0.0000,
+        feature_count INT DEFAULT 12,
+        sample_count INT DEFAULT 0,
+        training_duration DECIMAL(10,2) DEFAULT 0.00,
+        model_size INT DEFAULT 0,
+        created_by VARCHAR(100) DEFAULT 'SYSTEM',
+        description TEXT,
+        tags VARCHAR(255),
+        features_json JSON,
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB;
+    `;
+    await connection.query(createModelRegistryTableQuery);
+    try {
+      await connection.query('ALTER TABLE model_registry ADD COLUMN is_production TINYINT(1) DEFAULT 0');
+    } catch (e) {
+      
+    }
+    console.log('model_registry table verified/created successfully');
+
+    
+    const createModelHistoryTableQuery = `
+      CREATE TABLE IF NOT EXISTS model_history (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        model_version VARCHAR(50) NOT NULL,
+        action VARCHAR(50) NOT NULL,
+        actor VARCHAR(100) DEFAULT 'SYSTEM',
+        details TEXT,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB;
+    `;
+    await connection.query(createModelHistoryTableQuery);
+    console.log('model_history table verified/created successfully');
+
+    
+    const createModelComparisonsTableQuery = `
+      CREATE TABLE IF NOT EXISTS model_comparisons (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        comparison_id VARCHAR(100) UNIQUE NOT NULL,
+        production_model VARCHAR(50) NOT NULL,
+        candidate_model VARCHAR(50) NOT NULL,
+        comparison_score DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+        winner VARCHAR(50) NOT NULL,
+        recommendation VARCHAR(50) NOT NULL,
+        confidence_score DECIMAL(5,2) DEFAULT 95.00,
+        metric_summary JSON NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_by VARCHAR(100) DEFAULT 'SYSTEM'
+      ) ENGINE=InnoDB;
+    `;
+    await connection.query(createModelComparisonsTableQuery);
+    console.log('model_comparisons table verified/created successfully');
+
+    
+    const createDeploymentDecisionsTableQuery = `
+      CREATE TABLE IF NOT EXISTS deployment_decisions (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        decision_id VARCHAR(100) UNIQUE NOT NULL,
+        candidate_model VARCHAR(50) NOT NULL,
+        production_model VARCHAR(50) NOT NULL,
+        comparison_id VARCHAR(100) NULL DEFAULT NULL,
+        decision VARCHAR(50) NOT NULL,
+        reason TEXT NOT NULL,
+        confidence DECIMAL(5,2) DEFAULT 0.00,
+        passed_rules JSON NULL,
+        failed_rules JSON NULL,
+        manual_override TINYINT(1) DEFAULT 0,
+        reviewed_by VARCHAR(100) DEFAULT 'SYSTEM',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB;
+    `;
+    await connection.query(createDeploymentDecisionsTableQuery);
+    console.log('deployment_decisions table verified/created successfully');
+
+    
+    const createRollbackHistoryTableQuery = `
+      CREATE TABLE IF NOT EXISTS rollback_history (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        rollback_id VARCHAR(100) UNIQUE NOT NULL,
+        current_model VARCHAR(100) NOT NULL,
+        target_model VARCHAR(100) NOT NULL,
+        decision VARCHAR(50) NOT NULL DEFAULT 'PENDING',
+        simulation_result JSON NULL,
+        reason TEXT NULL,
+        reviewed_by VARCHAR(100) DEFAULT 'SYSTEM',
+        manual_override TINYINT(1) DEFAULT 0,
+        eligibility_passed TINYINT(1) DEFAULT 0,
+        artifact_status VARCHAR(20) DEFAULT 'UNKNOWN',
+        checksum_status VARCHAR(20) DEFAULT 'UNKNOWN',
+        dataset_status VARCHAR(20) DEFAULT 'UNKNOWN',
+        validation_result VARCHAR(20) DEFAULT 'PENDING',
+        target_dataset_version VARCHAR(50) DEFAULT '',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB;
+    `;
+    await connection.query(createRollbackHistoryTableQuery);
+    console.log('rollback_history table verified/created successfully');
+
+    
     const isTestScript = process.argv.some(arg => arg.includes('test_') || arg.includes('audit') || arg.includes('inspect') || arg.includes('repair_racks'));
     if (!isTestScript) {
       try {
         console.log('Running Unlimited Inventory Mode database migrations...');
-        // 1. Alter materials table
+        
         await connection.query('ALTER TABLE materials MODIFY COLUMN quantity DECIMAL(20,2) DEFAULT 0.00');
         await connection.query('ALTER TABLE materials MODIFY COLUMN threshold_limit DECIMAL(20,2) DEFAULT 0.00');
         
-        // 2. Alter racks table
+        
         await connection.query('ALTER TABLE racks MODIFY COLUMN quantity DECIMAL(20,2) NOT NULL DEFAULT 0.00');
         await connection.query('ALTER TABLE racks MODIFY COLUMN max_capacity DECIMAL(20,2) NOT NULL DEFAULT 999999999.00');
         await connection.query('ALTER TABLE racks MODIFY COLUMN threshold_limit DECIMAL(20,2) NOT NULL DEFAULT 10.00');
         
-        // 3. Alter rack_inventory table
+        
         await connection.query('ALTER TABLE rack_inventory MODIFY COLUMN current_capacity DECIMAL(20,2) NOT NULL DEFAULT 0.00');
         await connection.query('ALTER TABLE rack_inventory MODIFY COLUMN max_capacity DECIMAL(20,2) NOT NULL DEFAULT 999999999.00');
 
-        // 4. Alter other tables for large capacity safety
+        
         await connection.query('ALTER TABLE transactions MODIFY COLUMN quantity DECIMAL(20,2) NOT NULL');
         await connection.query('ALTER TABLE qr_codes MODIFY COLUMN quantity DECIMAL(20,2) DEFAULT 0.00');
         await connection.query('ALTER TABLE qr_codes MODIFY COLUMN units DECIMAL(20,2) DEFAULT 0.00');
@@ -474,10 +680,10 @@ const pool = mysql.createPool({
         await connection.query('ALTER TABLE rack_overload_history MODIFY COLUMN current_quantity DECIMAL(20,2) NOT NULL');
         await connection.query('ALTER TABLE rack_overload_history MODIFY COLUMN max_capacity DECIMAL(20,2) NOT NULL');
         
-        // 5. Update existing max_capacity values to 999999999
+        
         await connection.query('UPDATE racks SET max_capacity = 999999999.00');
         await connection.query('UPDATE rack_inventory SET max_capacity = 999999999.00');
-        // 6. Clean up empty racks (store only used racks in database)
+        
         console.log('Cleaning up empty racks to store only used racks...');
         await connection.query('DELETE FROM racks WHERE quantity = 0.00');
         

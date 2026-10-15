@@ -1,11 +1,5 @@
 import modelManager from '../services/modelManager.js';
 
-/**
- * modelController.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Controller layer exposing AI Model Management endpoints.
- */
-
 export const getModels = async (req, res, next) => {
   try {
     const models = modelManager.listAllModels();

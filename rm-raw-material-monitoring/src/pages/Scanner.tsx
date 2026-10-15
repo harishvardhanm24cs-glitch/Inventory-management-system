@@ -44,9 +44,9 @@ const Scanner: React.FC = () => {
 
     const [isProcessing, setIsProcessing] = useState(false);
 
-    // Core continuous scan handler passed to the custom hook
+    
     const handleScanDetected = useCallback(async (text: string) => {
-        if (isProcessing) return; // FIX 5: Request Queue Lock - Ignore simultaneous scan triggers
+        if (isProcessing) return; 
         setIsProcessing(true);
         setRawText(text);
         setLastError(null);
@@ -59,7 +59,7 @@ const Scanner: React.FC = () => {
             let rack_code: string | null = null;
             let barcode_id = text;
 
-            // Attempt to parse JSON structure from scanned barcode
+            
             try {
                 const parsed = JSON.parse(text);
                 material_name = parsed.material_name || parsed.paint_name || '';
@@ -69,7 +69,7 @@ const Scanner: React.FC = () => {
                 rack_code = parsed.rack_code || parsed.location || null;
                 barcode_id = parsed.barcode_id || parsed.sku_id || parsed.barcode || text;
             } catch (e) {
-                // Raw text barcode fallback lookup
+                
                 barcode_id = text;
                 const matchedMat = materials.find(m => m.barcode === barcode_id);
                 if (matchedMat) {
@@ -83,14 +83,14 @@ const Scanner: React.FC = () => {
                 throw new Error("Invalid barcode: Barcode ID is empty.");
             }
 
-            // Fallback material name if missing
+            
             if (!material_name) {
                 material_name = `Material ${barcode_id}`;
             }
 
             const quantityNum = parseFloat(String(weight)) || 1.0;
 
-            // Call backend autoStore endpoint
+            
             const res: any = await api.autoStore({
                 barcode_id,
                 material_name,
@@ -100,7 +100,7 @@ const Scanner: React.FC = () => {
                 manufacturing_date: manufacturing_date !== 'N/A' ? manufacturing_date : undefined
             });
 
-            // FIX 4: Handle Duplicate Scan Response (HTTP 409 / status duplicate)
+            
             if (res && (res.status === 'duplicate' || res.success === false)) {
                 const dupNotice = "Duplicate Scan - Inventory Not Updated";
                 console.warn(`[Inward Scanner] ${dupNotice}: ${barcode_id}`);
@@ -125,13 +125,13 @@ const Scanner: React.FC = () => {
             setScannedData(updatedPayload);
             setScanHistory(prev => [updatedPayload, ...prev]);
 
-            // Toast feedback
+            
             toast.success(`Inward Scan Successful: Assigned to Rack ${assignedRackCode}`);
 
-            // Refresh global inventory and rack data
+            
             await refreshData();
 
-            // Dispatch layout update custom events with targeted rack payload
+            
             window.dispatchEvent(new CustomEvent('rack-inventory-update', {
                 detail: { rackCode: assignedRackCode }
             }));
@@ -150,7 +150,7 @@ const Scanner: React.FC = () => {
         }
     }, [materials, refreshData, isProcessing]);
 
-    // Instantiate continuous scanner hook
+    
     const {
         videoRef,
         canvasRef,
@@ -168,7 +168,7 @@ const Scanner: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#F4F7FB] flex flex-col animate-fade-in text-slate-900 pb-20">
-            {/* Top Navigation Header */}
+            
             <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center gap-6">
                     <Link to="/" className="p-2 hover:bg-slate-50 rounded-lg text-slate-400 group transition-all">
@@ -208,16 +208,16 @@ const Scanner: React.FC = () => {
             <div className="max-w-7xl mx-auto w-full px-6 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                     
-                    {/* Scanner Feed Column */}
+                    
                     <div className="lg:col-span-6 space-y-6">
                         <div className="saas-card overflow-hidden bg-slate-950 border-slate-800 text-white relative shadow-2xl rounded-3xl">
-                            {/* Lens Overlay */}
+                            
                             <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-lg border border-white/10 backdrop-blur-md">
                                 <Camera size={14} className="text-[#4F8CFF] animate-pulse" />
                                 <span className="text-[9px] font-extrabold tracking-widest uppercase">LIVE INWARD LENS STREAM</span>
                             </div>
 
-                            {/* Camera Actions */}
+                            
                             <div className="absolute top-4 right-4 z-10 flex gap-2">
                                 <button
                                     onClick={togglePause}
@@ -235,7 +235,7 @@ const Scanner: React.FC = () => {
                                 </button>
                             </div>
 
-                            {/* Viewport Frame */}
+                            
                             <div className="relative aspect-square md:aspect-video w-full flex items-center justify-center bg-slate-900">
                                 {status === 'permission_denied' ? (
                                     <div className="p-8 text-center max-w-sm space-y-4">
@@ -257,7 +257,7 @@ const Scanner: React.FC = () => {
                                     </div>
                                 ) : (
                                     <div className="w-full h-full relative overflow-hidden">
-                                        {/* Camera Viewport */}
+                                        
                                         <video
                                             ref={videoRef}
                                             playsInline
@@ -269,7 +269,7 @@ const Scanner: React.FC = () => {
                                         />
                                         <canvas ref={canvasRef} className="hidden" />
 
-                                        {/* Cyber Target Brackets Overlay */}
+                                        
                                         <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
                                             <div className="w-48 h-48 md:w-60 md:h-60 relative border border-white/10 bg-black/10">
                                                 <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#4F8CFF]" />
@@ -277,12 +277,12 @@ const Scanner: React.FC = () => {
                                                 <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-[#4F8CFF]" />
                                                 <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-[#4F8CFF]" />
 
-                                                {/* Laser sweep animation */}
+                                                
                                                 <div className="absolute top-0 left-0 w-full h-[2px] bg-[#4F8CFF]/70 shadow-[0_0_10px_#4F8CFF] animate-[sweep_2.5s_linear_infinite]" />
                                             </div>
                                         </div>
 
-                                        {/* Hands-Free Banner */}
+                                        
                                         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 px-4 py-1.5 rounded-full border border-white/10 text-[10px] tracking-wider font-bold uppercase text-slate-300 z-10 text-center whitespace-nowrap">
                                             Continuous Hands-Free Scan Active
                                         </div>
@@ -291,7 +291,7 @@ const Scanner: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Scanner Session Stats */}
+                        
                         <div className="saas-card p-6 grid grid-cols-3 gap-4 rounded-3xl">
                             <div className="text-center border-r border-slate-100">
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Session Scans</p>
@@ -312,7 +312,7 @@ const Scanner: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Scanned Results Column */}
+                    
                     <div className="lg:col-span-6 space-y-6">
                         {status === 'processing' && (
                             <div className="saas-card p-8 border-[#4F8CFF]/20 bg-gradient-to-br from-white to-blue-50/20 animate-[slideUp_0.4s_ease-out_forwards] rounded-3xl shadow-lg">
@@ -345,7 +345,7 @@ const Scanner: React.FC = () => {
                                     </span>
                                 </div>
 
-                                {/* Metadata Cards */}
+                                
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center gap-3">
                                         <div className="p-2.5 bg-white border border-slate-100 rounded-lg text-slate-500">
@@ -452,7 +452,7 @@ const Scanner: React.FC = () => {
                             </div>
                         )}
 
-                        {/* Recent History Table */}
+                        
                         <div className="saas-card p-6 rounded-3xl">
                             <div className="flex items-center gap-3 mb-6">
                                 <History size={16} className="text-slate-400" />
@@ -485,7 +485,7 @@ const Scanner: React.FC = () => {
                 </div>
             </div>
 
-            {/* Injected Animations */}
+            
             <style>{`
                 @keyframes sweep {
                     0% { top: 0%; opacity: 0.1; }

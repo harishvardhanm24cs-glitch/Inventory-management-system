@@ -10,13 +10,13 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const { role } = useAuth(); // Phase 6: Sync theme with Firebase role
+    const { role } = useAuth(); 
     const [theme, setTheme] = useState<VisualTheme>(() => {
         return (localStorage.getItem('rm-visual-theme') as VisualTheme) || 'light';
     });
 
     useEffect(() => {
-        // Automatically cascade role changes to CSS targets
+        
         document.documentElement.setAttribute('data-theme', role);
     }, [role]);
 

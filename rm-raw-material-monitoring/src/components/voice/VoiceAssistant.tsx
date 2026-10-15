@@ -11,7 +11,7 @@ const VoiceAssistant: React.FC = () => {
     const navigate = useNavigate();
     const { materials } = useInventory();
 
-    // Initialize Speech Recognition
+    
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     const recognition = SpeechRecognition ? new SpeechRecognition() : null;
 

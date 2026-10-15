@@ -7,12 +7,12 @@ const RackInventory = require('../models/rackInventoryModel');
  * @access  Private
  */
 const getAllRackInventory = asyncHandler(async (req, res) => {
-  // Ensure default 12 racks exist
+  
   await RackInventory.ensureDefaultRacks();
 
   const racks = await RackInventory.getAll();
 
-  // Transform and compute color status
+  
   const transformed = racks.map(rack => {
     const occ = parseFloat(rack.occupancy_percentage) || 0;
     let color_status;
@@ -40,7 +40,6 @@ const getAllRackInventory = asyncHandler(async (req, res) => {
       }))
     };
   });
-
 
   res.status(200).json({
     success: true,

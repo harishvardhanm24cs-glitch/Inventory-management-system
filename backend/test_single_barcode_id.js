@@ -14,7 +14,7 @@ async function testBarcodeOnly() {
 
   console.log('--- TESTING SCAN WITH ONLY barcode_id (PI020) ---');
 
-  // Reset database state for PI020
+  
   await db.query("UPDATE qr_codes SET status = 'unused', scanned_at = NULL, scanned_by = NULL WHERE barcode_id = 'PI020'");
   await db.query("DELETE FROM transactions WHERE material_id IN (SELECT id FROM materials WHERE barcode = 'PI020')");
   await db.query("DELETE FROM qr_history WHERE barcode_id = 'PI020'");
@@ -37,7 +37,7 @@ async function testBarcodeOnly() {
   const json = await res.json();
   console.log('Response body:', json);
 
-  // Check state in DB
+  
   const [[qr]] = await db.query("SELECT barcode_id, status FROM qr_codes WHERE barcode_id = 'PI020'");
   console.log('QR Code status in DB:', qr);
 

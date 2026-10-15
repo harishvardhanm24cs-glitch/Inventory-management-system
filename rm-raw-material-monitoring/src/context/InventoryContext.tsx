@@ -119,7 +119,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         console.log("token found");
         console.log("fetch started");
 
-        // Only show spinner on initial load to prevent background updates from interrupting user
+        
         if (materials.length === 0) {
             setLoading(true);
         }
@@ -144,7 +144,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 setBatches(batchesRes);
             }
 
-            // Set Last Updated formatted as HH:MM:SS
+            
             const now = new Date();
             const timeStr = now.toTimeString().split(' ')[0];
             setLastUpdated(timeStr);
@@ -193,7 +193,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     useEffect(() => {
         fetchData();
 
-        // Real-time event subscription for immediate inventory & KPI refresh on scan
+        
         const handleRackUpdate = () => {
             const token = localStorage.getItem("token");
             if (token) {
@@ -202,7 +202,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         };
         window.addEventListener('rack-inventory-update', handleRackUpdate);
 
-        // Quiet background polling every 5 seconds
+        
         const interval = setInterval(() => {
             const token = localStorage.getItem("token");
             if (token) {
@@ -226,18 +226,18 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             if (result.material) {
                 setMaterials(prev => prev.map(m => m.id === id ? result.material : m));
                 setTransactions(prev => [result.transaction, ...prev]);
-                // Refresh alerts to get potential new ones from backend
+                
                 const newAlerts: any = await api.getAlerts();
                 setAlerts(newAlerts);
 
-                // Trigger immediate refresh of racks & stats
+                
                 await fetchData();
                 window.dispatchEvent(new CustomEvent('rack-inventory-update'));
                 if (typeof (window as any).refreshDigitalTwin === 'function') {
                     (window as any).refreshDigitalTwin();
                 }
 
-                // --- Emails ---
+                
                 if (type === 'outward' && result.material.stock < result.material.minLimit && !result.material.emailSent) {
                     try {
                         const emailResult = await api.sendLowStockAlert({
@@ -265,7 +265,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         try {
             const updatedMaterial: any = await api.updateLimits(id, minLimit, criticalLimit);
             setMaterials(prev => prev.map(m => m.id === id ? updatedMaterial : m));
-            // Refresh alerts to get potential new ones based on limit changes
+            
             const newAlerts: any = await api.getAlerts();
             setAlerts(newAlerts);
             await fetchData();

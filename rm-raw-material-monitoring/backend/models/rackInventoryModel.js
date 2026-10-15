@@ -1,11 +1,9 @@
 const db = require('../config/db');
 
 const RackInventory = {
-  /**
-   * Get all racks from rack_inventory with their materials
-   */
+  
   async getAll() {
-    // 1. Get all rack rows
+    
     const [racks] = await db.query(`
       SELECT 
         id,
@@ -19,7 +17,7 @@ const RackInventory = {
       ORDER BY zone_name, rack_code ASC
     `);
 
-    // 2. Get all rack_materials rows (single query, then group in JS)
+    
     const [materials] = await db.query(`
       SELECT
         id,
@@ -32,17 +30,17 @@ const RackInventory = {
       ORDER BY rack_code, id ASC
     `);
 
-    // 3. Group materials by rack_code
+    
     const materialsMap = {};
     for (const m of materials) {
       if (!materialsMap[m.rack_code]) materialsMap[m.rack_code] = [];
       materialsMap[m.rack_code].push(m);
     }
 
-    // 4. Attach materials to each rack + resolve last_scan
+    
     return racks.map(rack => {
       const rackMats = materialsMap[rack.rack_code] || [];
-      // last_scan = most recent scan across all materials in this rack
+      
       let lastScan = null;
       for (const m of rackMats) {
         if (m.last_scan && (!lastScan || new Date(m.last_scan) > new Date(lastScan))) {
@@ -57,9 +55,7 @@ const RackInventory = {
     });
   },
 
-  /**
-   * Get single rack by code with its materials
-   */
+  
   async getByCode(rackCode) {
     const [rows] = await db.query(
       `SELECT id, rack_code, zone_name, current_capacity, max_capacity, occupancy_percentage, updated_at
@@ -85,9 +81,7 @@ const RackInventory = {
     return { ...rack, last_scan: lastScan, materials };
   },
 
-  /**
-   * Upsert rack (insert or update on duplicate key)
-   */
+  
   async upsert(rackCode, zoneName, currentCapacity, maxCapacity) {
     const occ = maxCapacity > 0
       ? parseFloat(((currentCapacity / maxCapacity) * 100).toFixed(2))
@@ -106,9 +100,7 @@ const RackInventory = {
     return result;
   },
 
-  /**
-   * Auto-initialize default 12 racks if not present (INSERT IGNORE — won't overwrite existing data)
-   */
+  
   async ensureDefaultRacks() {
     const defaultRacks = [
       { rack_code: 'A1', zone_name: 'RECEIVING ZONE', current_capacity: 0, max_capacity: 100 },

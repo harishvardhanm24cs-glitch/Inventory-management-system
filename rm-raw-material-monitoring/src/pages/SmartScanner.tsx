@@ -48,7 +48,7 @@ const SmartScanner = () => {
 
     return (
         <div className="min-h-screen bg-[#F4F7FB] flex flex-col animate-fade-in">
-            {/* Unified Top Header */}
+            
             <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center gap-6">
                     <Link to="/" className="p-2 hover:bg-slate-50 rounded-lg text-slate-400 group transition-all">
@@ -68,7 +68,7 @@ const SmartScanner = () => {
             </div>
 
             <div className="max-w-7xl mx-auto w-full px-6 py-8 space-y-8">
-                {/* Executive Summary Metrics */}
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[
                         { label: 'System Health', value: '99.8%', icon: Activity, color: 'text-primary' },
@@ -89,9 +89,9 @@ const SmartScanner = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    {/* Predictive Insights & Inventory Audit */}
+                    
                     <div className="lg:col-span-8 space-y-8">
-                        {/* Predictive Alert Box */}
+                        
                         <div className="saas-card p-8 bg-slate-900 text-white border-none relative overflow-hidden">
                             <Zap size={120} className="absolute -bottom-8 -right-8 text-white/5 rotate-12" />
                             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -110,7 +110,7 @@ const SmartScanner = () => {
                             </div>
                         </div>
 
-                        {/* Material Registry Audit */}
+                        
                         <div className="saas-card p-8">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                                 <div>
@@ -174,9 +174,9 @@ const SmartScanner = () => {
                         </div>
                     </div>
 
-                    {/* Operational Sidebar */}
+                    
                     <div className="lg:col-span-4 space-y-6">
-                        {/* Session Analytics */}
+                        
                         <div className="saas-card p-6">
                             <h3 className="font-black text-slate-400 text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 mb-8">
                                 <History size={14} /> Efficiency Feed
@@ -212,7 +212,7 @@ const SmartScanner = () => {
                             </Link>
                         </div>
 
-                        {/* Inventory Heatmap / Alerts */}
+                        
                         <div className="saas-card p-6 bg-white border-rose-100 bg-gradient-to-br from-white to-rose-50/30">
                             <h4 className="font-black text-[10px] text-rose-500 uppercase tracking-widest mb-6 flex items-center gap-2">
                                 <AlertCircle size={14} /> Critical Stock Alerts
@@ -241,7 +241,7 @@ const SmartScanner = () => {
                             </div>
                         </div>
 
-                        {/* Learning Mode Insight */}
+                        
                         <div className="saas-card p-6 border-primary/20 bg-blue-50/20">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="p-2 bg-primary text-white rounded-lg">

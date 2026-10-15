@@ -112,7 +112,7 @@ const HealthDashboard: React.FC = () => {
         console.log('[Diagnostics] Running system health check...');
 
         try {
-            // 1. Gather all API data concurrently with error handling
+            
             const [
                 materialsRes, 
                 logsRes, 
@@ -131,7 +131,7 @@ const HealthDashboard: React.FC = () => {
                 api.getRackOptimizations()
             ]);
 
-            // Helper to safely extract array or object data from API response shapes defensively
+            
             const getSafeArray = (res: PromiseSettledResult<any>): any[] => {
                 if (res.status !== 'fulfilled' || !res.value) {
                     return [];
@@ -161,7 +161,7 @@ const HealthDashboard: React.FC = () => {
             const safeAiRecs = getSafeArray(aiRecsRes);
             const safeAiOpt = getSafeArray(aiOptRes);
 
-            // Extract rack list safely
+            
             let safeRacks: any[] = [];
             if (racksRes.status === 'fulfilled' && racksRes.value) {
                 const val = racksRes.value;
@@ -176,19 +176,19 @@ const HealthDashboard: React.FC = () => {
 
             const resolvedStats = statsRes.status === 'fulfilled' ? statsRes.value : null;
 
-            // ----------------------------------------------------
-            // 1. INWARD SCAN MODULE CHECKS
-            // ----------------------------------------------------
+            
+            
+            
             const inwardSubChecks: SubCheck[] = [];
             
-            // API Connection
+            
             if (materialsRes.status === 'fulfilled') {
                 inwardSubChecks.push({ label: 'API Connection', status: 'PASS', value: `${safeMaterials.length} materials fetched` });
             } else {
                 inwardSubChecks.push({ label: 'API Connection', status: 'FAIL', value: materialsRes.reason?.message || 'Failed' });
             }
 
-            // Material Added validation
+            
             if (materialsRes.status === 'fulfilled' && safeMaterials.length > 0) {
                 inwardSubChecks.push({ label: 'Material Added validation', status: 'PASS', value: 'Database registers active items' });
             } else if (materialsRes.status === 'fulfilled') {
@@ -197,7 +197,7 @@ const HealthDashboard: React.FC = () => {
                 inwardSubChecks.push({ label: 'Material Added validation', status: 'FAIL', value: 'Material DB unreachable' });
             }
 
-            // Rack Assignment Sync
+            
             const hasRacksAssigned = safeMaterials.some((m: any) => m && m.location && m.location !== 'Not Assigned' && m.location !== 'Pending');
             if (hasRacksAssigned) {
                 inwardSubChecks.push({ label: 'Rack Assignment Sync', status: 'PASS', value: 'Materials routed to active locations' });
@@ -205,7 +205,7 @@ const HealthDashboard: React.FC = () => {
                 inwardSubChecks.push({ label: 'Rack Assignment Sync', status: 'WARNING', value: 'No materials assigned to location zones' });
             }
 
-            // Inventory Inward record
+            
             const hasInwardTx = safeLogs.some((l: any) => l && (l.type === 'inward' || l.type === 'INWARD'));
             if (hasInwardTx) {
                 inwardSubChecks.push({ label: 'Inventory Inward record', status: 'PASS', value: 'Inward logs sync complete' });
@@ -223,12 +223,12 @@ const HealthDashboard: React.FC = () => {
                 ? 'PASS' 
                 : inwardSubChecks.some(c => c.status === 'FAIL') ? 'FAIL' : 'WARNING';
 
-            // ----------------------------------------------------
-            // 2. OUTWARD SCAN MODULE CHECKS
-            // ----------------------------------------------------
+            
+            
+            
             const outwardSubChecks: SubCheck[] = [];
             
-            // QR Lookup verification
+            
             if (materialsRes.status === 'fulfilled') {
                 const hasBarcodes = safeMaterials.length > 0 && safeMaterials.every((m: any) => m && m.barcode);
                 outwardSubChecks.push({ 
@@ -240,7 +240,7 @@ const HealthDashboard: React.FC = () => {
                 outwardSubChecks.push({ label: 'QR Lookup verification', status: 'FAIL', value: 'Inventory schema query failed' });
             }
 
-            // Material Reduction Sync & Outward logs check
+            
             const hasOutwardTx = safeLogs.some((l: any) => l && (l.type === 'outward' || l.type === 'OUTWARD'));
             if (hasOutwardTx) {
                 outwardSubChecks.push({ label: 'Material Reduction Sync', status: 'PASS', value: 'Outward reduction transactions detected' });
@@ -261,7 +261,7 @@ const HealthDashboard: React.FC = () => {
                 outwardSubChecks.push({ label: 'Outward logs check', status: 'FAIL', value: 'No audit logs available' });
             }
 
-            // Rack Stock Reduction Sync
+            
             if (racksRes.status === 'fulfilled' && safeRacks.length > 0) {
                 outwardSubChecks.push({ label: 'Rack Stock Reduction Sync', status: 'PASS', value: 'Rack capacity tracks stock movement' });
             } else {
@@ -272,9 +272,9 @@ const HealthDashboard: React.FC = () => {
                 ? 'PASS' 
                 : outwardSubChecks.some(c => c.status === 'FAIL') ? 'FAIL' : 'WARNING';
 
-            // ----------------------------------------------------
-            // 3. RACK SYNC MODULE CHECKS
-            // ----------------------------------------------------
+            
+            
+            
             const rackSubChecks: SubCheck[] = [];
             
             if (racksRes.status === 'fulfilled') {
@@ -308,9 +308,9 @@ const HealthDashboard: React.FC = () => {
                 ? 'PASS' 
                 : rackSubChecks.some(c => c.status === 'FAIL') ? 'FAIL' : 'WARNING';
 
-            // ----------------------------------------------------
-            // 4. DIGITAL TWIN MODULE CHECKS
-            // ----------------------------------------------------
+            
+            
+            
             const dtSubChecks: SubCheck[] = [];
             
             if (statsRes.status === 'fulfilled' && resolvedStats) {
@@ -332,16 +332,16 @@ const HealthDashboard: React.FC = () => {
                 dtSubChecks.push({ label: 'Rack color status rendering', status: 'FAIL', value: 'Racks API down' });
             }
 
-            // Material locator search index
+            
             dtSubChecks.push({ label: 'Material locator search index', status: 'PASS', value: 'Neural index compiled' });
 
             const dtStatus = dtSubChecks.every(c => c.status === 'PASS') 
                 ? 'PASS' 
                 : dtSubChecks.some(c => c.status === 'FAIL') ? 'FAIL' : 'WARNING';
 
-            // ----------------------------------------------------
-            // 5. ALERTS MODULE CHECKS
-            // ----------------------------------------------------
+            
+            
+            
             const alertSubChecks: SubCheck[] = [];
             
             if (alertsRes.status === 'fulfilled') {
@@ -350,16 +350,16 @@ const HealthDashboard: React.FC = () => {
                 alertSubChecks.push({ label: 'Low Stock threshold triggers', status: 'FAIL', value: alertsRes.reason?.message || 'Failed' });
             }
 
-            // SMTP / Email alert config checks
+            
             alertSubChecks.push({ label: 'Email dispatch engine config', status: 'PASS', value: 'SMTP delivery system online' });
 
             const alertStatus = alertSubChecks.every(c => c.status === 'PASS') 
                 ? 'PASS' 
                 : alertSubChecks.some(c => c.status === 'FAIL') ? 'FAIL' : 'WARNING';
 
-            // ----------------------------------------------------
-            // 6. AI ENGINE MODULE CHECKS
-            // ----------------------------------------------------
+            
+            
+            
             const aiSubChecks: SubCheck[] = [];
             
             if (aiRecsRes.status === 'fulfilled') {
@@ -384,9 +384,9 @@ const HealthDashboard: React.FC = () => {
                 ? 'PASS' 
                 : aiSubChecks.some(c => c.status === 'FAIL') ? 'FAIL' : 'WARNING';
 
-            // ----------------------------------------------------
-            // UPDATE STATE & OVERALL HEALTH
-            // ----------------------------------------------------
+            
+            
+            
             const updatedModules: ModuleCheck[] = [
                 {
                     name: 'Inward Scan',
@@ -434,7 +434,7 @@ const HealthDashboard: React.FC = () => {
 
             setModules(updatedModules);
 
-            // Calculate Overall Health
+            
             let totalChecks = 0;
             let passedChecks = 0;
             let warningChecks = 0;
@@ -447,7 +447,7 @@ const HealthDashboard: React.FC = () => {
                 });
             });
 
-            // Count warning as 0.5 pass
+            
             const healthScore = Math.round(((passedChecks + warningChecks * 0.5) / totalChecks) * 100);
             setOverallHealth(healthScore);
 
@@ -461,12 +461,12 @@ const HealthDashboard: React.FC = () => {
         }
     }, []);
 
-    // Initial Trigger
+    
     useEffect(() => {
         runDiagnostics();
     }, [runDiagnostics]);
 
-    // Auto Refresh Timer logic
+    
     useEffect(() => {
         if (!autoRefresh || loading) return;
 
@@ -483,7 +483,7 @@ const HealthDashboard: React.FC = () => {
         return () => clearInterval(timer);
     }, [autoRefresh, loading, runDiagnostics]);
 
-    // Reset countdown if autoRefresh is toggled back on
+    
     useEffect(() => {
         if (autoRefresh) {
             setCountdown(30);
@@ -514,7 +514,7 @@ const HealthDashboard: React.FC = () => {
 
     return (
         <div className="space-y-8 text-slate-800">
-            {/* Header section with Stats & Manual trigger */}
+            
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
                 <div>
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-wider border border-blue-100">
@@ -530,7 +530,7 @@ const HealthDashboard: React.FC = () => {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    {/* Auto Refresh Toggle */}
+                    
                     <button
                         onClick={() => setAutoRefresh(!autoRefresh)}
                         className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold transition-all ${
@@ -543,7 +543,7 @@ const HealthDashboard: React.FC = () => {
                         {autoRefresh ? `Auto Refresh: ${countdown}s` : 'Auto Refresh: Paused'}
                     </button>
 
-                    {/* Run Diagnostics */}
+                    
                     <button
                         onClick={runDiagnostics}
                         disabled={loading}
@@ -555,17 +555,17 @@ const HealthDashboard: React.FC = () => {
                 </div>
             </div>
 
-            {/* Overall Health Card */}
+            
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-1 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl transform translate-x-8 -translate-y-8 group-hover:scale-125 transition-transform" />
                     
                     <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Overall System Health</h3>
                     
-                    {/* Circular SVG Gauge */}
+                    
                     <div className="relative h-40 w-40 flex items-center justify-center">
                         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                            {/* Background Circle */}
+                            
                             <circle 
                                 cx="50" 
                                 cy="50" 
@@ -574,7 +574,7 @@ const HealthDashboard: React.FC = () => {
                                 strokeWidth="8" 
                                 fill="transparent" 
                             />
-                            {/* Indicator Circle */}
+                            
                             <circle 
                                 cx="50" 
                                 cy="50" 
@@ -604,9 +604,9 @@ const HealthDashboard: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Info / Quick Summary Panel */}
+                
                 <div className="lg:col-span-2 bg-slate-900 text-white p-8 rounded-3xl border border-slate-800 shadow-xl flex flex-col justify-between relative overflow-hidden group">
-                    {/* Glowing design elements */}
+                    
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl transform translate-x-12 -translate-y-12" />
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl transform -translate-x-12 translate-y-12" />
 
@@ -650,7 +650,7 @@ const HealthDashboard: React.FC = () => {
                 </div>
             </div>
 
-            {/* Diagnostic Modules Grid */}
+            
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {modules.map((mod, index) => {
                     const ModIcon = mod.icon;
@@ -674,7 +674,7 @@ const HealthDashboard: React.FC = () => {
                                 <p className="text-[11px] text-slate-400 font-semibold mt-1.5 leading-relaxed">{mod.description}</p>
                             </div>
 
-                            {/* Sub Checks Details */}
+                            
                             <div className="mt-5 pt-4 border-t border-slate-50 space-y-3">
                                 {mod.subChecks.map((sub, idx) => (
                                     <div key={idx} className="flex flex-col gap-1">

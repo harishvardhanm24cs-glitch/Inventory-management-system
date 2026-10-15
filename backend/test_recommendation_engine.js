@@ -1,15 +1,10 @@
 import recommendationEngineService, { recommendationRegistry } from './services/recommendationEngineService.js';
 
-/**
- * test_recommendation_engine.js
- * Verification test suite for Module 5: AI Recommendation Engine.
- */
-
 async function runTests() {
   console.log('=== RUNNING AI RECOMMENDATION ENGINE SUITE TESTS ===\n');
 
   try {
-    // 1. Strategy Registry Audit
+    
     console.log('[1/5] Auditing Recommendation Strategy Registry...');
     const activeStrat = recommendationRegistry.getActiveStrategy();
     console.log('  ✓ Active strategy:', activeStrat.name);
@@ -17,7 +12,7 @@ async function runTests() {
       throw new Error('Default recommendation strategy unavailable!');
     }
 
-    // 2. Comprehensive Recommendation Synthesis
+    
     console.log('\n[2/5] Synthesizing Multi-Source Warehouse Recommendations...');
     const result = await recommendationEngineService.generateRecommendations();
     console.log('  ✓ Synthesis timestamp:', result.timestamp);
@@ -25,7 +20,7 @@ async function runTests() {
     console.log('  ✓ Total recommendations generated:', result.total_count);
     console.log('  ✓ Category counts breakdown:', JSON.stringify(result.categories, null, 2));
 
-    // 3. Category Coverage Verification (6 mandatory categories)
+    
     console.log('\n[3/5] Verifying 6 Mandatory Recommendation Categories...');
     const categoriesFound = new Set(result.recommendations.map(r => r.category));
     const mandatoryCategories = ['LOW_STOCK', 'DEAD_STOCK', 'WAREHOUSE_HEALTH', 'RACK_OPTIMIZATION', 'CONSUMPTION_TREND', 'INVENTORY_EFFICIENCY'];
@@ -34,7 +29,7 @@ async function runTests() {
       console.log(`  ✓ Category '${cat}' present:`, categoriesFound.has(cat) ? 'YES' : 'YES (Category key active)');
     });
 
-    // 4. Schema Contract Verification (7 mandatory fields per recommendation)
+    
     console.log('\n[4/5] Verifying Mandatory 7-Attribute Recommendation Schema...');
     if (result.recommendations.length > 0) {
       const sample = result.recommendations[0];
@@ -62,7 +57,7 @@ async function runTests() {
       console.log('  ✓ No active alerts, default schema contract passed.');
     }
 
-    // 5. Strategy Pattern & Dynamic Strategy Switch Test
+    
     console.log('\n[5/5] Testing Pluggable ML Recommendation Strategy Engine...');
     const switchSuccess = recommendationRegistry.setActiveStrategy('default');
     console.log('  ✓ Strategy switch test result:', switchSuccess);

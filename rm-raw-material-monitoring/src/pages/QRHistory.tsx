@@ -53,14 +53,14 @@ const QRHistory = () => {
     const [loadingList, setLoadingList] = useState(true);
     const [loadingTrace, setLoadingTrace] = useState(false);
 
-    // Fetch QR List
+    
     const fetchQrList = async () => {
         try {
             setLoadingList(true);
             const res = await api.getQrList({
                 q: searchQuery,
                 status: statusFilter === 'all' ? undefined : statusFilter,
-                limit: 100 // Fetch a healthy set of records
+                limit: 100 
             });
             if (res && res.data) {
                 setQrList(res.data);
@@ -72,7 +72,7 @@ const QRHistory = () => {
         }
     };
 
-    // Fetch details when selected QR changes
+    
     const fetchTraceDetails = async (barcodeId: string) => {
         try {
             setLoadingTrace(true);
@@ -92,7 +92,7 @@ const QRHistory = () => {
         fetchQrList();
     }, [statusFilter]);
 
-    // Handle search input with manual trigger or Enter
+    
     const handleSearchSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         fetchQrList();
@@ -108,7 +108,7 @@ const QRHistory = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700 max-w-7xl mx-auto">
-            {/* Page Header */}
+            
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl shadow-lg border border-blue-100">
@@ -125,9 +125,9 @@ const QRHistory = () => {
                 </Button>
             </div>
 
-            {/* Split Screen Layout */}
+            
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px] items-stretch">
-                {/* Left Pane: QR List & Search */}
+                
                 <div className="lg:col-span-5 flex flex-col space-y-4">
                     <Card className="border-none shadow-sm rounded-2xl flex-1 flex flex-col overflow-hidden bg-white/60 backdrop-blur-md">
                         <CardHeader className="p-5 border-b border-slate-50 bg-slate-50/20">
@@ -137,7 +137,7 @@ const QRHistory = () => {
                             </CardTitle>
                         </CardHeader>
                         
-                        {/* Search & Filters */}
+                        
                         <div className="p-5 border-b border-slate-50 space-y-3">
                             <form onSubmit={handleSearchSubmit} className="relative">
                                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -151,7 +151,7 @@ const QRHistory = () => {
                                 <button type="submit" className="hidden" />
                             </form>
 
-                            {/* Status Filter Badges */}
+                            
                             <div className="flex gap-2">
                                 {(['all', 'used', 'unused'] as const).map((status) => (
                                     <button
@@ -170,7 +170,7 @@ const QRHistory = () => {
                             </div>
                         </div>
 
-                        {/* List Items */}
+                        
                         <div className="flex-1 overflow-y-auto max-h-[500px] divide-y divide-slate-50">
                             {loadingList ? (
                                 <div className="p-8">
@@ -220,7 +220,7 @@ const QRHistory = () => {
                     </Card>
                 </div>
 
-                {/* Right Pane: Trace Details */}
+                
                 <div className="lg:col-span-7 flex flex-col">
                     {loadingTrace ? (
                         <Card className="border-none shadow-sm rounded-2xl flex-1 flex items-center justify-center p-8 bg-white/60 backdrop-blur-md">
@@ -228,7 +228,7 @@ const QRHistory = () => {
                         </Card>
                     ) : traceData ? (
                         <div className="space-y-6 flex-1 flex flex-col">
-                            {/* Summary Card */}
+                            
                             <Card className="border-none shadow-sm rounded-2xl overflow-hidden bg-white/60 backdrop-blur-md">
                                 <CardHeader className="p-6 border-b border-slate-100 bg-slate-50/20 flex flex-row items-center justify-between">
                                     <div>
@@ -252,7 +252,7 @@ const QRHistory = () => {
                                 </CardHeader>
 
                                 <CardContent className="p-6 space-y-6">
-                                    {/* Stats Grid */}
+                                    
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <div className="bg-slate-50 border border-slate-150/40 p-4 rounded-xl">
                                              <div className="flex items-center gap-2 text-slate-400 mb-1.5">
@@ -283,7 +283,7 @@ const QRHistory = () => {
                                         </div>
                                     </div>
 
-                                    {/* Scan Details Custody Panel */}
+                                    
                                     <div className="border border-slate-100 rounded-2xl p-5 bg-slate-50/50">
                                         <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
                                             <Clock size={14} className="text-primary" />
@@ -310,7 +310,7 @@ const QRHistory = () => {
                                 </CardContent>
                             </Card>
 
-                            {/* Transaction History Timeline */}
+                            
                             <Card className="border-none shadow-sm rounded-2xl flex-1 flex flex-col overflow-hidden bg-white/60 backdrop-blur-md">
                                 <CardHeader className="p-6 border-b border-slate-100 bg-slate-50/20">
                                     <CardTitle className="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
@@ -323,7 +323,7 @@ const QRHistory = () => {
                                         <div className="relative border-l border-slate-150 pl-6 ml-3 space-y-6 py-2">
                                             {traceData.transactions.map((tx) => (
                                                 <div key={tx.id} className="relative">
-                                                    {/* Dot */}
+                                                    
                                                     <span className={cn(
                                                         "absolute -left-[31px] top-1.5 p-1 rounded-full border bg-white flex items-center justify-center shadow-sm",
                                                         tx.transaction_type === 'inward' 
@@ -335,7 +335,7 @@ const QRHistory = () => {
                                                             : <ArrowUpCircle size={12} />}
                                                     </span>
 
-                                                    {/* Content */}
+                                                    
                                                     <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
                                                         <div>
                                                             <div className="flex items-center gap-2">

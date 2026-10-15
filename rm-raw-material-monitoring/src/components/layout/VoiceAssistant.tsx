@@ -12,7 +12,7 @@ const VoiceAssistant: React.FC = () => {
     const { materials } = useInventory();
     const navigate = useNavigate();
     
-    // Web Speech API
+    
     const recognitionRef = useRef<any>(null);
 
     useEffect(() => {

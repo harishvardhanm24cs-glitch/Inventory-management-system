@@ -19,19 +19,17 @@ import {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Reports directory is placed directly inside backend folder
 const reportsDir = path.join(__dirname, '../reports');
 if (!fs.existsSync(reportsDir)) {
   fs.mkdirSync(reportsDir, { recursive: true });
 }
 
-// Multer storage engine configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, reportsDir);
   },
   filename: (req, file, cb) => {
-    // Sanitize filename to prevent security exploits
+    
     const safeName = file.originalname.replace(/[^a-zA-Z0-9_\-\.]/g, '_');
     cb(null, safeName);
   }
@@ -50,8 +48,6 @@ const upload = multer({
 
 const router = express.Router();
 
-// Upload a generated PDF report
-// POST /api/reports/upload
 router.post('/upload', protect, anyRole, upload.single('report'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ status: 'error', message: 'No file uploaded.' });
@@ -64,8 +60,6 @@ router.post('/upload', protect, anyRole, upload.single('report'), (req, res) => 
   });
 });
 
-// List all generated PDF reports
-// GET /api/reports
 router.get('/', protect, anyRole, (req, res) => {
   try {
     const files = fs.readdirSync(reportsDir);
@@ -84,7 +78,7 @@ router.get('/', protect, anyRole, (req, res) => {
           url: `/reports/${filename}`
         };
       })
-      .sort((a, b) => b.created_at - a.created_at); // Newest first
+      .sort((a, b) => b.created_at - a.created_at); 
 
     res.status(200).json({
       status: 'success',
@@ -95,7 +89,6 @@ router.get('/', protect, anyRole, (req, res) => {
   }
 });
 
-// PDF Generation Routes
 router.get('/inventory', protect, anyRole, getInventoryReport);
 router.get('/racks', protect, anyRole, getRacksReport);
 router.get('/alerts', protect, anyRole, getAlertsReport);
@@ -106,12 +99,10 @@ router.get('/movement', protect, anyRole, getMovementReport);
 router.get('/ai-recommendations', protect, anyRole, getAiRecommendationsReport);
 router.get('/warehouse-health', protect, anyRole, getWarehouseHealthReport);
 
-// Delete a generated PDF report
-// DELETE /api/reports/:filename
 router.delete('/:filename', protect, anyRole, (req, res) => {
   try {
     const { filename } = req.params;
-    // Sanitize filename to prevent directory traversal
+    
     const safeFilename = path.basename(filename);
     const filePath = path.join(reportsDir, safeFilename);
 

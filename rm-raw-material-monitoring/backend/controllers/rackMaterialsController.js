@@ -15,7 +15,7 @@ const getRackMaterials = asyncHandler(async (req, res) => {
     throw new Error(`Rack ${rackCode} not found`);
   }
 
-  // Format output to match Phase 2 API specifications exactly
+  
   res.status(200).json({
     rack_code: data.rack_code,
     occupancy_percentage: data.occupancy_percentage,

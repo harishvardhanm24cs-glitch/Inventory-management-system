@@ -10,8 +10,6 @@ try:
 except ImportError:
     from ai_training.config import REPORTS_DIR
 
-
-
 class TrainingLogger:
     """
     TrainingLogger
@@ -56,11 +54,9 @@ class TrainingLogger:
         test_metrics = evaluation_results.get("test_metrics", {})
         error_summary = evaluation_results.get("prediction_error_summary", {})
 
-        # Top 10 Feature Importance
         top10_df = feature_importance_df.head(10)
         top10_list = top10_df.to_dict(orient="records")
 
-        # 1. training_metrics.json
         metrics_json_data = {
             "timestamp": timestamp_iso,
             "model_version": model_version,
@@ -81,7 +77,6 @@ class TrainingLogger:
         with open(metrics_json_path, "w", encoding="utf-8") as f:
             json.dump(metrics_json_data, f, indent=2)
 
-        # 2. feature_importance.csv & feature_importance.json
         fi_csv_path = self.reports_dir / "feature_importance.csv"
         feature_importance_df.to_csv(fi_csv_path, index=False)
 
@@ -90,12 +85,10 @@ class TrainingLogger:
         with open(fi_json_path, "w", encoding="utf-8") as f:
             json.dump(fi_dict_list, f, indent=2)
 
-        # 3. training_log.txt
         log_txt_path = self.reports_dir / "training_log.txt"
         with open(log_txt_path, "w", encoding="utf-8") as f:
             f.write("\n".join(self.log_messages) + "\n")
 
-        # 4. training_report.md
         report_md_lines = [
             "# RM Monitor - ML Model Training Report",
             "",
@@ -180,7 +173,6 @@ class TrainingLogger:
             "feature_importance_json": str(fi_json_path),
             "training_log_txt": str(log_txt_path)
         }
-
 
 if __name__ == "__main__":
     import pandas as pd

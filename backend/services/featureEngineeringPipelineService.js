@@ -12,9 +12,6 @@ if (!fs.existsSync(mlDatasetsDir)) {
   fs.mkdirSync(mlDatasetsDir, { recursive: true });
 }
 
-/**
- * Helper to compute ISO week number
- */
 function getIsoWeekNumber(date) {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
   const dayNum = d.getUTCDay() || 7;
@@ -23,9 +20,6 @@ function getIsoWeekNumber(date) {
   return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
-/**
- * Helper: Division by zero safeguard
- */
 function safeDiv(num, den, fallback = 0.0) {
   const n = parseFloat(num) || 0.0;
   const d = parseFloat(den) || 0.0;
@@ -34,37 +28,13 @@ function safeDiv(num, den, fallback = 0.0) {
   return isNaN(res) || !isFinite(res) ? fallback : res;
 }
 
-/**
- * featureEngineeringPipelineService.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Production Feature Engineering Pipeline for RM Monitor.
- *
- * Reads cleaned warehouse dataset (`clean_warehouse_dataset.json` / `.csv`)
- * and generates 50+ AI-ready features across 8 domain categories:
- * • Material Features
- * • Transaction Features
- * • Consumption Features
- * • Rack Telemetry Features
- * • Movement Features
- * • Time & Calendar Features
- * • Historical Rolling Averages (7d, 14d, 30d)
- * • Derived AI & Risk Scores
- *
- * Exports:
- * • backend/ml_datasets/feature_dataset.csv
- * • backend/ml_datasets/feature_dataset.json
- * • backend/ml_datasets/feature_metadata.json
- * • backend/ml_datasets/feature_statistics.json
- */
 export class FeatureEngineeringPipelineService {
 
-  /**
-   * Main Feature Engineering Pipeline Handler
-   */
+  
   async runFeaturePipeline(options = {}) {
     const startTime = Date.now();
 
-    // 1. Fetch clean input dataset (from disk or run cleaning pipeline)
+    
     let cleanRows = [];
     const cleanJsonPath = path.join(mlDatasetsDir, 'clean_warehouse_dataset.json');
 
@@ -87,7 +57,7 @@ export class FeatureEngineeringPipelineService {
       }
     }
 
-    // 2. Pre-calculate Aggregations across Materials for Group Statistics
+    
     const materialAggs = new Map();
     cleanRows.forEach((r) => {
       const matId = r.material_id;
@@ -129,7 +99,7 @@ export class FeatureEngineeringPipelineService {
 
     const totalDatasetDays = Math.max(1, Math.ceil((Date.now() - Math.min(...cleanRows.map(r => new Date(r.timestamp || Date.now()).getTime()))) / 86400000));
 
-    // 3. Transform Clean Rows into 50+ Engineered AI Features
+    
     const engineeredRows = cleanRows.map((r, idx) => {
       const ts = r.timestamp ? new Date(r.timestamp) : new Date();
       const matId = r.material_id;
@@ -138,7 +108,7 @@ export class FeatureEngineeringPipelineService {
         total_inward_qty: 0, total_outward_qty: 0, quantities: [0], dates: [ts], stocks: [0]
       };
 
-      // ── Material Features ──────────────────────────────────────────────────
+      
       const current_stock = parseFloat(r.current_stock) || 0.0;
       const threshold = parseFloat(r.threshold) || 0.0;
       const stock_difference = parseFloat((current_stock - threshold).toFixed(2));
@@ -147,7 +117,7 @@ export class FeatureEngineeringPipelineService {
       const remaining_capacity = Math.max(0, parseFloat((rack_cap - current_stock).toFixed(2)));
       const material_weight = parseFloat(r.weight) || current_stock;
 
-      // ── Transaction Features ───────────────────────────────────────────────
+      
       const daily_transactions = cleanRows.filter((row) => row.material_id === matId && new Date(row.timestamp).toDateString() === ts.toDateString()).length;
       const weekly_transactions = cleanRows.filter((row) => row.material_id === matId && getIsoWeekNumber(new Date(row.timestamp)) === getIsoWeekNumber(ts)).length;
       const monthly_transactions = cleanRows.filter((row) => row.material_id === matId && new Date(row.timestamp).getMonth() === ts.getMonth()).length;
@@ -158,7 +128,7 @@ export class FeatureEngineeringPipelineService {
       const total_outward = parseFloat(agg.total_outward_qty.toFixed(2));
       const net_inventory_change = parseFloat((total_inward - total_outward).toFixed(2));
 
-      // ── Consumption Features ───────────────────────────────────────────────
+      
       const outwardRowsToday = cleanRows.filter((row) => row.material_id === matId && new Date(row.timestamp).toDateString() === ts.toDateString() && String(row.transaction_type).toLowerCase() === 'outward');
       const daily_consumption = parseFloat(outwardRowsToday.reduce((sum, row) => sum + (parseFloat(row.quantity) || 0), 0).toFixed(2));
 
@@ -176,21 +146,21 @@ export class FeatureEngineeringPipelineService {
       if (weekly_consumption > avg_weekly_consumption * 1.15) consumption_trend = 'Increasing';
       else if (weekly_consumption < avg_weekly_consumption * 0.85) consumption_trend = 'Decreasing';
 
-      // ── Rack Features ──────────────────────────────────────────────────────
+      
       const rack_occupancy_pct = parseFloat(r.occupancy_percentage) || 0.0;
       const current_rack_quantity = parseFloat(r.current_rack_quantity) || 0.0;
       const remaining_rack_capacity = Math.max(0, parseFloat((rack_cap - current_rack_quantity).toFixed(2)));
       const rack_utilization_score = Math.min(100.0, parseFloat(rack_occupancy_pct.toFixed(2)));
       const rack_load_ratio = parseFloat(safeDiv(current_rack_quantity, rack_cap, 0.0).toFixed(4));
 
-      // ── Movement Features ──────────────────────────────────────────────────
+      
       const movement_count = agg.tx_count;
       const inward_count = agg.inward_count;
       const outward_count = agg.outward_count;
       const transfer_count = agg.transfer_count;
       const movement_frequency = parseFloat(safeDiv(movement_count, totalDatasetDays, 0.5).toFixed(2));
 
-      // ── Time & Calendar Features ───────────────────────────────────────────
+      
       const hour = ts.getHours();
       const day = ts.getDate();
       const week = getIsoWeekNumber(ts);
@@ -201,7 +171,7 @@ export class FeatureEngineeringPipelineService {
       const weekend_flag = (dayIdx === 0 || dayIdx === 6) ? 1 : 0;
       const business_hour_flag = (hour >= 8 && hour <= 18) ? 1 : 0;
 
-      // ── Historical Features (Rolling Averages) ──────────────────────────────
+      
       const rolling_7d_consumption = parseFloat((avg_daily_consumption * 7).toFixed(2));
       const rolling_14d_consumption = parseFloat((avg_daily_consumption * 14).toFixed(2));
       const rolling_30d_consumption = parseFloat((avg_daily_consumption * 30).toFixed(2));
@@ -210,7 +180,7 @@ export class FeatureEngineeringPipelineService {
       const rolling_stock_avg = parseFloat(avgStock.toFixed(2));
       const rolling_movement_avg = parseFloat(safeDiv(movement_count, 7, 0.5).toFixed(2));
 
-      // ── Derived AI & Risk Indicators ─────────────────────────────────────────
+      
       const inventory_turnover = avg_daily_consumption > 0 ? parseFloat(safeDiv(avg_daily_consumption * 365, current_stock, 0.0).toFixed(2)) : 0.0;
       const daysSinceMov = Math.max(0, Math.floor((Date.now() - ts.getTime()) / 86400000));
       const days_since_last_movement = daysSinceMov;
@@ -230,7 +200,7 @@ export class FeatureEngineeringPipelineService {
       const critical_stock_indicator = (current_stock <= threshold * 0.5 || current_stock === 0) ? 1 : 0;
 
       return {
-        // Core Record Identifiers
+        
         material_id: matId,
         material_name: r.material_name,
         barcode: r.barcode,
@@ -240,8 +210,7 @@ export class FeatureEngineeringPipelineService {
         rack_code: r.rack_code,
         quantity_used: r.quantity_used ?? 0.0,
 
-
-        // Material Features
+        
         current_stock,
         threshold,
         stock_difference,
@@ -249,7 +218,7 @@ export class FeatureEngineeringPipelineService {
         remaining_capacity,
         material_weight,
 
-        // Transaction Features
+        
         daily_transactions,
         weekly_transactions,
         monthly_transactions,
@@ -258,7 +227,7 @@ export class FeatureEngineeringPipelineService {
         total_outward,
         net_inventory_change,
 
-        // Consumption Features
+        
         daily_consumption,
         weekly_consumption,
         monthly_consumption,
@@ -267,20 +236,20 @@ export class FeatureEngineeringPipelineService {
         avg_monthly_consumption,
         consumption_trend,
 
-        // Rack Features
+        
         rack_occupancy_pct,
         remaining_rack_capacity,
         rack_utilization_score,
         rack_load_ratio,
 
-        // Movement Features
+        
         movement_count,
         inward_count,
         outward_count,
         transfer_count,
         movement_frequency,
 
-        // Time Features
+        
         hour,
         day,
         week,
@@ -290,14 +259,14 @@ export class FeatureEngineeringPipelineService {
         weekend_flag,
         business_hour_flag,
 
-        // Historical Rolling Features
+        
         rolling_7d_consumption,
         rolling_14d_consumption,
         rolling_30d_consumption,
         rolling_stock_avg,
         rolling_movement_avg,
 
-        // Derived AI Features & Indicators
+        
         inventory_turnover,
         days_since_last_movement,
         days_since_last_scan,
@@ -309,7 +278,7 @@ export class FeatureEngineeringPipelineService {
         low_stock_indicator,
         critical_stock_indicator,
 
-        // Preserved Normalized & Encodings
+        
         norm_current_stock: r.norm_current_stock ?? 0.5,
         norm_threshold: r.norm_threshold ?? 0.0,
         norm_quantity: r.norm_quantity ?? 0.1,
@@ -328,7 +297,7 @@ export class FeatureEngineeringPipelineService {
       };
     });
 
-    // 4. Feature Metadata Schema
+    
     const featureMetadata = {
       pipeline_name: 'RM Monitor Feature Engineering Pipeline',
       version: 'v1.0.0',
@@ -347,7 +316,7 @@ export class FeatureEngineeringPipelineService {
       }
     };
 
-    // 5. Feature Statistics Summary
+    
     const featureStatistics = {
       total_materials_indexed: materialAggs.size,
       total_dataset_records: engineeredRows.length,
@@ -358,7 +327,7 @@ export class FeatureEngineeringPipelineService {
       avg_threshold_risk_score: parseFloat((engineeredRows.reduce((a, b) => a + b.threshold_risk_score, 0) / Math.max(1, engineeredRows.length)).toFixed(1))
     };
 
-    // 6. Generate AI Governance & Metadata Files
+    
     const sampleRow = engineeredRows[0] || {};
     const featureRegistry = this.generateFeatureRegistry(sampleRow);
     const importanceTemplate = this.generateImportanceTemplate(sampleRow);
@@ -366,7 +335,7 @@ export class FeatureEngineeringPipelineService {
     const featurePipelineDoc = this.generateFeaturePipelineDoc();
     const modelRegistry = this.generateModelRegistry();
 
-    // 7. Export All Files to `backend/ml_datasets/`
+    
     const csvPath = path.join(mlDatasetsDir, 'feature_dataset.csv');
     const jsonPath = path.join(mlDatasetsDir, 'feature_dataset.json');
     const metaPath = path.join(mlDatasetsDir, 'feature_metadata.json');
@@ -378,13 +347,13 @@ export class FeatureEngineeringPipelineService {
     const pipelineDocPath = path.join(mlDatasetsDir, 'feature_pipeline.json');
     const modelRegistryPath = path.join(mlDatasetsDir, 'model_registry.json');
 
-    // Write Datasets & Metadata
+    
     fs.writeFileSync(csvPath, datasetGeneratorService.convertToCSV(engineeredRows), 'utf8');
     fs.writeFileSync(jsonPath, JSON.stringify(engineeredRows, null, 2), 'utf8');
     fs.writeFileSync(metaPath, JSON.stringify(featureMetadata, null, 2), 'utf8');
     fs.writeFileSync(statsPath, JSON.stringify(featureStatistics, null, 2), 'utf8');
 
-    // Write Governance Files
+    
     fs.writeFileSync(registryPath, JSON.stringify(featureRegistry, null, 2), 'utf8');
     fs.writeFileSync(importancePath, JSON.stringify(importanceTemplate, null, 2), 'utf8');
     fs.writeFileSync(prepConfigPath, JSON.stringify(preprocessingConfig, null, 2), 'utf8');
@@ -428,9 +397,7 @@ export class FeatureEngineeringPipelineService {
     };
   }
 
-  /**
-   * Dynamically generate central Feature Registry metadata (`feature_importance_template.json`)
-   */
+  
   generateFeatureRegistry(sampleRow = {}) {
     const featureKeys = Object.keys(sampleRow);
     const now = new Date().toISOString();
@@ -469,7 +436,7 @@ export class FeatureEngineeringPipelineService {
         importanceCategory = 'High';
       }
 
-      // Feature specific business definitions
+      
       if (name === 'stock_difference') {
         formula = 'Current Stock - Threshold';
         sourceColumns = ['current_stock', 'threshold_limit'];
@@ -549,9 +516,7 @@ export class FeatureEngineeringPipelineService {
     };
   }
 
-  /**
-   * Placeholders for future model evaluation metrics (`feature_importance_template.json`)
-   */
+  
   generateImportanceTemplate(sampleRow = {}) {
     const now = new Date().toISOString();
     return {
@@ -568,9 +533,7 @@ export class FeatureEngineeringPipelineService {
     };
   }
 
-  /**
-   * Preprocessing Configuration (`preprocessing_config.json`)
-   */
+  
   generatePreprocessingConfig() {
     return {
       version: 'v1.0.0',
@@ -602,9 +565,7 @@ export class FeatureEngineeringPipelineService {
     };
   }
 
-  /**
-   * Feature Engineering Workflow Documentation (`feature_pipeline.json`)
-   */
+  
   generateFeaturePipelineDoc() {
     return {
       pipeline_name: 'RM Monitor End-to-End AI Feature Pipeline',
@@ -622,9 +583,7 @@ export class FeatureEngineeringPipelineService {
     };
   }
 
-  /**
-   * Model Registry Initialization (`model_registry.json`)
-   */
+  
   generateModelRegistry() {
     const now = new Date().toISOString();
     return {

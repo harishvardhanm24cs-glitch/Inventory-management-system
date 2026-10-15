@@ -53,10 +53,10 @@ export const WarehouseRiskScoreWidget: React.FC = memo(() => {
 
   return (
     <div className="bg-slate-900/90 border border-slate-800/80 rounded-2xl p-6 shadow-2xl backdrop-blur-xl relative overflow-hidden group hover:border-rose-500/30 transition-all duration-300">
-      {/* Glow Accent */}
+      
       <div className="absolute -right-10 -top-10 w-40 h-40 bg-rose-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-rose-500/20 transition-all duration-500" />
 
-      {/* Header */}
+      
       <div className="flex items-center justify-between mb-5 border-b border-slate-800/80 pb-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-rose-600 to-red-700 text-white shadow-lg shadow-rose-500/20">
@@ -84,7 +84,7 @@ export const WarehouseRiskScoreWidget: React.FC = memo(() => {
         </div>
       ) : (
         <div className="space-y-5">
-          {/* Main Risk Gauge Display */}
+          
           <div className="flex items-center justify-between p-4 rounded-xl bg-slate-950/60 border border-slate-800">
             <div>
               <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Overall Risk Level</span>
@@ -99,7 +99,7 @@ export const WarehouseRiskScoreWidget: React.FC = memo(() => {
             </div>
           </div>
 
-          {/* Progress Bar */}
+          
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs text-slate-400">
               <span>Risk Intensity</span>
@@ -113,7 +113,7 @@ export const WarehouseRiskScoreWidget: React.FC = memo(() => {
             </div>
           </div>
 
-          {/* Risk Factors Breakdown */}
+          
           {riskData?.risk_factors && (
             <div className="grid grid-cols-3 gap-2.5 pt-1">
               <div className="p-2.5 rounded-lg bg-slate-800/40 border border-slate-800 text-center">

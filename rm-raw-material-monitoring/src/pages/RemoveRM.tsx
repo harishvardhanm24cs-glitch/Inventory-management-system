@@ -6,7 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 const RemoveRM = () => {
     return (
         <div className="min-h-screen bg-[#F4F7FB] flex flex-col animate-fade-in pb-20">
-            {/* Header */}
+            
             <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center gap-6">
                     <Link to="/" className="p-2 hover:bg-slate-50 rounded-lg text-slate-400 group transition-all">

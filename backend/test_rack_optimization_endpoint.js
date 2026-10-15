@@ -11,7 +11,7 @@ const BASE_URL = 'http://localhost:5000/api';
 async function testRackOptimizationEndpoint() {
   console.log('--- STARTING RACK OPTIMIZATION ENDPOINT TEST ---');
   
-  // 1. Fetch the optimizations from the endpoint
+  
   console.log('Fetching rack optimizations from GET /api/ai/rack-optimization...');
   const response = await fetch(`${BASE_URL}/ai/rack-optimization`, {
     headers: { 'Authorization': authHeader }
@@ -45,7 +45,7 @@ async function testRackOptimizationEndpoint() {
     console.log(`- Expected Improvement: "${opt.expected_improvement}"`);
     console.log(`- Priority Score: ${opt.priority_score}`);
     
-    // Check format of recommendation for balance: Move inventory from [Current] ([Occ]%) to [Suggested] ([Occ]%).
+    
     if (opt.suggested_rack) {
       const balanceRegex = /Move inventory from ([A-C][1-4]) \(\d+%\) to ([A-C][1-4]) \(\d+%\)\./;
       const genericRegex = /Move \w+ Paint from ([A-C][1-4]) to ([A-C][1-4]) to balance occupancy\./;
@@ -63,7 +63,7 @@ async function testRackOptimizationEndpoint() {
         console.log(`✓ Msg format is valid.`);
       }
     } else {
-      // Underutilized check
+      
       const underutilizedRegex = /Rack ([A-C][1-4]) is underutilized \(\d+%\)\./;
       if (!underutilizedRegex.test(opt.suggestion)) {
         console.warn(`⚠️ Warning: Underutilized Msg "${opt.suggestion}" does not match standard format.`);

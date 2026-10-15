@@ -9,7 +9,6 @@ import jwt from 'jsonwebtoken';
 const JWT_SECRET = 'rm_secret_key';
 const PORT = 5000;
 
-// Generate a signed test token (same algorithm as the auth middleware)
 const token = jwt.sign(
   { id: 1, role: 'manager', name: 'TestUser' },
   JWT_SECRET,

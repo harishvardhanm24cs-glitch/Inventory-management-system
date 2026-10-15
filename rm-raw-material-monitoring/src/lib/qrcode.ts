@@ -1,8 +1,5 @@
 import QRCode from 'qrcode';
 
-/**
- * Generate QR code as data URL
- */
 export const generateQRCode = async (text: string): Promise<string> => {
     try {
         const qrCodeDataUrl = await QRCode.toDataURL(text, {
@@ -20,9 +17,6 @@ export const generateQRCode = async (text: string): Promise<string> => {
     }
 };
 
-/**
- * Download QR code as PNG image
- */
 export const downloadQRCode = (dataUrl: string, filename: string) => {
     const link = document.createElement('a');
     link.href = dataUrl;
@@ -32,9 +26,6 @@ export const downloadQRCode = (dataUrl: string, filename: string) => {
     document.body.removeChild(link);
 };
 
-/**
- * Print QR code
- */
 export const printQRCode = (dataUrl: string, title?: string) => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
@@ -83,9 +74,7 @@ export const printQRCode = (dataUrl: string, title?: string) => {
         printWindow.print();
     }, 250);
 };
-/**
- * Print multiple QR codes for labels/stickers (Phase 6)
- */
+
 export const printBulkQRCodes = (items: { id: string, qr: string, name?: string }[]) => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;

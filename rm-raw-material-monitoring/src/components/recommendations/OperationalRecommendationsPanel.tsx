@@ -73,7 +73,7 @@ export const OperationalRecommendationsPanel: React.FC<OperationalRecommendation
 
   const filteredRecommendations = useMemo(() => {
     return recommendations.filter((rec) => {
-      // Priority filter
+      
       if (selectedPriority === 'urgent' && rec.priority !== 'CRITICAL' && rec.priority !== 'HIGH') {
         return false;
       }
@@ -87,7 +87,7 @@ export const OperationalRecommendationsPanel: React.FC<OperationalRecommendation
         return false;
       }
 
-      // Search filter
+      
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const mTitle = rec.title.toLowerCase().includes(q);
@@ -106,7 +106,7 @@ export const OperationalRecommendationsPanel: React.FC<OperationalRecommendation
 
   return (
     <div className="rounded-3xl border border-slate-800/80 bg-slate-900/80 p-6 backdrop-blur-md transition-all shadow-xl space-y-6">
-      {/* Header & Controls */}
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-4 gap-4">
         <div>
           <div className="flex items-center gap-2">
@@ -125,7 +125,7 @@ export const OperationalRecommendationsPanel: React.FC<OperationalRecommendation
           </p>
         </div>
 
-        {/* Controls: Search & Tabs */}
+        
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           <div className="relative flex-1 md:w-60">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
@@ -183,7 +183,7 @@ export const OperationalRecommendationsPanel: React.FC<OperationalRecommendation
         </div>
       </div>
 
-      {/* Loading state */}
+      
       {loading && (
         <div className="flex flex-col items-center justify-center py-12 space-y-3">
           <div className="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin" />
@@ -191,7 +191,7 @@ export const OperationalRecommendationsPanel: React.FC<OperationalRecommendation
         </div>
       )}
 
-      {/* Empty State */}
+      
       {!loading && filteredRecommendations.length === 0 && (
         <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-8 text-center">
           <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-400 mb-2" />
@@ -202,7 +202,7 @@ export const OperationalRecommendationsPanel: React.FC<OperationalRecommendation
         </div>
       )}
 
-      {/* Recommendations Cards Grid */}
+      
       {!loading && filteredRecommendations.length > 0 && (
         <div className="space-y-4">
           {filteredRecommendations.map((rec) => {
@@ -218,14 +218,14 @@ export const OperationalRecommendationsPanel: React.FC<OperationalRecommendation
                 }`}
               >
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                  {/* Left Column */}
+                  
                   <div className="flex items-start gap-3.5 flex-1">
                     <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${style.bg}`}>
                       <Icon className="h-5 w-5" />
                     </div>
 
                     <div className="space-y-2 flex-1">
-                      {/* Priority, Category, & Title */}
+                      
                       <div className="flex flex-wrap items-center gap-2">
                         <span className={`rounded-full px-2.5 py-0.5 text-[10px] border ${style.badge}`}>
                           {rec.priority} PRIORITY
@@ -242,7 +242,7 @@ export const OperationalRecommendationsPanel: React.FC<OperationalRecommendation
                         {rec.title}
                       </h3>
 
-                      {/* Reason */}
+                      
                       <div className="rounded-xl border border-slate-800/80 bg-slate-950/60 p-3 text-xs">
                         <p className="font-semibold text-slate-300">
                           <strong className="text-slate-400 font-bold uppercase text-[10px] tracking-wider block mb-0.5">
@@ -252,7 +252,7 @@ export const OperationalRecommendationsPanel: React.FC<OperationalRecommendation
                         </p>
                       </div>
 
-                      {/* Suggested Action */}
+                      
                       <div className="rounded-xl border border-cyan-500/20 bg-cyan-950/20 p-3 text-xs text-cyan-300">
                         <p className="font-medium flex items-start gap-1.5">
                           <ArrowRight className="h-4 w-4 shrink-0 mt-0.5 text-cyan-400" />
@@ -265,7 +265,7 @@ export const OperationalRecommendationsPanel: React.FC<OperationalRecommendation
                     </div>
                   </div>
 
-                  {/* Right Column Action */}
+                  
                   <div className="flex items-center gap-2 md:flex-col md:items-end justify-end shrink-0">
                     <button
                       onClick={() => toggleAcknowledge(rec.id)}

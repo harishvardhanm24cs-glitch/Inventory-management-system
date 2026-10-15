@@ -20,7 +20,7 @@ export const AnalyticsFilterBar: React.FC<AnalyticsFilterBarProps> = ({
   return (
     <div className="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-4 backdrop-blur-md transition-all shadow-md">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        {/* Title / Label */}
+        
         <div className="flex items-center gap-2 text-slate-200">
           <Filter className="h-4 w-4 text-cyan-400" />
           <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
@@ -28,9 +28,9 @@ export const AnalyticsFilterBar: React.FC<AnalyticsFilterBarProps> = ({
           </span>
         </div>
 
-        {/* Filter Controls Grid */}
+        
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:items-center">
-          {/* Date Range Selector */}
+          
           <div className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-1.5 text-xs text-slate-300">
             <Calendar className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
             <select
@@ -51,7 +51,7 @@ export const AnalyticsFilterBar: React.FC<AnalyticsFilterBarProps> = ({
             </select>
           </div>
 
-          {/* Material Selector */}
+          
           <div className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-1.5 text-xs text-slate-300">
             <Layers className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
             <select
@@ -68,7 +68,7 @@ export const AnalyticsFilterBar: React.FC<AnalyticsFilterBarProps> = ({
             </select>
           </div>
 
-          {/* Rack Selector */}
+          
           <div className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-1.5 text-xs text-slate-300">
             <Grid className="h-3.5 w-3.5 text-violet-400 shrink-0" />
             <select
@@ -85,7 +85,7 @@ export const AnalyticsFilterBar: React.FC<AnalyticsFilterBarProps> = ({
             </select>
           </div>
 
-          {/* Transaction Type Selector */}
+          
           <div className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-1.5 text-xs text-slate-300">
             <ArrowRightLeft className="h-3.5 w-3.5 text-amber-400 shrink-0" />
             <select
@@ -105,7 +105,7 @@ export const AnalyticsFilterBar: React.FC<AnalyticsFilterBarProps> = ({
             </select>
           </div>
 
-          {/* Reset Filters */}
+          
           <button
             onClick={onReset}
             className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-800 bg-slate-800/50 px-3 py-1.5 text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-all cursor-pointer"

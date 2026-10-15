@@ -132,7 +132,7 @@ const ProductionCheck: React.FC = () => {
                         });
                     }
 
-                    // Fallback check if no materials exist in DB
+                    
                     if (generatedCheckList.length === 0) {
                         generatedCheckList.push({
                             materialCheckId: 'MAT-CHECK-FALLBACK',
@@ -168,13 +168,13 @@ const ProductionCheck: React.FC = () => {
             const currentStock = reqItem.material.stock;
             const isMissing = currentStock < totalNeeded;
             
-            // Look for substitute if missing
+            
             let substituteAvailable = false;
             let subName = '';
             let subStock = 0;
 
             if (isMissing && reqItem.material.substituteId) {
-                // Check if substitute has enough stock
+                
                 const sub = reqItem.material.substitute;
                 if (sub && sub.stock >= (totalNeeded - currentStock)) {
                     substituteAvailable = true;
@@ -214,7 +214,7 @@ const ProductionCheck: React.FC = () => {
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Configuration Panel */}
+                
                 <Card className="md:col-span-1 border-none shadow-xl shadow-slate-100 bg-white/50 backdrop-blur-md">
                     <CardContent className="p-6 space-y-6">
                         <div>
@@ -268,7 +268,7 @@ const ProductionCheck: React.FC = () => {
                     </CardContent>
                 </Card>
 
-                {/* Requirements Panel */}
+                
                 <Card className="md:col-span-2 border-none shadow-2xl shadow-slate-200 bg-slate-900 overflow-hidden">
                     <CardContent className="p-0">
                         <div className="p-6 border-b border-white/5 flex items-center justify-between">
@@ -327,7 +327,7 @@ const ProductionCheck: React.FC = () => {
                             )}
                         </div>
 
-                        {/* Summary Action */}
+                        
                         <div className="p-6 bg-white/[0.03] border-t border-white/5 flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <Box className="w-8 h-8 text-primary/40" />

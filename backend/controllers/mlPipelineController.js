@@ -3,23 +3,17 @@ import mlDataPreprocessor from '../services/mlDataPreprocessor.js';
 import mlDatasetStorage from '../services/mlDatasetStorage.js';
 import mlDatasetExporter from '../services/mlDatasetExporter.js';
 
-/**
- * mlPipelineController.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Controller layer exposing ML Data Pipeline management and export endpoints.
- */
-
 export const runPipeline = async (req, res, next) => {
   try {
     const datasetName = req.body?.dataset_name || 'warehouse_ml_dataset';
     
-    // 1. Harvest raw data
+    
     const harvested = await mlDataHarvester.harvestAllWarehouseData();
 
-    // 2. Preprocess & engineer features
+    
     const preprocessed = mlDataPreprocessor.processHarvestedData(harvested);
 
-    // 3. Persist dataset into isolated ML storage
+    
     const savedInfo = await mlDatasetStorage.saveDataset(datasetName, preprocessed);
 
     res.status(200).json({
@@ -80,7 +74,7 @@ export const exportDataset = async (req, res, next) => {
   try {
     const framework = req.params.framework || 'scikit-learn';
     
-    // Fetch latest dataset or harvest & preprocess live
+    
     let dataset = await mlDatasetStorage.getLatestDataset();
     if (!dataset) {
       const harvested = await mlDataHarvester.harvestAllWarehouseData();

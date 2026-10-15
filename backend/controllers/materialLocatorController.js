@@ -8,12 +8,12 @@ export const locateMaterials = async (req, res, next) => {
   try {
     const { search } = req.query;
     
-    // Construct search pattern (default to '%' if empty to return all mapped materials)
+    
     const searchPattern = search ? `%${search.trim()}%` : '%';
 
     console.log(`[API Call] GET /api/material-locator with search term: "${search || ''}"`);
 
-    // Query MySQL database for matching materials placed in racks
+    
     const [results] = await db.query(`
       SELECT 
         m.material_name,
@@ -34,7 +34,7 @@ export const locateMaterials = async (req, res, next) => {
       ORDER BY q.rack_code ASC
     `, [searchPattern, searchPattern, searchPattern]);
 
-    // Format fields (convert decimals to numbers, format dates, and query movement history)
+    
     const formattedResults = [];
     for (const row of results) {
       const [history] = await db.query(`
@@ -74,7 +74,7 @@ export const locateMaterials = async (req, res, next) => {
       data: formattedResults
     };
 
-    // Log response before sending
+    
     console.log(`[API Success] GET /api/material-locator returned ${formattedResults.length} matching rows.`);
     console.log('[API Response Payload]:', JSON.stringify(responseBody));
 

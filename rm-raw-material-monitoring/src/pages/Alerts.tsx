@@ -26,7 +26,7 @@ const Alerts = () => {
   const [readIds, setReadIds] = useState<Set<string>>(() => getReadNotificationIds());
   const [deletedIds, setDeletedIds] = useState<Set<string>>(() => getDeletedNotificationIds());
 
-  // Filter controls
+  
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<NotificationCategory | 'all'>('all');
   const [unreadOnly, setUnreadOnly] = useState<boolean>(false);
@@ -34,7 +34,7 @@ const Alerts = () => {
     typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'unsupported'
   );
 
-  // Fetch recent transactions for Inventory Updates & Rack Changes category
+  
   const fetchTransactions = useCallback(async () => {
     try {
       const res = await api.getTransactions();
@@ -58,11 +58,11 @@ const Alerts = () => {
     return () => clearInterval(interval);
   }, [refreshData, fetchTransactions]);
 
-  // Aggregate all 5 notification categories dynamically
+  
   const allNotifications: NotificationItem[] = useMemo(() => {
     const list: NotificationItem[] = [];
 
-    // 1. Low Stock Alerts (from inventory alerts / threshold limits)
+    
     (alerts || []).forEach((alt: any) => {
       list.push({
         id: `notif-alert-${alt.id || alt.date}`,
@@ -96,7 +96,7 @@ const Alerts = () => {
       }
     });
 
-    // 2. Inventory Updates (from recent transactions)
+    
     (transactions || []).slice(0, 15).forEach((tx: any) => {
       const id = `notif-tx-${tx.id || tx.created_at}`;
       const isOutward = String(tx.transaction_type || '').toLowerCase() === 'outward';
@@ -112,7 +112,7 @@ const Alerts = () => {
       });
     });
 
-    // 3. Rack Status Changes
+    
     racks.forEach((rack) => {
       const q = parseFloat(String(rack.quantity)) || 0;
       const c = parseFloat(String(rack.max_capacity)) || 100;
@@ -133,7 +133,7 @@ const Alerts = () => {
       }
     });
 
-    // 4. System Notifications
+    
     list.push({
       id: 'notif-sys-iot-01',
       category: 'system',
@@ -144,7 +144,7 @@ const Alerts = () => {
       isRead: readIds.has('notif-sys-iot-01')
     });
 
-    // 5. Email History Logs
+    
     list.push({
       id: 'notif-email-01',
       category: 'email_history',
@@ -156,11 +156,11 @@ const Alerts = () => {
       isRead: readIds.has('notif-email-01')
     });
 
-    // Exclude deleted items
+    
     return list.filter((item) => !deletedIds.has(item.id));
   }, [alerts, materials, racks, transactions, readIds, deletedIds]);
 
-  // Compute category counts
+  
   const categoryCounts = useMemo(() => {
     const counts: Record<NotificationCategory | 'all', number> = {
       all: allNotifications.length,
@@ -178,7 +178,7 @@ const Alerts = () => {
     return counts;
   }, [allNotifications]);
 
-  // Filter items based on user criteria
+  
   const filteredNotifications = useMemo(() => {
     return allNotifications.filter((item) => {
       if (unreadOnly && item.isRead) return false;
@@ -196,12 +196,12 @@ const Alerts = () => {
     });
   }, [allNotifications, unreadOnly, selectedCategory, searchQuery]);
 
-  // Group chronologically by date
+  
   const groupedNotifications = useMemo(() => {
     return groupNotificationsByDate(filteredNotifications);
   }, [filteredNotifications]);
 
-  // Handlers for state management
+  
   const handleToggleRead = (id: string) => {
     markNotificationAsReadInStorage(id);
     setReadIds((prev) => {
@@ -245,7 +245,7 @@ const Alerts = () => {
 
   return (
     <div className="space-y-8 animate-fade-in pb-16">
-      {/* Top Header */}
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -272,7 +272,7 @@ const Alerts = () => {
         </div>
       </div>
 
-      {/* Filter Control Bar */}
+      
       <NotificationFilterBar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -287,7 +287,7 @@ const Alerts = () => {
         onRequestPushPermission={handleRequestPush}
       />
 
-      {/* Date-Grouped Notifications Section */}
+      
       <NotificationGroupSection
         groups={groupedNotifications}
         onToggleRead={handleToggleRead}

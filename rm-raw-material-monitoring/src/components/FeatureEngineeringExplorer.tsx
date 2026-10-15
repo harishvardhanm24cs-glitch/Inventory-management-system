@@ -21,7 +21,7 @@ export const FeatureEngineeringExplorer: React.FC = () => {
 
   return (
     <div className="bg-slate-900/90 border border-slate-800 rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden text-slate-100">
-      {/* Header */}
+      
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 border-b border-slate-800 gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-600 shadow-lg shadow-indigo-500/20">
@@ -56,7 +56,7 @@ export const FeatureEngineeringExplorer: React.FC = () => {
           </div>
         )}
 
-        {/* Feature KPI Cards */}
+        
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60">
             <div className="flex items-center justify-between text-slate-400 text-xs font-semibold mb-1">
@@ -107,7 +107,7 @@ export const FeatureEngineeringExplorer: React.FC = () => {
           </div>
         </div>
 
-        {/* Tab Navigation & Search */}
+        
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
           <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
             {[
@@ -145,7 +145,7 @@ export const FeatureEngineeringExplorer: React.FC = () => {
           )}
         </div>
 
-        {/* TAB 1: Catalog */}
+        
         {(activeTab === 'catalog' || activeTab === 'all') && (
           <div>
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
@@ -178,7 +178,7 @@ export const FeatureEngineeringExplorer: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 2: Material Feature Vectors */}
+        
         {(activeTab === 'materials' || activeTab === 'all') && (
           <div>
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
@@ -239,7 +239,7 @@ export const FeatureEngineeringExplorer: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 3: Rack Features */}
+        
         {activeTab === 'racks' && (
           <div>
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
@@ -275,7 +275,7 @@ export const FeatureEngineeringExplorer: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 4: Consuming Services Mapping */}
+        
         {activeTab === 'consumers' && (
           <div>
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">

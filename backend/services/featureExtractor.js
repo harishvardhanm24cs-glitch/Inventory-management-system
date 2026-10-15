@@ -1,24 +1,8 @@
 import db from '../config/db.js';
 import warehouseHealthScoreIntelligence from './warehouseHealthScoreIntelligence.js';
 
-/**
- * featureExtractor.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Feature Extraction Layer for AI Prediction Engine.
- * Consumes raw data across existing database tables and existing intelligence services:
- * • Materials (Inventory)
- * • Transactions & Usage History
- * • Racks & Occupancy (Rack View)
- * • Movement History (qr_history)
- * • Alerts & Health Scores
- *
- * Transforms raw datasets into normalized feature matrices consumable by prediction models.
- */
-
 export const featureExtractor = {
-  /**
-   * Extract features for inventory materials & demand analysis
-   */
+  
   async extractMaterialFeatures() {
     const [materials] = await db.query(
       'SELECT id, barcode, material_name, quantity, threshold_limit, unit FROM materials ORDER BY id ASC'
@@ -68,7 +52,7 @@ export const featureExtractor = {
         const lastTxMs = now.getTime() - newestTxDate.getTime();
         days_since_last_movement = Math.max(0, Math.floor(lastTxMs / (1000 * 60 * 60 * 24)));
 
-        // Calculate usage variance across transactions
+        
         const quantities = txs.map(t => parseFloat(t.quantity) || 0);
         const meanQty = total_outward_qty / txs.length;
         const varianceSum = quantities.reduce((acc, q) => acc + Math.pow(q - meanQty, 2), 0);
@@ -99,9 +83,7 @@ export const featureExtractor = {
     });
   },
 
-  /**
-   * Extract features for rack utilization & spatial load balancing
-   */
+  
   async extractRackFeatures() {
     const [racks] = await db.query(`
       SELECT 
@@ -128,7 +110,7 @@ export const featureExtractor = {
         movementCounts[h.rack_code] = parseInt(h.count) || 0;
       });
     } catch {
-      // Graceful fallback if table is empty or inaccessible
+      
       movementCounts = {};
     }
 
@@ -151,9 +133,7 @@ export const featureExtractor = {
     });
   },
 
-  /**
-   * Extract overall warehouse system health, risk, and alert metrics
-   */
+  
   async extractWarehouseFeatures() {
     const materialFeatures = await this.extractMaterialFeatures();
     const rackFeatures = await this.extractRackFeatures();

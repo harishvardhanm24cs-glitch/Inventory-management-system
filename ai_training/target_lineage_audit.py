@@ -18,7 +18,6 @@ import numpy as np
 from pathlib import Path
 from datetime import datetime
 
-# Configure sys.stdout for UTF-8 encoding if supported
 if hasattr(sys.stdout, "reconfigure"):
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -38,7 +37,6 @@ try:
 except ImportError:
     from ai_training.config import REPORTS_DIR, FEATURE_DATASET_CSV, TARGET_COLUMN
 
-
 class TargetLineageAudit:
     def __init__(self):
         self.reports_dir = Path(REPORTS_DIR)
@@ -51,9 +49,6 @@ class TargetLineageAudit:
         print(msg)
         self.logs.append(msg)
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 1: TARGET SOURCE DISCOVERY
-    # ──────────────────────────────────────────────────────────────────────────
     def discover_target_sources(self):
         self.log("\n" + "=" * 80)
         self.log("SECTION 1: TARGET SOURCE DISCOVERY & CODEBASE REFERENCE MAP")
@@ -62,7 +57,6 @@ class TargetLineageAudit:
         target_name = TARGET_COLUMN
         references = []
 
-        # Scan backend files
         scan_dirs = [BACKEND_DIR, AI_TRAINING_DIR]
         for sdir in scan_dirs:
             if not sdir.exists():
@@ -104,23 +98,17 @@ class TargetLineageAudit:
         self.results["section_1_source_discovery"] = section1_summary
         return section1_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 2: DATABASE LINEAGE
-    # ──────────────────────────────────────────────────────────────────────────
     def inspect_database_lineage(self):
         self.log("\n" + "=" * 80)
         self.log("SECTION 2: DATABASE LINEAGE & OPERATIONAL RECORDS AUDIT")
         self.log("=" * 80)
 
-        # Inspect generated dataset files originating from database tables
         raw_dataset_file = ML_DATASETS_DIR / "feature_dataset.csv"
         clean_json_file = ML_DATASETS_DIR / "clean_warehouse_dataset.json"
 
-        # Check transactions history
         ds_generator_file = BACKEND_DIR / "services" / "datasetGeneratorService.js"
         gen_content = ds_generator_file.read_text(encoding="utf-8", errors="ignore") if ds_generator_file.exists() else ""
 
-        # Analyze dataset rows if feature_dataset.csv exists
         db_audit_summary = {
             "primary_source_table": "transactions (joined with materials & racks)",
             "alternative_tables_checked": ["material_usage_history", "material_movements", "rack_inventory", "alerts"],
@@ -148,9 +136,6 @@ class TargetLineageAudit:
         self.results["section_2_database_lineage"] = db_audit_summary
         return db_audit_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 3: SQL QUERY TRACE
-    # ──────────────────────────────────────────────────────────────────────────
     def trace_sql_queries(self):
         self.log("\n" + "=" * 80)
         self.log("SECTION 3: SQL QUERY TRACE & JOIN ANALYSIS")
@@ -209,9 +194,6 @@ class TargetLineageAudit:
         self.results["section_3_sql_trace"] = section3_summary
         return section3_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 4: DATASET GENERATOR TRACE
-    # ──────────────────────────────────────────────────────────────────────────
     def trace_dataset_generator(self):
         self.log("\n" + "=" * 80)
         self.log("SECTION 4: DATASET GENERATOR EXECUTION TRACE")
@@ -238,9 +220,6 @@ class TargetLineageAudit:
         self.results["section_4_generator_trace"] = trace
         return trace
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 5: FEATURE ENGINEERING TRACE
-    # ──────────────────────────────────────────────────────────────────────────
     def trace_feature_engineering(self):
         self.log("\n" + "=" * 80)
         self.log("SECTION 5: FEATURE ENGINEERING PIPELINE TRACE")
@@ -276,9 +255,6 @@ class TargetLineageAudit:
         self.results["section_5_feature_engineering_trace"] = section5_summary
         return section5_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 6: CSV GENERATION TRACE
-    # ──────────────────────────────────────────────────────────────────────────
     def trace_csv_generation(self):
         self.log("\n" + "=" * 80)
         self.log("SECTION 6: CSV GENERATION & EXPORT TRACE ('feature_dataset.csv')")
@@ -312,9 +288,6 @@ class TargetLineageAudit:
         self.results["section_6_csv_trace"] = section6_summary
         return section6_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 7: CODE PATH ANALYSIS
-    # ──────────────────────────────────────────────────────────────────────────
     def analyze_code_path(self):
         self.log("\n" + "=" * 80)
         self.log("SECTION 7: END-TO-END CODE PATH LINEAGE FLOW")
@@ -365,9 +338,6 @@ class TargetLineageAudit:
         self.results["section_7_code_path_analysis"] = flow_steps
         return flow_steps
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 8: ROOT CAUSE ANALYSIS
-    # ──────────────────────────────────────────────────────────────────────────
     def perform_root_cause_analysis(self):
         self.log("\n" + "=" * 80)
         self.log("SECTION 8: ROOT CAUSE CLASSIFICATION & ANALYSIS")
@@ -392,9 +362,6 @@ class TargetLineageAudit:
         self.results["section_8_root_cause_analysis"] = root_causes
         return root_causes
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 9: SAFE FIX RECOMMENDATION
-    # ──────────────────────────────────────────────────────────────────────────
     def generate_fix_recommendations(self):
         self.log("\n" + "=" * 80)
         self.log("SECTION 9: SAFE FIX RECOMMENDATION & REMEDIATION PLAN")
@@ -434,9 +401,6 @@ class TargetLineageAudit:
         self.results["section_9_fix_recommendation"] = fix_plan
         return fix_plan
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 10: REPORT GENERATION & FINAL SUMMARY
-    # ──────────────────────────────────────────────────────────────────────────
     def run_all_audits(self):
         s1 = self.discover_target_sources()
         s2 = self.inspect_database_lineage()
@@ -452,12 +416,10 @@ class TargetLineageAudit:
         self.log("GENERATING 7 LINEAGE REPORT ARTIFACTS IN ai_training/reports/...")
         self.log("=" * 80)
 
-        # 1. target_lineage_report.json
         json_path = self.reports_dir / "target_lineage_report.json"
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(self.results, f, indent=2)
 
-        # 2. sql_trace_report.md
         sql_md_lines = [
             "# RM Monitor - SQL Trace & Query Lineage Audit Report",
             "",
@@ -478,7 +440,6 @@ class TargetLineageAudit:
         with open(sql_md_path, "w", encoding="utf-8") as f:
             f.write("\n".join(sql_md_lines))
 
-        # 3. dataset_generator_trace.md
         gen_md_lines = [
             "# RM Monitor - Dataset Generator Lineage Trace Report",
             "",
@@ -498,7 +459,6 @@ class TargetLineageAudit:
         with open(gen_md_path, "w", encoding="utf-8") as f:
             f.write("\n".join(gen_md_lines))
 
-        # 4. feature_engineering_trace.md
         fe_md_lines = [
             "# RM Monitor - Feature Engineering Lineage Trace Report",
             "",
@@ -520,7 +480,6 @@ class TargetLineageAudit:
         with open(fe_md_path, "w", encoding="utf-8") as f:
             f.write("\n".join(fe_md_lines))
 
-        # 5. root_cause_analysis.md
         rc_md_lines = [
             "# RM Monitor - Target Data Loss Root Cause Analysis",
             "",
@@ -539,7 +498,6 @@ class TargetLineageAudit:
         with open(rc_md_path, "w", encoding="utf-8") as f:
             f.write("\n".join(rc_md_lines))
 
-        # 6. implementation_plan.md / lineage_fix_plan.md
         fix_md_lines = [
             "# RM Monitor - Target Lineage Remediation Implementation Plan",
             "",
@@ -564,7 +522,6 @@ class TargetLineageAudit:
         with open(fix_md_path, "w", encoding="utf-8") as f:
             f.write("\n".join(fix_md_lines))
 
-        # 7. target_lineage_report.md
         rep_md_lines = [
             "# RM Monitor - End-to-End Target Data Lineage Audit Report",
             "",
@@ -600,7 +557,6 @@ class TargetLineageAudit:
         self.log(f"   • Saved '{fix_md_path.name}'")
         self.log(f"   • Saved '{rep_md_path.name}'")
 
-        # Final Terminal Output
         self.log("\n" + "=" * 80)
         self.log("                   TARGET DATA LINEAGE AUDIT RESULTS")
         self.log("=" * 80)
@@ -616,7 +572,6 @@ class TargetLineageAudit:
         self.log("=" * 80)
 
         return self.results
-
 
 if __name__ == "__main__":
     audit = TargetLineageAudit()

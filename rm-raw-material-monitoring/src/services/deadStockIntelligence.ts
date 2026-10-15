@@ -1,23 +1,4 @@
-/**
- * deadStockIntelligence.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 5 – Dead Stock Intelligence Client Engine
- *
- * Dedicated client-side module for dead stock detection.
- * Analyzes Last Movement Date, Days Since Last Movement, Total Quantity,
- * and Rack Location for every material in inventory.
- *
- * Classifies materials into:
- * • Active     (<= 15 days)
- * • Idle       (16 - 45 days)
- * • Dead Stock (> 45 days)
- *
- * Reusable by:
- * • Dashboard KPI Cards & Inactive Stock Widgets
- * • Digital Twin (Cold Spot & Inspection Badges)
- * • Reports & Audit Logs
- * • Notification Center
- */
+
 
 import api from './api';
 
@@ -56,9 +37,7 @@ export interface DeadStockReportPayload {
 }
 
 class ClientDeadStockIntelligence {
-  /**
-   * Fetch complete dead stock intelligence report with optional custom threshold parameters
-   */
+  
   async getReport(params?: { active_max_days?: number; idle_max_days?: number }): Promise<DeadStockReportPayload> {
     try {
       const res: any = await api.getDeadStockIntelligence(params);
@@ -104,17 +83,13 @@ class ClientDeadStockIntelligence {
     }
   }
 
-  /**
-   * Get materials classified specifically as Dead Stock (>45 days inactive)
-   */
+  
   async getDeadStockItems(): Promise<DeadStockMaterialItem[]> {
     const report = await this.getReport();
     return report.dead_stock_materials || [];
   }
 
-  /**
-   * Get materials classified as Idle (16-45 days inactive)
-   */
+  
   async getIdleItems(): Promise<DeadStockMaterialItem[]> {
     const report = await this.getReport();
     return report.idle_materials || [];

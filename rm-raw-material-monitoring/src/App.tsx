@@ -7,7 +7,6 @@ import { ThemeProvider } from './context/ThemeContext';
 import { Toaster } from 'react-hot-toast';
 import BackendStatus from './components/ui/BackendStatus';
 
-// Dynamic Lazy Imports for Code Splitting
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Login = lazy(() => import('./pages/auth/Login'));
 const Signup = lazy(() => import('./pages/auth/Signup'));
@@ -61,7 +60,7 @@ function App() {
             <BackendStatus />
             <Suspense fallback={<PageLoadingFallback />}>
               <Routes>
-                {/* Auth Routes */}
+                
                 <Route path="/login" element={
                   <AuthLayout 
                     title="Paint RM Monitor" 
@@ -79,7 +78,7 @@ function App() {
                   </AuthLayout>
                 } />
 
-                {/* Dashboard Layout Routes */}
+                
                 <Route element={<DashboardLayout />}>
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   <Route path="/dashboard" element={<Dashboard />} />
@@ -119,7 +118,7 @@ function App() {
                   <Route path="/tests" element={<TestCenter />} />
                   <Route path="/training-platform" element={<TrainingPlatformConsole />} />
                   
-                  {/* Fallback Route inside Layout */}
+                  
                   <Route path="*" element={
                     <div className="flex h-[80vh] items-center justify-center text-xl font-semibold text-gray-500">
                       Page Not Found

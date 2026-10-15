@@ -40,7 +40,7 @@ export interface PredictionFailuresMetrics {
 }
 
 export interface AiHealthSummaryPayload {
-  health_index: number; // 0 - 100
+  health_index: number; 
   status: AiOperationalStatus;
   timestamp: string;
   non_interference_guarantee: boolean;

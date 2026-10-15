@@ -88,7 +88,7 @@ const Reports = () => {
   const [actionLoading, setActionLoading] = useState<boolean>(false);
   const [stats, setStats] = useState<any>(null);
 
-  // Multi-criteria filter states
+  
   const [filters, setFilters] = useState<ReportFilterState>(initialFilters);
   const [showFilterDrawer, setShowFilterDrawer] = useState(false);
 
@@ -225,7 +225,7 @@ const Reports = () => {
 
   return (
     <div className="space-y-8 animate-fade-in pb-16">
-      {/* Top Header */}
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -265,7 +265,7 @@ const Reports = () => {
         </div>
       </div>
 
-      {/* Filter Drawer */}
+      
       <ReportFilterDrawer
         filters={filters}
         onFilterChange={setFilters}
@@ -274,7 +274,7 @@ const Reports = () => {
         onToggle={() => setShowFilterDrawer(!showFilterDrawer)}
       />
 
-      {/* Telemetry Stats Cards */}
+      
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 backdrop-blur-md">
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Stored Archives</span>
@@ -307,7 +307,7 @@ const Reports = () => {
         </div>
       </div>
 
-      {/* 5 Target Report Templates Grid */}
+      
       <div className="space-y-4">
         <div>
           <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
@@ -331,7 +331,7 @@ const Reports = () => {
         </div>
       </div>
 
-      {/* Stored Archives Table */}
+      
       <div className="rounded-3xl border border-slate-800/80 bg-slate-900/80 p-6 backdrop-blur-md transition-all shadow-xl space-y-4">
         <div>
           <h3 className="text-base font-bold text-white">Stored Report Archives</h3>

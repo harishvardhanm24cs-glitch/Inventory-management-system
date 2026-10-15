@@ -31,21 +31,21 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({ isOpen, onClose, onSu
             skipEmptyLines: true,
             complete: async (results) => {
                 const data = results.data as any[];
-                // Basic validation: check for name, qty, price
+                
                 const isValid = data.every(row => row.name && row.qty !== undefined && row.price !== undefined);
 
                 if (!isValid) {
                     setError("Invalid CSV format. Please ensure headers are 'name, qty, price'.");
                     setParsedData([]);
                 } else {
-                    // Enrich with productId using Phase 2 Rule: RM-{Date.now()}-{index}
+                    
                     const now = Date.now();
                     const enrichedData = data.map((row, i) => ({
                         ...row,
                         productId: `RM-${now}-${i}`
                     }));
 
-                    // Generate Bulk QRs as per Phase 2.2 Rule
+                    
                     const { generateQRCode } = await import('../../lib/qrcode');
 
                     setIsParsing(true);
@@ -72,7 +72,7 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({ isOpen, onClose, onSu
 
         setIsImporting(true);
         try {
-            // Phase 5 Rule: Save ONLY IDs + product info (strip QR data URLs)
+            
             const payload = parsedData.map(({ productId, name, qty, price }) => ({
                 productId,
                 name,
@@ -176,7 +176,7 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({ isOpen, onClose, onSu
                                     )}
                                 </div>
 
-                                {/* QR Grid Preview - Phase 4 & 6 */}
+                                
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between pl-1">
                                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">

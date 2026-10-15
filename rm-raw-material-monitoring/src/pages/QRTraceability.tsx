@@ -55,7 +55,7 @@ const QRTraceability: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [filterRange, setFilterRange] = useState<'today' | 'week' | 'month' | 'all'>('all');
 
-    // Fetch initial log registry
+    
     const fetchLogs = async () => {
         setLoading(true);
         try {
@@ -79,7 +79,7 @@ const QRTraceability: React.FC = () => {
         fetchLogs();
     }, []);
 
-    // Handles barcode specific lifecycle timeline query
+    
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!barcodeQuery.trim()) {
@@ -139,7 +139,7 @@ const QRTraceability: React.FC = () => {
         setTransactions([]);
     };
 
-    // Filter logic
+    
     const filterLogs = (logs: HistoryLog[]) => {
         const now = new Date();
         return logs.filter(log => {
@@ -163,27 +163,27 @@ const QRTraceability: React.FC = () => {
     const getTimelineStages = () => {
         if (!qrCodeData) return [];
 
-        // 1. Generated
+        
         const genLog = barcodeLogs.find(l => l.action === 'GENERATED');
         const genTime = genLog ? genLog.created_at : qrCodeData.created_at;
 
-        // 2. Inward Scanned
+        
         const scanLog = barcodeLogs.find(l => l.action === 'SCANNED');
         const isInwardScanned = !!scanLog;
         const scanTime = scanLog ? scanLog.created_at : null;
 
-        // 3. Stored in {rack_code}
+        
         const inwardLog = barcodeLogs.find(l => l.action === 'INWARD');
         const isStored = !!inwardLog;
         const storedTime = inwardLog ? inwardLog.created_at : null;
         const assignedRackCode = inwardLog?.rack_code || qrCodeData.rack_code || 'Not Assigned';
 
-        // 4. Outward Scanned
+        
         const outwardLog = barcodeLogs.find(l => l.action === 'OUTWARD');
         const isOutwardScanned = !!outwardLog;
         const outwardTime = outwardLog ? outwardLog.created_at : null;
 
-        // 5. Dispatched
+        
         const dispatchedLog = barcodeLogs.find(l => l.action === 'OUTWARD' || l.action === 'USED');
         const isDispatched = !!dispatchedLog;
         const dispatchedTime = dispatchedLog ? dispatchedLog.created_at : null;
@@ -232,7 +232,7 @@ const QRTraceability: React.FC = () => {
         ];
     };
 
-    // CSV Exporter
+    
     const handleExportCSV = () => {
         if (searchedBarcode && qrCodeData) {
             const summaryHeaders = ["Barcode ID", "Material Name", "Batch Number", "Quantity", "Unit", "Current Status", "Assigned Rack", "Registered Date"];
@@ -337,7 +337,7 @@ const QRTraceability: React.FC = () => {
 
     return (
         <div className="space-y-8 pb-20 animate-saas-fade">
-            {/* Header */}
+            
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -352,7 +352,7 @@ const QRTraceability: React.FC = () => {
                 </Button>
             </header>
 
-            {/* Search Box Card */}
+            
             <Card className="border border-slate-100 shadow-sm rounded-3xl overflow-hidden bg-white">
                 <CardContent className="p-6">
                     <form onSubmit={handleSearch} className="flex gap-4">
@@ -387,9 +387,9 @@ const QRTraceability: React.FC = () => {
                 </CardContent>
             </Card>
 
-            {/* Main Section */}
+            
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Visual Lifecycle Timeline (Visible when barcode is searched) */}
+                
                 {searchedBarcode && qrCodeData && (
                     <>
                         <Card className="lg:col-span-12 border-none shadow-md rounded-3xl bg-white overflow-hidden animate-saas-fade">
@@ -404,7 +404,7 @@ const QRTraceability: React.FC = () => {
                                     const stages = getTimelineStages();
                                     return (
                                         <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-8 relative">
-                                            {/* Timeline connectors */}
+                                            
                                             <div className="hidden md:block absolute top-10 left-[12%] right-[12%] h-0.5 bg-slate-100 z-0" />
                                             
                                             {stages.map((stage, idx) => {
@@ -437,7 +437,7 @@ const QRTraceability: React.FC = () => {
                             </CardContent>
                         </Card>
 
-                        {/* Material Details Panel */}
+                        
                         <div className="lg:col-span-5 animate-saas-fade">
                             <Card className="border border-slate-100 shadow-md rounded-3xl bg-white overflow-hidden h-full">
                                 <CardHeader className="p-6 border-b border-slate-50 bg-slate-50/50">
@@ -493,7 +493,7 @@ const QRTraceability: React.FC = () => {
                             </Card>
                         </div>
 
-                        {/* Rack History Panel */}
+                        
                         <div className="lg:col-span-7 animate-saas-fade">
                             <Card className="border border-slate-100 shadow-md rounded-3xl bg-white overflow-hidden h-full">
                                 <CardHeader className="p-6 border-b border-slate-50 bg-slate-50/50">
@@ -552,7 +552,7 @@ const QRTraceability: React.FC = () => {
                     </>
                 )}
 
-                {/* Audit Logs Table */}
+                
                 <div className="lg:col-span-12 space-y-6">
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                         <div className="flex gap-2 bg-slate-100/80 border border-slate-200/50 p-1.5 rounded-2xl self-start">

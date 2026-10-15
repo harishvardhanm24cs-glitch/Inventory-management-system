@@ -42,7 +42,7 @@ const OutwardScanner: React.FC = () => {
 
     const [isProcessing, setIsProcessing] = useState(false);
 
-    // Core continuous scan handler passed to the custom hook
+    
     const handleOutwardScan = useCallback(async (text: string) => {
         if (isProcessing) return;
         setIsProcessing(true);
@@ -51,19 +51,19 @@ const OutwardScanner: React.FC = () => {
         try {
             let barcodeId = text;
 
-            // Attempt to parse JSON format if applicable
+            
             try {
                 const parsed = JSON.parse(text);
                 barcodeId = parsed.barcode_id || parsed.sku_id || parsed.barcode || text;
             } catch (e) {
-                // Not JSON, use raw text
+                
             }
 
             if (!barcodeId) {
                 throw new Error("Invalid barcode: Barcode ID is empty.");
             }
 
-            // 1. Trace QR code status from registry
+            
             let qrCode: any = null;
             let matchedMaterial = materials.find(m => m.barcode === barcodeId);
 
@@ -91,7 +91,7 @@ const OutwardScanner: React.FC = () => {
             const unitStr = matchedMaterial ? matchedMaterial.unit : 'KG';
             const qtyOutward = qrCode ? (parseFloat(qrCode.units) || 1.0) : (matchedMaterial ? matchedMaterial.stock : 1.0);
 
-            // 2. Execute existing outwardScan backend API
+            
             const res = await api.outwardScan({
                 barcode_id: barcodeId
             });
@@ -110,13 +110,13 @@ const OutwardScanner: React.FC = () => {
                 setLastDispatched(historyItem);
                 setOutwardHistory(prev => [historyItem, ...prev]);
 
-                // Display success toast
+                
                 toast.success(`Outward Scan Successful: Dispatched ${qtyOutward} ${unitStr} of ${materialName}`);
 
-                // Refresh global inventory and rack data
+                
                 await refreshData();
 
-                // Dispatch layout update custom events with targeted rack payload
+                
                 window.dispatchEvent(new CustomEvent('rack-inventory-update', {
                     detail: { rackCode: rackCode !== 'Not Assigned' ? rackCode : null }
                 }));
@@ -137,7 +137,7 @@ const OutwardScanner: React.FC = () => {
         }
     }, [materials, refreshData, isProcessing]);
 
-    // Instantiate continuous scanner hook
+    
     const {
         videoRef,
         canvasRef,
@@ -155,7 +155,7 @@ const OutwardScanner: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#F4F7FB] flex flex-col animate-fade-in text-slate-900 pb-20">
-            {/* Top Navigation Header */}
+            
             <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center gap-6">
                     <Link to="/" className="p-2 hover:bg-slate-50 rounded-lg text-slate-400 group transition-all">
@@ -195,16 +195,16 @@ const OutwardScanner: React.FC = () => {
             <div className="max-w-7xl mx-auto w-full px-6 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                     
-                    {/* Scanner Feed Column */}
+                    
                     <div className="lg:col-span-6 space-y-6">
                         <div className="saas-card overflow-hidden bg-slate-950 border-slate-800 text-white relative shadow-2xl rounded-3xl">
-                            {/* Live Lens Overlay */}
+                            
                             <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-lg border border-white/10 backdrop-blur-md">
                                 <Camera size={14} className="text-[#4F8CFF] animate-pulse" />
                                 <span className="text-[9px] font-extrabold tracking-widest uppercase">LIVE OUTWARD DISPATCH STREAM</span>
                             </div>
 
-                            {/* Camera Actions */}
+                            
                             <div className="absolute top-4 right-4 z-10 flex gap-2">
                                 <button
                                     onClick={togglePause}
@@ -222,7 +222,7 @@ const OutwardScanner: React.FC = () => {
                                 </button>
                             </div>
 
-                            {/* Viewport Frame */}
+                            
                             <div className="relative aspect-square md:aspect-video w-full flex items-center justify-center bg-slate-900">
                                 {status === 'permission_denied' ? (
                                     <div className="p-8 text-center max-w-sm space-y-4">
@@ -255,7 +255,7 @@ const OutwardScanner: React.FC = () => {
                                         />
                                         <canvas ref={canvasRef} className="hidden" />
 
-                                        {/* Target Brackets */}
+                                        
                                         <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
                                             <div className="w-48 h-48 md:w-60 md:h-60 relative border border-white/10 bg-black/10">
                                                 <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#4F8CFF]" />
@@ -274,7 +274,7 @@ const OutwardScanner: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Scanner Session Stats */}
+                        
                         <div className="saas-card p-6 grid grid-cols-3 gap-4 rounded-3xl">
                             <div className="text-center border-r border-slate-100">
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Session Dispatches</p>
@@ -295,7 +295,7 @@ const OutwardScanner: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Verification & Details Column */}
+                    
                     <div className="lg:col-span-6 space-y-6">
                         
                         {status === 'processing' && (
@@ -329,7 +329,7 @@ const OutwardScanner: React.FC = () => {
                                     </span>
                                 </div>
 
-                                {/* Metadata Cards */}
+                                
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center gap-3">
                                         <div className="p-2.5 bg-white border border-slate-100 rounded-lg text-slate-500">
@@ -401,7 +401,7 @@ const OutwardScanner: React.FC = () => {
                             </div>
                         )}
 
-                        {/* Recent Outward session logs */}
+                        
                         <div className="saas-card p-6 rounded-3xl">
                             <div className="flex items-center gap-3 mb-6">
                                 <History size={16} className="text-slate-400" />
@@ -434,7 +434,7 @@ const OutwardScanner: React.FC = () => {
                 </div>
             </div>
 
-            {/* Injected Animations */}
+            
             <style>{`
                 @keyframes sweep {
                     0% { top: 0%; opacity: 0.1; }

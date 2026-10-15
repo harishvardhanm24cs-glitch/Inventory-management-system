@@ -22,24 +22,24 @@ const InventoryIntelligence: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortOption, setSortOption] = useState<SortOption>('urgency');
 
-  // 1. Classify all raw materials dynamically
+  
   const classifiedMaterials = useMemo(() => {
     return (materials || []).map(classifyMaterialItem);
   }, [materials]);
 
-  // 2. Compute aggregate counts
+  
   const categoryCounts = useMemo(() => {
     return calculateHealthCategoryCounts(classifiedMaterials);
   }, [classifiedMaterials]);
 
-  // 3. Filter materials by search query and category tab
+  
   const filteredMaterials = useMemo(() => {
     return classifiedMaterials.filter((item) => {
-      // Category filter
+      
       if (selectedCategory !== 'all' && item.healthCategory !== selectedCategory) {
         return false;
       }
-      // Search filter
+      
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const matchName = item.name.toLowerCase().includes(q);
@@ -51,7 +51,7 @@ const InventoryIntelligence: React.FC = () => {
     });
   }, [classifiedMaterials, selectedCategory, searchQuery]);
 
-  // 4. Sort materials
+  
   const sortedMaterials = useMemo(() => {
     const list = [...filteredMaterials];
     return list.sort((a, b) => {
@@ -74,7 +74,7 @@ const InventoryIntelligence: React.FC = () => {
     });
   }, [filteredMaterials, sortOption]);
 
-  // Group items by category for section rendering
+  
   const criticalItems = useMemo(
     () => sortedMaterials.filter((m) => m.healthCategory === 'critical'),
     [sortedMaterials]
@@ -94,7 +94,7 @@ const InventoryIntelligence: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-fade-in pb-16">
-      {/* Top Title & Header */}
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -120,14 +120,14 @@ const InventoryIntelligence: React.FC = () => {
         </div>
       </div>
 
-      {/* Summary Widget Bar */}
+      
       <IntelligenceSummaryBar
         counts={categoryCounts}
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
       />
 
-      {/* Control Bar (Search, Filters, Sort) */}
+      
       <IntelligenceControlsBar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -137,7 +137,7 @@ const InventoryIntelligence: React.FC = () => {
         onSortChange={setSortOption}
       />
 
-      {/* Loading state indicator */}
+      
       {loading && (
         <div className="flex flex-col items-center justify-center py-12 space-y-3">
           <div className="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin" />
@@ -145,7 +145,7 @@ const InventoryIntelligence: React.FC = () => {
         </div>
       )}
 
-      {/* Empty Search Result State */}
+      
       {!loading && sortedMaterials.length === 0 && (
         <div className="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-8 text-center backdrop-blur-md">
           <ShieldAlert className="mx-auto h-10 w-10 text-slate-500 mb-3" />
@@ -156,10 +156,10 @@ const InventoryIntelligence: React.FC = () => {
         </div>
       )}
 
-      {/* Category Sections */}
+      
       {!loading && sortedMaterials.length > 0 && (
         <div className="space-y-6">
-          {/* Critical Stock Section */}
+          
           <IntelligenceCategorySection
             category="critical"
             title="Critical Stock Tiers"
@@ -167,7 +167,7 @@ const InventoryIntelligence: React.FC = () => {
             items={criticalItems}
           />
 
-          {/* Low Stock Section */}
+          
           <IntelligenceCategorySection
             category="low"
             title="Low Stock Warnings"
@@ -175,7 +175,7 @@ const InventoryIntelligence: React.FC = () => {
             items={lowItems}
           />
 
-          {/* Overstock Section */}
+          
           <IntelligenceCategorySection
             category="overstock"
             title="Overstock Detections"
@@ -183,7 +183,7 @@ const InventoryIntelligence: React.FC = () => {
             items={overstockItems}
           />
 
-          {/* Healthy Stock Section */}
+          
           <IntelligenceCategorySection
             category="healthy"
             title="Healthy Stock Tiers"

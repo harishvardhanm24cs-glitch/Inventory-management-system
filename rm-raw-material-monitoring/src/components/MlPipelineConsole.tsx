@@ -50,7 +50,7 @@ export const MlPipelineConsole: React.FC = () => {
 
   return (
     <div className="bg-slate-900/90 border border-slate-800 rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden">
-      {/* Header */}
+      
       <div className="flex items-center justify-between p-6 border-b border-slate-800">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-600 to-purple-700 shadow-lg shadow-violet-500/20">
@@ -82,7 +82,7 @@ export const MlPipelineConsole: React.FC = () => {
           </div>
         )}
 
-        {/* Operational Data Sources Summary */}
+        
         {status && (
           <div>
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
@@ -90,11 +90,11 @@ export const MlPipelineConsole: React.FC = () => {
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
               {[
-                { label: 'Inventory', value: status.operational_sources.inventory_records, color: 'text-blue-400' },
-                { label: 'Transactions', value: status.operational_sources.transaction_records, color: 'text-indigo-400' },
-                { label: 'Scanner Events', value: status.operational_sources.scan_events, color: 'text-cyan-400' },
-                { label: 'Rack States', value: status.operational_sources.rack_records, color: 'text-violet-400' },
-                { label: 'Alerts', value: status.operational_sources.alert_records, color: 'text-amber-400' },
+                { label: 'Inventory', value: status?.operational_sources?.inventory_records ?? 0, color: 'text-blue-400' },
+                { label: 'Transactions', value: status?.operational_sources?.transaction_records ?? 0, color: 'text-indigo-400' },
+                { label: 'Scanner Events', value: status?.operational_sources?.scan_events ?? 0, color: 'text-cyan-400' },
+                { label: 'Rack States', value: status?.operational_sources?.rack_records ?? 0, color: 'text-violet-400' },
+                { label: 'Alerts', value: status?.operational_sources?.alert_records ?? 0, color: 'text-amber-400' },
               ].map(item => (
                 <div key={item.label} className="p-3 rounded-xl bg-slate-800/60 border border-slate-700 text-center">
                   <div className={`text-xl font-bold ${item.color}`}>{item.value}</div>
@@ -105,7 +105,7 @@ export const MlPipelineConsole: React.FC = () => {
           </div>
         )}
 
-        {/* Pipeline Control */}
+        
         <div>
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
             <Play className="w-3.5 h-3.5" /> Pipeline Execution
@@ -129,7 +129,7 @@ export const MlPipelineConsole: React.FC = () => {
             </button>
           </div>
 
-          {/* Last Run Summary */}
+          
           {lastRun && (
             <div className="mt-4 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
               <div className="flex items-center gap-2 mb-3">
@@ -163,7 +163,7 @@ export const MlPipelineConsole: React.FC = () => {
           )}
         </div>
 
-        {/* ML Framework Export Controls */}
+        
         <div>
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
             <FileJson className="w-3.5 h-3.5" /> Export for ML Framework
@@ -188,7 +188,7 @@ export const MlPipelineConsole: React.FC = () => {
             ))}
           </div>
 
-          {/* Export Preview Panel */}
+          
           {showExport && exportData && (
             <div className="mt-4 rounded-xl border border-slate-700 bg-slate-950/80 overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
@@ -205,7 +205,7 @@ export const MlPipelineConsole: React.FC = () => {
                 </div>
               </div>
 
-              {/* Metadata row */}
+              
               <div className="px-4 py-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs border-b border-slate-800">
                 <div><span className="text-slate-500">Framework: </span><span className="font-mono text-emerald-300">{exportData.framework}</span></div>
                 {exportData.shape && <div><span className="text-slate-500">Tensor Shape: </span><span className="font-mono text-blue-300">[{exportData.shape.join(', ')}]</span></div>}
@@ -215,7 +215,7 @@ export const MlPipelineConsole: React.FC = () => {
                 {exportData.onnx_ir_version && <div><span className="text-slate-500">ONNX IR: </span><span className="font-mono text-purple-300">v{exportData.onnx_ir_version}</span></div>}
               </div>
 
-              {/* Code Snippet */}
+              
               {showCode && (
                 <div className="p-4">
                   <pre className="text-[11px] font-mono text-emerald-300 whitespace-pre-wrap leading-relaxed overflow-x-auto bg-slate-900/80 p-3 rounded-lg border border-slate-800 max-h-48">
@@ -227,7 +227,7 @@ export const MlPipelineConsole: React.FC = () => {
           )}
         </div>
 
-        {/* Stored ML Datasets Table */}
+        
         {datasets.length > 0 && (
           <div>
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
@@ -258,7 +258,7 @@ export const MlPipelineConsole: React.FC = () => {
           </div>
         )}
 
-        {/* Data Independence Notice */}
+        
         <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/60 text-xs text-slate-400">
           <BarChart3 className="w-4 h-4 shrink-0 text-violet-400 mt-0.5" />
           <span>

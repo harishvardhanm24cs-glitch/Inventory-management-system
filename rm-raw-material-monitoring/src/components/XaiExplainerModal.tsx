@@ -17,7 +17,7 @@ export const XaiExplainerModal: React.FC<XaiExplainerModalProps> = ({ explanatio
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
       <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden text-slate-100 max-h-[90vh] flex flex-col">
-        {/* Modal Header */}
+        
         <div className="flex items-center justify-between p-5 border-b border-slate-800 bg-slate-950/40">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300">
@@ -41,9 +41,9 @@ export const XaiExplainerModal: React.FC<XaiExplainerModalProps> = ({ explanatio
           </button>
         </div>
 
-        {/* Modal Body */}
+        
         <div className="p-6 overflow-y-auto space-y-6 flex-1">
-          {/* 1. Prediction Banner & Confidence Score */}
+          
           <div className="p-4 rounded-xl bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950/60 border border-indigo-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-1">1. Output Prediction Directive</div>
@@ -58,7 +58,7 @@ export const XaiExplainerModal: React.FC<XaiExplainerModalProps> = ({ explanatio
             </div>
           </div>
 
-          {/* 3. Key Factors (Feature Influence Weights sum = 1.0) */}
+          
           <div>
             <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3 flex items-center justify-between">
               <span className="flex items-center gap-1.5"><Layers className="w-4 h-4 text-indigo-400" /> 3. Key Influencing Factors (Feature Weight Attribution)</span>
@@ -82,7 +82,7 @@ export const XaiExplainerModal: React.FC<XaiExplainerModalProps> = ({ explanatio
                       </div>
                       <span className="font-mono font-bold text-indigo-300">{pct}% Weight</span>
                     </div>
-                    {/* Weight Bar */}
+                    
                     <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full ${
@@ -98,7 +98,7 @@ export const XaiExplainerModal: React.FC<XaiExplainerModalProps> = ({ explanatio
             </div>
           </div>
 
-          {/* 4. Reasoning (Human-Readable Narrative) */}
+          
           <div>
             <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
               <Cpu className="w-4 h-4 text-purple-400" /> 4. Step-by-Step Explanatory Reasoning
@@ -113,7 +113,7 @@ export const XaiExplainerModal: React.FC<XaiExplainerModalProps> = ({ explanatio
             </div>
           </div>
 
-          {/* 5. Suggested Action Directive */}
+          
           <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-slate-900 to-slate-900 border border-amber-500/30 space-y-1">
             <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">5. Operational Directive (Suggested Action)</div>
             <div className="text-xs text-amber-200 font-semibold flex items-center gap-2">
@@ -122,7 +122,7 @@ export const XaiExplainerModal: React.FC<XaiExplainerModalProps> = ({ explanatio
             </div>
           </div>
 
-          {/* 6. Data Sources Lineage Audit */}
+          
           <div>
             <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
               <Database className="w-4 h-4 text-cyan-400" /> 6. Telemetry Data Sources Lineage Audit
@@ -141,7 +141,7 @@ export const XaiExplainerModal: React.FC<XaiExplainerModalProps> = ({ explanatio
           </div>
         </div>
 
-        {/* Modal Footer */}
+        
         <div className="p-4 border-t border-slate-800 bg-slate-950/60 flex justify-end">
           <button
             onClick={onClose}

@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// Create Axios Instance
 const API = axios.create({
   baseURL: "http://localhost:5000/api",
   headers: {
@@ -8,7 +7,6 @@ const API = axios.create({
   },
 });
 
-// Request Interceptor: Automatically attach JWT token to every request
 API.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -26,7 +24,6 @@ API.interceptors.request.use(
   }
 );
 
-// Response Interceptor: Error handling & Logging
 API.interceptors.response.use(
   (response) => {
     return response;
@@ -41,8 +38,6 @@ API.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-// ─── AUTH ────────────────────────────────────────────────────────────────────
 
 export const loginUser = async (data) => {
   console.log('[API Call] POST /auth/login with email:', data.email);
@@ -71,8 +66,6 @@ export const registerUser = async (data) => {
     throw error;
   }
 };
-
-// ─── MATERIALS ───────────────────────────────────────────────────────────────
 
 export const getMaterials = async () => {
   console.log('[API Call] GET /materials');
@@ -171,8 +164,6 @@ export const updateMaterialLimits = async (id, minLimit, criticalLimit) => {
   }
 };
 
-// ─── ALERTS ──────────────────────────────────────────────────────────────────
-
 export const getAlerts = async () => {
   console.log('[API Call] GET /alerts');
   try {
@@ -184,8 +175,6 @@ export const getAlerts = async () => {
     throw error;
   }
 };
-
-// ─── TRANSACTIONS ─────────────────────────────────────────────────────────────
 
 export const getTransactions = async () => {
   console.log('[API Call] GET /transactions');
@@ -199,18 +188,13 @@ export const getTransactions = async () => {
   }
 };
 
-// ─── BATCHES ──────────────────────────────────────────────────────────────────
-// No dedicated /batches backend route — batch data lives inside /materials.
-// Each material record contains batch_number, manufacture_date, expiry_date, etc.
-// We map those fields to the Batch shape expected by BatchInventory.tsx.
-
 export const getBatches = async () => {
   console.log('[API Call] fetching batches via GET /materials');
   try {
     const response = await API.get("/materials");
     const materials = response.data;
 
-    // Map each material row → Batch object
+    
     const batches = (Array.isArray(materials) ? materials : []).map((m) => ({
       id:              String(m.id),
       materialId:      String(m.id),
@@ -230,8 +214,6 @@ export const getBatches = async () => {
     throw error;
   }
 };
-
-// ─── RACKS ───────────────────────────────────────────────────────────────────
 
 export const getRacks = async () => {
   console.log('[API Call] GET /racks');
@@ -324,6 +306,10 @@ export const autoStoreScanner = async (data) => {
     console.log('API success');
     return response.data;
   } catch (error) {
+    if (error.response && error.response.status === 409) {
+      console.warn('[Scanner Sync] Duplicate scan detected within 5-second debounce window.');
+      return error.response.data || { success: false, status: 'duplicate', message: 'Duplicate scan rejected.' };
+    }
     console.error('API failure', error.message);
     throw error;
   }
@@ -338,6 +324,10 @@ export const outwardScan = async (data) => {
     console.log('API success');
     return response.data;
   } catch (error) {
+    if (error.response && error.response.status === 409) {
+      console.warn('[Scanner Sync] Duplicate outward scan detected within 5-second debounce window.');
+      return error.response.data || { success: false, status: 'duplicate', message: 'Duplicate scan rejected.' };
+    }
     console.error('outwardScan failure', error.message);
     throw error;
   }
@@ -517,7 +507,6 @@ export const getAiRiskAnalysis = async () => {
 };
 
 export const getRiskAnalysis = getAiRiskAnalysis;
-
 
 export const uploadReport = async (formData) => {
   console.log('[API Call] POST /reports/upload');
@@ -702,12 +691,10 @@ export const createMovement = async (data) => {
     return response.data;
   } catch (error) {
     console.error('createMovement failure', error.message);
-    // Non-fatal — don't block the scanner flow
+    
     return null;
   }
 };
-
-// ─── MODULE 1, 2, 3 AI & INTELLIGENCE ENDPOINTS ──────────────────────────────────────
 
 export const getPredictionEngineOverview = async () => {
   try {
@@ -859,7 +846,6 @@ export const getFeatureCatalog = async () => {
   }
 };
 
-// --- Module 4: Model Management ---
 export const getModels = async () => {
   try {
     const res = await API.get('/ai/models');
@@ -910,7 +896,6 @@ export const getModelPerformance = async () => {
   }
 };
 
-// --- Module 5: AI Recommendation Engine ---
 export const getRecommendationsEngine = async () => {
   try {
     const res = await API.get('/ai/recommendations/engine');
@@ -941,7 +926,6 @@ export const switchRecommendationStrategy = async (strategyName) => {
   }
 };
 
-// --- Module 6: Explainable AI (XAI) ---
 export const explainMaterial = async (materialId) => {
   try {
     const res = await API.get(`/ai/xai/explain/material/${materialId}`);
@@ -1002,7 +986,6 @@ export const getXaiManagerPortal = async () => {
   }
 };
 
-// --- Module 7: AI Monitoring ---
 export const getAiHealth = async () => {
   try {
     const res = await API.get('/ai/monitoring/health');
@@ -1093,8 +1076,6 @@ export const getWarehouseHealthScore = async () => {
   }
 };
 
-// ─── DEFAULT & NAMED EXPORTS ───────────────────────────────────────────────────
-
 const api = {
   updateStock,
   updateMaterialLimits,
@@ -1146,7 +1127,7 @@ const api = {
   createMovement,
   getWarehouseAnalytics,
   getConsumptionAnalytics,
-  // Prediction Engine
+  
   getPredictionEngineOverview,
   getPredictionDemand,
   getPredictionDepletion,
@@ -1154,43 +1135,43 @@ const api = {
   getPredictionWarehouseRisk,
   getPredictionConsumptionTrend,
   getPredictiveRecommendations,
-  // ML Pipeline
+  
   mlPipelineRun,
   mlPipelineStatus,
   mlPipelineDatasets,
   mlPipelineExport,
-  // Feature Engineering
+  
   getFeatures,
   getMaterialFeatures,
   getWarehouseFeatures,
   getFeatureCatalog,
-  // Generic HTTP helpers
+  
   get: (url, config) => API.get(url, config),
   post: (url, data, config) => API.post(url, data, config),
   put: (url, data, config) => API.put(url, data, config),
   delete: (url, config) => API.delete(url, config),
-  // Model Management
+  
   getModels,
   registerModel,
   switchModel,
   loadModel,
   getModelPerformance,
-  // Recommendation Engine
+  
   getRecommendationsEngine,
   getRecommendationsByCategory,
   switchRecommendationStrategy,
-  // Explainable AI
+  
   explainMaterial,
   explainRack,
   getXaiDashboard,
   getXaiDigitalTwin,
   getXaiReports,
   getXaiManagerPortal,
-  // AI Monitoring
+  
   getAiHealth,
   getAiMetrics,
   resetAiMetrics,
-  // Intelligence
+  
   getLowStockIntelligence,
   getConsumptionIntelligence,
   getDeadStockIntelligence,
@@ -1201,6 +1182,4 @@ const api = {
 
 export const apiService = api;
 export default api;
-
-
 

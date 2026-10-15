@@ -29,14 +29,14 @@ const BackendStatus: React.FC = () => {
     };
 
     useEffect(() => {
-        // Only run check on first mount OR when interval fires.
-        // We avoid calling checkHealth() inside useEffect itself if status changes
-        // to prevent immediate double-fires, but since we want it on mount:
+        
+        
+        
         
         const intervalTime = status === 'reconnecting' ? 3000 : 30000;
         const interval = setInterval(checkHealth, intervalTime);
         
-        // Initial fire on mount handled by status defaulting to 'checking'
+        
         if (status === 'checking') {
             checkHealth();
         }

@@ -4,8 +4,6 @@ import { protect, anyRole } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// GET /api/alerts
-// Retrieves all active and resolved inventory alerts with associated material details
 router.get('/', protect, anyRole, async (req, res, next) => {
   try {
     const [alerts] = await db.query(

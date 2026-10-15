@@ -1,29 +1,4 @@
-/**
- * smartAlertIntelligence.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 7 – AI Smart Alert System Client Engine
- *
- * Client-side intelligence module for smart alert management.
- * Enhances existing threshold alerts with intelligent recommendations and suggested actions.
- *
- * Supported Alert Types:
- * • CRITICAL_STOCK
- * • DEAD_STOCK
- * • HIGH_CONSUMPTION
- * • RACK_CAPACITY
- * • SCANNER_FAILURE
- * • SYNC_FAILURE
- *
- * Supported Severities:
- * • CRITICAL (Red)
- * • WARNING (Yellow/Amber)
- * • SUCCESS (Green)
- *
- * Reusable by:
- * • Dashboard (Top Notification Banner & Executive Alerts)
- * • Digital Twin (Heatmap Badges & Real-time Alert Markers)
- * • Manager Portal (Alert Management Page)
- */
+
 
 import api from './api';
 
@@ -60,9 +35,7 @@ export interface SmartAlertReportPayload {
 }
 
 class ClientSmartAlertIntelligence {
-  /**
-   * Fetch live smart alerts across all 6 alert categories
-   */
+  
   async getReport(): Promise<SmartAlertReportPayload> {
     try {
       const res: any = await api.getSmartAlerts();
@@ -92,9 +65,7 @@ class ClientSmartAlertIntelligence {
     }
   }
 
-  /**
-   * Get alerts filtered by severity (CRITICAL | WARNING | SUCCESS)
-   */
+  
   async getAlertsBySeverity(severity: SmartAlertSeverity): Promise<SmartAlertItem[]> {
     const report = await this.getReport();
     return (report.alerts || []).filter(a => a.severity === severity);

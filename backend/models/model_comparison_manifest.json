@@ -1,0 +1,2110 @@
+[
+  {
+    "comparison_id": "comp_20260818_171422",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-08-18T17:14:22.812024",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260818_171414",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-08-18T17:14:14.492762",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233549",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:35:49.854311",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233545",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:35:45.815262",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233503",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:35:03.384900",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233450",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:34:50.723385",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233446",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:34:46.551514",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233349",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:33:49.407767",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233345",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:33:45.871638",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233249",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:32:49.196602",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233245",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:32:45.726392",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233216",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:32:16.023724",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233211",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:32:11.033902",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233211",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:32:11.009991",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233206",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:32:06.498599",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233206",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:32:06.319999",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233201",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:32:01.624439",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233201",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:32:01.513834",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233156",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:56.999852",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233156",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:56.992447",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233152",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:52.359884",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233152",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:52.253963",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233147",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:47.334450",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233147",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:47.194607",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233142",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:42.317337",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233142",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:42.267080",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233137",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:37.235163",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233136",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:36.887101",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233131",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:31.114160",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233130",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:30.902644",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233124",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:24.005703",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233123",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:23.459644",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233116",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:16.196749",
+    "created_by": "SYSTEM"
+  },
+  {
+    "comparison_id": "comp_20260728_233116",
+    "production_model": "v1.0.0",
+    "candidate_model": "v1.1.0",
+    "comparison_score": 53.62,
+    "winner": "v1.1.0",
+    "recommendation": "ELIGIBLE_FOR_PROMOTION",
+    "confidence_score": 90.9,
+    "metric_summary": {
+      "mae": {
+        "model_a": 0.85,
+        "model_b": 0.78,
+        "diff": 0.07,
+        "pct_change": 8.24,
+        "better": "b"
+      },
+      "rmse": {
+        "model_a": 1.12,
+        "model_b": 1.02,
+        "diff": 0.1,
+        "pct_change": 8.93,
+        "better": "b"
+      },
+      "r2_score": {
+        "model_a": 0.94,
+        "model_b": 0.96,
+        "diff": 0.02,
+        "pct_change": 33.33,
+        "better": "b"
+      },
+      "cv_score": {
+        "model_a": 0.92,
+        "model_b": 0.94,
+        "diff": 0.02,
+        "pct_change": 2.17,
+        "better": "b"
+      },
+      "latency_ms": {
+        "model_a": 4.5,
+        "model_b": 4.5,
+        "diff": 0.0,
+        "pct_change": 0.0,
+        "better": "b"
+      },
+      "model_size": {
+        "model_a": 48.0,
+        "model_b": 48.0,
+        "diff": 0.0,
+        "better": "b"
+      },
+      "dataset_version": {
+        "model_a": "2026.08.001",
+        "model_b": "2026.08.001"
+      },
+      "feature_count": {
+        "model_a": 12,
+        "model_b": 12
+      }
+    },
+    "created_at": "2026-07-28T23:31:16.062987",
+    "created_by": "SYSTEM"
+  }
+]

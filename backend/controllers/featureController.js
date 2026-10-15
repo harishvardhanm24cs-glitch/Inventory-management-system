@@ -1,12 +1,5 @@
 import featureEngineeringService from '../services/featureEngineeringService.js';
 
-/**
- * featureController.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 3: Feature Engineering Controller
- * Exposes feature extraction endpoints for prediction engine, dashboard, reports, digital twin.
- */
-
 export const getFeatures = async (req, res, next) => {
   try {
     const data = await featureEngineeringService.generateAllFeatures();

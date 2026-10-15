@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 const Alert = {
   async createAlert(material_id, message) {
-    // Check if an unresolved alert already exists for this material to prevent spam
+    
     const [existing] = await db.query(
       'SELECT id FROM alerts WHERE material_id = ? AND is_resolved = FALSE', 
       [material_id]
@@ -15,7 +15,7 @@ const Alert = {
       );
       return result.insertId;
     }
-    return null; // Alert already active
+    return null; 
   },
 
   async getActiveAlerts() {

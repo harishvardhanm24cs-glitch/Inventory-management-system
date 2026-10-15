@@ -1,19 +1,5 @@
-/**
- * modelAdapters.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 4: Framework Model Adapters & Strategy Interfaces
- *
- * Provides standardized adapter contracts for integrating multi-framework AI models:
- * • TensorFlow (TensorFlowModelAdapter)
- * • PyTorch (PyTorchModelAdapter)
- * • ONNX (ONNXModelAdapter)
- * • Scikit-Learn (ScikitLearnModelAdapter)
- * • Heuristic Fallback (DefaultHeuristicModelAdapter)
- */
 
-/**
- * Base Abstract Model Adapter Interface (IModelAdapter)
- */
+
 export class IModelAdapter {
   constructor(metadata = {}) {
     this.id = metadata.id || 'abstract_model';
@@ -52,10 +38,6 @@ export class IModelAdapter {
   }
 }
 
-/**
- * 1. Default Statistical / Heuristic Fallback Adapter
- * Guarantees 100% operational uptime when no trained model binary exists.
- */
 export class DefaultHeuristicModelAdapter extends IModelAdapter {
   constructor() {
     super({
@@ -221,9 +203,6 @@ export class DefaultHeuristicModelAdapter extends IModelAdapter {
   }
 }
 
-/**
- * 2. TensorFlow Model Adapter
- */
 export class TensorFlowModelAdapter extends IModelAdapter {
   constructor(metadata = {}) {
     super({
@@ -277,9 +256,6 @@ export class TensorFlowModelAdapter extends IModelAdapter {
   }
 }
 
-/**
- * 3. PyTorch Model Adapter
- */
 export class PyTorchModelAdapter extends IModelAdapter {
   constructor(metadata = {}) {
     super({
@@ -326,9 +302,6 @@ export class PyTorchModelAdapter extends IModelAdapter {
   }
 }
 
-/**
- * 4. ONNX Runtime Model Adapter
- */
 export class ONNXModelAdapter extends IModelAdapter {
   constructor(metadata = {}) {
     super({
@@ -375,9 +348,6 @@ export class ONNXModelAdapter extends IModelAdapter {
   }
 }
 
-/**
- * 5. Scikit-Learn Model Adapter
- */
 export class ScikitLearnModelAdapter extends IModelAdapter {
   constructor(metadata = {}) {
     super({

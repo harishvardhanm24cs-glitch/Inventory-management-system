@@ -6,7 +6,6 @@ import VoiceAssistant from './VoiceAssistant';
 import { useAuth } from '../../context/AuthContext';
 
 const DashboardLayout = () => {
-    console.log('DashboardLayout rendering');
     const { role } = useAuth();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
@@ -18,7 +17,6 @@ const DashboardLayout = () => {
         return <Navigate to="/login" replace />;
     }
 
-    // Handle responsive check
     useEffect(() => {
         const checkMobile = () => {
             setIsMobile(window.innerWidth < 1024);
@@ -30,7 +28,7 @@ const DashboardLayout = () => {
     }, []);
 
     return (
-        <div className="flex h-screen overflow-hidden bg-bg-main font-sans selection:bg-primary/20" data-role={role}>
+        <div className="flex h-screen overflow-hidden bg-[#F8FAFC] dark:bg-slate-900 text-[#0F172A] dark:text-slate-100 font-sans antialiased transition-colors" data-role={role}>
             {/* Sidebar */}
             <Sidebar
                 isOpen={sidebarOpen}
@@ -38,11 +36,11 @@ const DashboardLayout = () => {
                 isMobile={isMobile}
             />
 
-            {/* Main Content Area */}
-            <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Main Area */}
+            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
                 <Topbar onMenuClick={() => setSidebarOpen(true)} />
 
-                <main className="flex-1 overflow-x-hidden overflow-y-auto p-6 lg:p-10 transition-all scroll-smooth">
+                <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6 lg:p-8 transition-all scroll-smooth">
                     <div className="max-w-[1700px] mx-auto animate-saas-fade">
                         <Outlet />
                     </div>

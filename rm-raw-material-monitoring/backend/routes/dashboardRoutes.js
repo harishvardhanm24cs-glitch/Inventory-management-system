@@ -4,7 +4,7 @@ const { getStats, getCharts, getDashboardAlerts } = require('../controllers/dash
 const { protect, authorize } = require('../middleware/authMiddleware');
 
 router.use(protect);
-// Restrict dashboard analytics to Managers and Engineers only
+
 router.use(authorize('manager', 'engineer'));
 
 router.get('/stats', getStats);

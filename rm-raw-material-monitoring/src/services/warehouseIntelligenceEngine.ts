@@ -1,18 +1,4 @@
-/**
- * warehouseIntelligenceEngine.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * Frontend AI Warehouse Intelligence Engine Service (Module 1 - System Brain)
- *
- * Dedicated, UI-decoupled client-side intelligence module.
- * Consumes warehouse data (Inventory, Racks, Transactions, Thresholds, Twin)
- * and generates structured recommendations, insights, and alert prioritization.
- *
- * Fully reusable by:
- * • Dashboard (Executive & Operations)
- * • Digital Twin (WarehouseTwin)
- * • Notifications & Alert System
- * • Reports & Analytics Engine
- */
+
 
 import api from './api';
 
@@ -47,9 +33,7 @@ export interface IntelligenceInsight {
 }
 
 class ClientIntelligenceEngine {
-  /**
-   * Fetch and synthesize structured recommendations across warehouse services
-   */
+  
   async getRecommendations(): Promise<StructuredRecommendation[]> {
     try {
       const res: any = await api.getAiRecommendations();
@@ -68,9 +52,7 @@ class ClientIntelligenceEngine {
     }
   }
 
-  /**
-   * Synthesize real-time operational insights for Dashboard & Reports
-   */
+  
   async getInsights(): Promise<IntelligenceInsight> {
     const recommendations = await this.getRecommendations();
 
@@ -97,9 +79,7 @@ class ClientIntelligenceEngine {
     };
   }
 
-  /**
-   * Get load balancing and rack optimization suggestions for Digital Twin
-   */
+  
   async getRackOptimizations(): Promise<any[]> {
     try {
       const res: any = await api.getRackOptimizations();
@@ -113,9 +93,7 @@ class ClientIntelligenceEngine {
     }
   }
 
-  /**
-   * Normalize raw payload into a strongly-typed StructuredRecommendation object
-   */
+  
   private normalizeRecommendation(item: any, idx: number): StructuredRecommendation {
     const id = item.id || `rec-${item.recommendation_type || 'AI'}-${idx}-${Date.now()}`;
     const type = item.recommendation_type || 'SPACE_OPTIMIZATION';

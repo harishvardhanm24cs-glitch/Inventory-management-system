@@ -5,17 +5,14 @@ import path from 'path';
 import fs from 'fs';
 import pool, { initDB, checkDbConnection } from './db';
 
-// Ensure .env is loaded
 dotenv.config();
 
-// Global Process Resilience (Phase 8)
 process.on('uncaughtException', (err) => console.error('🔥 CRITICAL UNCAUGHT:', err.message));
 process.on('unhandledRejection', (reason) => console.error('🔥 CRITICAL REJECTION:', reason));
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 1. Mission Critical Health (Phase 8 Priority)
 app.get('/health', async (req, res) => {
     try {
         const connection = await pool.getConnection();
@@ -40,16 +37,13 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
-// Industrial Persistence Heartbeat
 setInterval(() => {}, 1000000); 
 
-// Middlewares
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
-// --- Safety Wrapper helper ---
 const safeExecute = async (res: any, fn: () => Promise<void>) => {
-    // Phase 1: FAST-FAIL CHECK
+    
     const isUp = await checkDbConnection();
     if (!isUp) {
         return res.status(503).json({ 
@@ -71,7 +65,6 @@ const safeExecute = async (res: any, fn: () => Promise<void>) => {
     }
 };
 
-// 2. Dashboard Intelligence & ML (Requested Phase 7)
 app.get('/api/alerts', async (req: any, res: any) => {
     await safeExecute(res, async () => {
         const [rows]: any = await pool.query('SELECT sku_id as id, name, total_weight as stock, min_limit as minLimit FROM inventory WHERE total_weight < min_limit');
@@ -88,7 +81,7 @@ app.get('/api/alerts', async (req: any, res: any) => {
 
 app.get('/api/analytics/anomalies', async (req: any, res: any) => {
     await safeExecute(res, async () => {
-        // Query recent high-weight scans
+        
         const [rows]: any = await pool.query(`
             SELECT 
                 sku_id as materialId, 
@@ -108,15 +101,15 @@ app.get('/api/analytics/anomalies', async (req: any, res: any) => {
 
 app.get('/api/inventory/predictions', async (req: any, res: any) => {
     await safeExecute(res, async () => {
-        // Mock Predictive Analysis based on inventory
+        
         const [rows]: any = await pool.query('SELECT sku_id, total_weight FROM inventory');
         const predictions = rows.map((r: any) => ({
             sku_id: r.sku_id,
-            name: r.sku_id, // Added to match frontend expectation
+            name: r.sku_id, 
             forecast: 'Downward Trend',
-            risk: r.total_weight < 20 ? 'high' : 'low', // Added to match frontend
-            recommendedReorder: r.total_weight < 20 ? 50 : 0, // Added to match frontend
-            exhaustionDate: new Date(Date.now() + 86400000 * 2).toLocaleDateString(), // 2 days
+            risk: r.total_weight < 20 ? 'high' : 'low', 
+            recommendedReorder: r.total_weight < 20 ? 50 : 0, 
+            exhaustionDate: new Date(Date.now() + 86400000 * 2).toLocaleDateString(), 
             confidence: '94.2%'
         }));
         res.json(predictions);
@@ -142,7 +135,7 @@ app.get('/api/batches', async (req: any, res: any) => {
 });
 
 app.get('/api/products', async (req: any, res: any) => {
-    // Mock products for the FE component
+    
     res.json([
         {
             productId: 'P-001',
@@ -177,7 +170,6 @@ app.get('/api/logs', async (req: any, res: any) => {
     });
 });
 
-// 3. Auto-Incrementing SKU Generation (Requested Phase 6)
 app.get('/api/sku/next-id', async (req: any, res: any) => {
     await safeExecute(res, async () => {
         const [rows]: any = await pool.query('SELECT sku_id FROM sku_registry ORDER BY id DESC LIMIT 1');
@@ -193,7 +185,6 @@ app.get('/api/sku/next-id', async (req: any, res: any) => {
     });
 });
 
-// 3. Register SKU (Requested Phase 4)
 app.post('/api/sku', async (req: any, res: any) => {
     const { 
         registrationId, sku_id, 
@@ -205,7 +196,7 @@ app.post('/api/sku', async (req: any, res: any) => {
         qrCodeImage 
     } = req.body;
     
-    // Support both frontend camelCase and backend snake_case
+    
     const final_sku_id = registrationId || sku_id;
     const final_paint_name = paintName || paint_name;
     const final_batch = batchNumber || batch;
@@ -213,13 +204,13 @@ app.post('/api/sku', async (req: any, res: any) => {
     const final_exp = expiryDate || expiry_date;
 
     await safeExecute(res, async () => {
-        // Insert into Registry
+        
         await pool.query(
             'INSERT INTO sku_registry (sku_id, paint_name, batch, location, weight, manufacture_date, expiry_date, qr_code_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             [final_sku_id, final_paint_name, final_batch, location, weight, final_mfg, final_exp, qrCodeImage]
         );
 
-        // Initialize Inventory record with full metadata & defaults
+        
         await pool.query(
             'INSERT IGNORE INTO inventory (sku_id, name, total_weight, min_limit, critical_limit) VALUES (?, ?, ?, ?, ?)',
             [final_sku_id, final_paint_name, 0, 20.00, 10.00]
@@ -229,7 +220,6 @@ app.post('/api/sku', async (req: any, res: any) => {
     });
 });
 
-// Added for Historical Archive lookup
 app.get('/api/sku', async (req: any, res: any) => {
     await safeExecute(res, async () => {
         const [rows]: any = await pool.query(`
@@ -251,7 +241,6 @@ app.get('/api/sku', async (req: any, res: any) => {
     });
 });
 
-// 4. Get Inventory (Requested Phase 4)
 app.get('/api/inventory', async (req: any, res: any) => {
     await safeExecute(res, async () => {
         const [rows] = await pool.query(`
@@ -301,7 +290,6 @@ const ensureDefaultRacks = async () => {
     }
 };
 
-// GET /api/rack-inventory
 app.get('/api/rack-inventory', async (req: any, res: any) => {
     await safeExecute(res, async () => {
         await ensureDefaultRacks();
@@ -396,7 +384,6 @@ app.get('/api/rack-inventory', async (req: any, res: any) => {
     });
 });
 
-// GET /api/rack-inventory/:rackCode
 app.get('/api/rack-inventory/:rackCode', async (req: any, res: any) => {
     const { rackCode } = req.params;
     await safeExecute(res, async () => {
@@ -433,7 +420,6 @@ app.get('/api/rack-inventory/:rackCode', async (req: any, res: any) => {
     });
 });
 
-// PUT /api/rack-inventory/:rackCode
 app.put('/api/rack-inventory/:rackCode', async (req: any, res: any) => {
     const { rackCode } = req.params;
     const { current_capacity, max_capacity } = req.body;
@@ -484,7 +470,6 @@ app.put('/api/rack-inventory/:rackCode', async (req: any, res: any) => {
     });
 });
 
-// GET /api/racks/:rackCode/materials
 app.get('/api/racks/:rackCode/materials', async (req: any, res: any) => {
     const rackCode = req.params.rackCode;
     await safeExecute(res, async () => {
@@ -502,7 +487,7 @@ app.get('/api/racks/:rackCode/materials', async (req: any, res: any) => {
         const maxCap = parseFloat(rack.max_capacity) || 100;
         const occ = parseFloat(rack.occupancy_percentage) || 0;
 
-        // 1 & 2. Validation: Occupancy capacity and Negative inventory check
+        
         if (currentCap > maxCap) {
             console.error(`[VALIDATION ERROR] Rack ${rackCode} occupancy ${currentCap} KG exceeds max capacity ${maxCap} KG!`);
         }
@@ -515,7 +500,7 @@ app.get('/api/racks/:rackCode/materials', async (req: any, res: any) => {
             [rackCode]
         );
 
-        // 3. Validation: Merge duplicate entries & prevent negative inventory
+        
         const mergedMap = new Map();
         for (const row of materialRows) {
             const name = row.material_name;
@@ -525,7 +510,7 @@ app.get('/api/racks/:rackCode/materials', async (req: any, res: any) => {
 
             if (quantity < 0 || weight < 0) {
                 console.error(`[VALIDATION ERROR] Negative inventory not allowed for material '${name}' in Rack '${rackCode}': Quantity=${quantity}, Weight=${weight}`);
-                continue; // Skip negative entries
+                continue; 
             }
 
             if (mergedMap.has(name)) {
@@ -555,7 +540,6 @@ app.get('/api/racks/:rackCode/materials', async (req: any, res: any) => {
     });
 });
 
-// 5. Scanning Engine (Requested Phase 5)
 app.post('/api/scan', async (req: any, res: any) => {
     const { sku_id, weight, type, paint_name, batch_number, location } = req.body;
     const action = type.toUpperCase() === 'INWARD' ? 'IN' : 'OUT';
@@ -566,35 +550,35 @@ app.post('/api/scan', async (req: any, res: any) => {
         try {
             await connection.beginTransaction();
 
-            // 1. Sync metadata if it's a first-time scan for this SKU in inventory
+            
             await connection.query(
                 'INSERT IGNORE INTO inventory (sku_id, name, total_weight) VALUES (?, ?, ?)',
                 [sku_id, paint_name || 'Industrial Material', 0]
             );
 
-            // 2. Update Inventory (total_weight)
+            
             const operator = action === 'IN' ? '+' : '-';
             await connection.query(
                 `UPDATE inventory SET total_weight = total_weight ${operator} ? WHERE sku_id = ?`,
                 [amount, sku_id]
             );
 
-            // 3. Log Transaction (Now with full context)
+            
             await connection.query(
                 'INSERT INTO scan_logs (sku_id, action, weight, batch_number, location) VALUES (?, ?, ?, ?, ?)',
                 [sku_id, action, amount, batch_number, location]
             );
 
-            // 4. Log Material Movements (Phase 4 Step 1)
+            
             const finalMaterialName = paint_name || 'Industrial Material';
             if (action === 'IN') {
-                // Inward Scan: Scanner -> Receiving Zone
+                
                 await connection.query(
                     `INSERT INTO material_movements (barcode_id, material_name, source_location, destination_location, movement_type)
                      VALUES (?, ?, ?, ?, ?)`,
                     [sku_id, finalMaterialName, 'Scanner', 'Receiving Zone', 'INWARD']
                 );
-                // Inward Scan: Receiving Zone -> Rack [location]
+                
                 const destRack = location ? (location.startsWith('Rack') ? location : `Rack ${location}`) : 'Unknown Rack';
                 await connection.query(
                     `INSERT INTO material_movements (barcode_id, material_name, source_location, destination_location, movement_type)
@@ -602,7 +586,7 @@ app.post('/api/scan', async (req: any, res: any) => {
                     [sku_id, finalMaterialName, 'Receiving Zone', destRack, 'INWARD']
                 );
             } else {
-                // Outward Scan: Rack [location] -> Dispatch Zone
+                
                 const srcRack = location ? (location.startsWith('Rack') ? location : `Rack ${location}`) : 'Unknown Rack';
                 await connection.query(
                     `INSERT INTO material_movements (barcode_id, material_name, source_location, destination_location, movement_type)
@@ -622,7 +606,6 @@ app.post('/api/scan', async (req: any, res: any) => {
     });
 });
 
-// POST /api/movements — record a single material movement (Phase 4 Step 4)
 app.post('/api/movements', async (req: any, res: any) => {
     const { barcode_id, material_name, source_location, destination_location, movement_type } = req.body;
 
@@ -650,7 +633,6 @@ app.post('/api/movements', async (req: any, res: any) => {
     });
 });
 
-// GET /api/movements
 app.get('/api/movements', async (req: any, res: any) => {
     await safeExecute(res, async () => {
         const [rows]: any = await pool.query(
@@ -662,7 +644,6 @@ app.get('/api/movements', async (req: any, res: any) => {
     });
 });
 
-// GET /api/movements/recent
 app.get('/api/movements/recent', async (req: any, res: any) => {
     await safeExecute(res, async () => {
         const [rows]: any = await pool.query(
@@ -675,25 +656,21 @@ app.get('/api/movements/recent', async (req: any, res: any) => {
     });
 });
 
-// Catch-all for Frontend Stability
 app.use((req, res) => {
     console.warn(`[404] ${req.method} ${req.url}`);
     res.status(404).json({ error: 'Endpoint not found' });
 });
 
-// Global Error Handler (Phase 8)
 app.use((err: any, req: any, res: any, next: any) => {
     console.error('[GLOBAL ERROR]:', err.message);
     res.status(200).json({ success: false, error: 'Internal system anomaly detected' });
 });
 
-// Attempt DB Init safely without blocking
 initDB().catch(err => {
     console.error('⚠️ [INITIALIZATION WARNING]: MySQL connection failed.');
     console.error('   Please ensure MySQL (XAMPP/WAMP) is running.');
 });
 
-// Startup Sequence (Hardened Phase 8)
 const server = app.listen(PORT, () => {
     console.log(`🚀 Industrial Backend LIVE on http://localhost:${PORT}`);
     console.log(`🛠️ Mode: Resilience Active (Zero-Crash Initializer)`);
@@ -702,4 +679,4 @@ const server = app.listen(PORT, () => {
 server.on('error', (err: any) => {
     console.error('🔥 [SERVER ENGINE ERROR]:', err.message);
 });
-// trigger restart
+

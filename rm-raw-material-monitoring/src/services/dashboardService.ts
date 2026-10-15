@@ -69,7 +69,7 @@ export const fetchWarehouseAnalytics = async (
   params?: AnalyticsFilterParams
 ): Promise<WarehouseAnalyticsData> => {
   const response: any = await getWarehouseAnalytics(params);
-  // api.js returns response.data which is { status, data: {...} }
+  
   const data = response?.data || response;
   return data as WarehouseAnalyticsData;
 };
@@ -110,9 +110,8 @@ export const fetchConsumptionAnalytics = async (
   dateRange: '7d' | '30d' | '90d' | '1y' = '30d'
 ): Promise<MaterialConsumptionAnalyticsData> => {
   const response: any = await getConsumptionAnalytics(dateRange);
-  // api.js returns response.data which is { status, data: {...} }
+  
   const data = response?.data || response;
   return data as MaterialConsumptionAnalyticsData;
 };
-
 

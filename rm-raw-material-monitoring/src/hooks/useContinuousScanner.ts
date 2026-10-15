@@ -56,14 +56,14 @@ export const useContinuousScanner = ({
             setStatus('connecting');
             setErrorMessage('');
 
-            // Stop any existing stream before starting a new one
+            
             if (streamRef.current) {
                 streamRef.current.getTracks().forEach((track) => track.stop());
             }
 
             const constraints: MediaStreamConstraints = {
                 video: {
-                    facingMode: 'environment', // Rear camera preferred on mobile
+                    facingMode: 'environment', 
                     width: { ideal: 1280 },
                     height: { ideal: 720 },
                 },
@@ -109,7 +109,7 @@ export const useContinuousScanner = ({
         }
     }, [status]);
 
-    // Initialize/cleanup camera stream based on 'enabled' prop
+    
     useEffect(() => {
         if (enabled) {
             startCamera();
@@ -122,7 +122,7 @@ export const useContinuousScanner = ({
         };
     }, [enabled, startCamera, stopCamera]);
 
-    // Live frame scanning loop using requestAnimationFrame
+    
     useEffect(() => {
         if (status !== 'scanning' || isPaused || !enabled) return;
 
@@ -147,7 +147,7 @@ export const useContinuousScanner = ({
                         const decodedText = code.data.trim();
                         const now = Date.now();
 
-                        // Duplicate scan prevention logic (configurable cooldown interval)
+                        
                         const isDuplicate =
                             decodedText === lastCodeRef.current &&
                             now - lastScanTimeRef.current < cooldownMs;

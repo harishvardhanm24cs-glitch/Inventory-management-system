@@ -4,22 +4,13 @@ import mlDatasetStorage from './mlDatasetStorage.js';
 import mlDataHarvester from './mlDataHarvester.js';
 import mlDataPreprocessor from './mlDataPreprocessor.js';
 
-/**
- * trainingPlatformService.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 10: Future AI Training Platform Core Infrastructure
- *
- * Provides ready-to-use infrastructure for future AI engineers to train,
- * evaluate, benchmark, deploy, and rollback models across TensorFlow,
- * PyTorch, Scikit-Learn, and ONNX without altering warehouse business logic.
- */
 export class TrainingPlatformService {
   constructor() {
-    this.deploymentHistory = []; // Stack of past active model IDs for instant 1-click rollback
+    this.deploymentHistory = []; 
     this.trainingConfigs = new Map();
     this.trainingRuns = [];
 
-    // Pre-seed default training configs
+    
     this.seedDefaultConfigs();
     this.seedTrainingRuns();
   }
@@ -93,15 +84,13 @@ export class TrainingPlatformService {
     ];
   }
 
-  /**
-   * 1. Dataset Generation & Train/Val/Test Split Generator
-   */
+  
   async generateTrainingDataset(datasetName = 'warehouse_ml_dataset', splitRatio = { train: 0.8, val: 0.1, test: 0.1 }) {
     const harvested = await mlDataHarvester.harvestAllWarehouseData();
     const preprocessed = mlDataPreprocessor.processHarvestedData(harvested);
     const features = preprocessed.preprocessed_features || [];
 
-    // Shuffle and partition features into train/val/test splits
+    
     const shuffled = [...features].sort(() => 0.5 - Math.random());
     const total = shuffled.length;
     const trainEnd = Math.floor(total * splitRatio.train);
@@ -137,9 +126,7 @@ export class TrainingPlatformService {
     return datasetPayload;
   }
 
-  /**
-   * 2. Save or update Hyperparameter Training Configuration
-   */
+  
   saveTrainingConfig(configPayload) {
     const { id, name, framework, target_column, feature_set_version, hyperparameters } = configPayload;
     const configId = id || `cfg_${framework.toLowerCase()}_${Date.now()}`;
@@ -165,9 +152,7 @@ export class TrainingPlatformService {
     return config;
   }
 
-  /**
-   * 3. Simulate or Register Training Run History
-   */
+  
   registerTrainingRun(runPayload) {
     const runId = `run_${Date.now()}`;
     const newRun = {
@@ -195,7 +180,7 @@ export class TrainingPlatformService {
 
     this.trainingRuns.unshift(newRun);
 
-    // Register into modelManager for runtime evaluation
+    
     modelManager.registerNewModel({
       id: newRun.model_name,
       name: newRun.model_name,
@@ -208,9 +193,7 @@ export class TrainingPlatformService {
     return newRun;
   }
 
-  /**
-   * 4. Model Evaluation & Benchmarking Matrix
-   */
+  
   getModelEvaluations() {
     const registered = modelManager.listAllModels();
     return registered.map((m) => {
@@ -234,20 +217,18 @@ export class TrainingPlatformService {
     });
   }
 
-  /**
-   * 5. Model Deployment (Promote Model to Production)
-   */
+  
   deployModel(modelId) {
     const previousActive = modelManager.activeModelId;
 
-    // Track deployment history for 1-click rollback
+    
     if (previousActive && previousActive !== modelId) {
       this.deploymentHistory.push(previousActive);
     }
 
     const switchResult = modelManager.switchActiveModel(modelId);
 
-    // Update run history timestamp
+    
     const run = this.trainingRuns.find((r) => r.model_name === modelId);
     if (run) {
       run.deployed_at = new Date().toISOString();
@@ -262,12 +243,10 @@ export class TrainingPlatformService {
     };
   }
 
-  /**
-   * 6. Model 1-Click Instant Rollback
-   */
+  
   rollbackActiveModel() {
     if (this.deploymentHistory.length === 0) {
-      // Default fallback to statistical_ml_default if no stack
+      
       const previousActive = modelManager.activeModelId;
       modelManager.switchActiveModel('statistical_ml_default');
       return {
@@ -293,9 +272,7 @@ export class TrainingPlatformService {
     };
   }
 
-  /**
-   * 7. System Overview for Training Platform Console
-   */
+  
   getOverview() {
     return {
       platform_version: 'v1.0.0',

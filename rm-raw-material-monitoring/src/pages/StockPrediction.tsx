@@ -41,7 +41,7 @@ const StockPrediction = () => {
         setLoading(true);
         try {
             const data = await api.getPredictions();
-            // Ensure data is an array
+            
             setPredictions(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Failed to fetch predictions:", error);
@@ -73,7 +73,7 @@ const StockPrediction = () => {
 
     return (
         <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-            {/* Header Section */}
+            
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div className="space-y-2">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider border border-indigo-100">
@@ -97,7 +97,7 @@ const StockPrediction = () => {
                 </div>
             </div>
 
-            {/* Insight HUD */}
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="p-6 bg-white rounded-3xl border border-slate-200/60 shadow-sm relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
@@ -142,7 +142,7 @@ const StockPrediction = () => {
                 </div>
             </div>
 
-            {/* Filter Hub */}
+            
             <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-2xl border border-slate-200/60 shadow-sm">
                 <div className="relative w-full md:w-96">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -173,7 +173,7 @@ const StockPrediction = () => {
                 </div>
             </div>
 
-            {/* Predictions List */}
+            
             <div className="bg-white rounded-3xl border border-slate-200/60 shadow-xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
@@ -261,7 +261,7 @@ const StockPrediction = () => {
                 </div>
             </div>
 
-            {/* Strategy Footer */}
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-12 opacity-10">
                     <Activity className="w-64 h-64 text-indigo-400" />

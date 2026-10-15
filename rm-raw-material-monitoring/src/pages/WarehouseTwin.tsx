@@ -12,7 +12,6 @@ import { rackVisualizationRules } from '../utils/rackVisualizationRules';
 import { warehouseIntelligenceEngine as clientIntelligenceEngine } from '../services/warehouseIntelligenceEngine';
 import DigitalTwinPredictionOverlay from '../components/DigitalTwinPredictionOverlay';
 
-// ── Types ──────────────────────────────────────────────────────────────────────
 interface RackMaterial {
   id: number;
   material_name: string;
@@ -46,9 +45,8 @@ interface FlowAnimation {
   fading: boolean;
 }
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
 const getRackDisplayConfig = (occ: number, currentCap = 0, maxCap = 100) => {
-  // Priority 2: If currentCap is 0, return Empty Rack config
+  
   if (currentCap === 0 && occ === 0) {
     return {
       card: 'bg-slate-50/60 border-slate-200 hover:border-slate-400',
@@ -62,8 +60,8 @@ const getRackDisplayConfig = (occ: number, currentCap = 0, maxCap = 100) => {
     };
   }
 
-  // Priority 1 & 3: If currentCap > 0, Rack Status is OCCUPIED / Loaded
-  // For Unlimited Capacity mode (maxCap >= 999999), effective occupancy is based on active load
+  
+  
   const effectiveOcc = (maxCap >= 999999 || occ === 0) && currentCap > 0 ? 25 : occ;
 
   if (effectiveOcc <= 40) {
@@ -95,7 +93,7 @@ const getRackDisplayConfig = (occ: number, currentCap = 0, maxCap = 100) => {
       badgeColor: 'text-amber-600',
     };
   }
-  // 81-100% is High Load
+  
   const isHot = effectiveOcc > 85;
   return {
     card: isHot
@@ -156,14 +154,14 @@ const getRackHealthScore = (rack: RackInventoryItem) => {
   const occ = parseFloat(String(rack.occupancy_percentage)) || 0;
   let score = 100;
   
-  // 1. Overload deduction
+  
   if (occ > 100) {
     score -= Math.min(100, Math.round((occ - 100) * 5));
   } else if (occ > 80) {
     score -= Math.round((occ - 80) * 1.5);
   }
   
-  // 2. Low stock deduction
+  
   let lowStockCount = 0;
   if (rack.materials && Array.isArray(rack.materials)) {
     rack.materials.forEach((m: any) => {
@@ -258,7 +256,7 @@ const runDataValidationReport = (racksList: RackInventoryItem[]) => {
     const current = parseFloat(String(rack.current_capacity))     || 0;
     const max     = parseFloat(String(rack.max_capacity))         || 0;
 
-    // 1. Rack occupancy cannot exceed max capacity — use actual DB max_capacity
+    
     if (max > 0 && current > max) {
       console.error(
         `❌ [INTEGRITY ERROR] Rack ${rack.rack_code} current capacity exceeds max! ` +
@@ -267,7 +265,7 @@ const runDataValidationReport = (racksList: RackInventoryItem[]) => {
       errorsCount++;
     }
 
-    // 2. Verify reported occupancy % matches what we can compute from DB values
+    
     if (max > 0) {
       const computedOcc = parseFloat(((current / max) * 100).toFixed(2));
       const diff = Math.abs(computedOcc - occ);
@@ -281,13 +279,13 @@ const runDataValidationReport = (racksList: RackInventoryItem[]) => {
       }
     }
 
-    // 3. Negative capacity stats
+    
     if (current < 0 || max < 0 || occ < 0) {
       console.error(`❌ [INTEGRITY ERROR] Rack ${rack.rack_code} has negative stats! Current: ${current}, Max: ${max}, Occ: ${occ}%`);
       errorsCount++;
     }
 
-    // 4. Negative material inventory check
+    
     if (rack.materials && Array.isArray(rack.materials)) {
       rack.materials.forEach((mat: any) => {
         const qty = parseFloat(mat.quantity) || parseFloat(mat.bucket_count) || 0;
@@ -299,7 +297,7 @@ const runDataValidationReport = (racksList: RackInventoryItem[]) => {
       });
     }
 
-    // 5. Warning / Critical / Empty Alerts
+    
     if (occ === 0) {
       emptyCount++;
     } else if (occ > 100) {
@@ -332,7 +330,6 @@ const formatDateTime = (isoStr: string | null | undefined) => {
   }
 };
 
-// Paint bucket color dots for material cards
 const PAINT_COLORS: Record<string, string> = {
   'pink':       'bg-pink-400',
   'cream':      'bg-yellow-100 border border-yellow-300',
@@ -357,9 +354,6 @@ const getPaintDot = (name: string) => {
   return 'bg-slate-300';
 };
 
-// Zone config is computed dynamically inside the component
-
-// ── Material Flow Animation Banner (Phase 4 Step 3) ─────────────────────────
 const FlowAnimationBanner = ({ flow }: { flow: FlowAnimation }) => {
   const isInward = flow.type === 'INWARD';
   const truncate = (s: string, n = 14) => s.length > n ? s.slice(0, n) + '\u2026' : s;
@@ -377,7 +371,7 @@ const FlowAnimationBanner = ({ flow }: { flow: FlowAnimation }) => {
       )}
       style={{ animation: flow.fading ? undefined : 'flowBannerIn 0.28s cubic-bezier(0.34,1.56,0.64,1)' }}
     >
-      {/* Icon bubble */}
+      
       <div className={cn(
         'flex-shrink-0 p-1.5 rounded-lg',
         isInward ? 'bg-indigo-100 text-indigo-600' : 'bg-orange-100 text-orange-600'
@@ -385,7 +379,7 @@ const FlowAnimationBanner = ({ flow }: { flow: FlowAnimation }) => {
         <Package className="w-3 h-3" />
       </div>
 
-      {/* Direction label + material name */}
+      
       <div className="flex-shrink-0 leading-none">
         <p className={cn(
           'text-[8px] font-black uppercase tracking-wider mb-0.5',
@@ -398,21 +392,21 @@ const FlowAnimationBanner = ({ flow }: { flow: FlowAnimation }) => {
         </p>
       </div>
 
-      {/* Animated path: Source → moving dot → Destination */}
+      
       <div className="flex items-center gap-1 flex-1 min-w-0 overflow-hidden">
-        {/* Source node */}
+        
         <span className="flex-shrink-0 text-[7px] font-black text-slate-500 bg-white/90 px-1.5 py-0.5 rounded-md border border-slate-100 whitespace-nowrap">
           {truncate(flow.sourceLocation)}
         </span>
 
-        {/* Dot travel track */}
+        
         <div className="relative h-3 flex-1 min-w-[28px]">
-          {/* Track line */}
+          
           <div className={cn(
             'absolute inset-x-0 top-1/2 -translate-y-1/2 h-px',
             isInward ? 'bg-indigo-200' : 'bg-orange-200'
           )} />
-          {/* Traveling dot */}
+          
           <div
             style={{
               position: 'absolute',
@@ -431,7 +425,7 @@ const FlowAnimationBanner = ({ flow }: { flow: FlowAnimation }) => {
           />
         </div>
 
-        {/* Destination node */}
+        
         <span className={cn(
           'flex-shrink-0 text-[7px] font-black px-1.5 py-0.5 rounded-md border whitespace-nowrap',
           isInward
@@ -445,7 +439,6 @@ const FlowAnimationBanner = ({ flow }: { flow: FlowAnimation }) => {
   );
 };
 
-// ── Timestamp formatter for movement feed
 const formatMovementTime = (isoStr: string | null | undefined): string => {
   if (!isoStr) return '--:-- --';
   try {
@@ -459,7 +452,6 @@ const formatMovementTime = (isoStr: string | null | undefined): string => {
   }
 };
 
-// ── Main Component ─────────────────────────────────────────────────────────────
 const WarehouseTwin = () => {
   const [racks, setRacks] = useState<RackInventoryItem[]>([]);
   const totalRacks = racks.length;
@@ -469,7 +461,7 @@ const WarehouseTwin = () => {
   const [loadingMaterials, setLoadingMaterials] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [lastRefresh, setLastRefresh] = useState<string>('');
-  const [pulseKey, setPulseKey] = useState(0); // force re-render on refresh
+  const [pulseKey, setPulseKey] = useState(0); 
   const [movements, setMovements] = useState<any[]>([]);
   const prevMovementIdRef = useRef<number | null>(null);
   const [activeFlows, setActiveFlows] = useState<FlowAnimation[]>([]);
@@ -484,7 +476,7 @@ const WarehouseTwin = () => {
     return saved !== null ? saved === 'true' : true;
   });
 
-  // Interactive highlighting state for Occupied vs Empty racks
+  
   const [rackHighlightMode, setRackHighlightMode] = useState<'all' | 'occupied' | 'empty'>('all');
 
   useEffect(() => {
@@ -669,7 +661,7 @@ const WarehouseTwin = () => {
 
   useEffect(() => {
     fetchRackOptimizations();
-    const interval = setInterval(fetchRackOptimizations, 300000); // 5 minutes auto refresh
+    const interval = setInterval(fetchRackOptimizations, 300000); 
     return () => clearInterval(interval);
   }, [fetchRackOptimizations]);
 
@@ -682,11 +674,11 @@ const WarehouseTwin = () => {
       if (drawerOpen && selectedRack) {
         fetchRackMaterials(selectedRack.rack_code, false);
       }
-    }, 10000); // 10s refresh for live movements feed
+    }, 10000); 
     return () => clearInterval(interval);
   }, [fetchRackInventory, fetchRackMaterials, fetchRecentMovements, drawerOpen, selectedRack]);
 
-  // Targeted single-rack refresh handler (preserves array references for unaffected racks)
+  
   const refreshSingleRack = useCallback(async (targetRackCode: string) => {
     console.log(`[Digital Twin] Targeted single-rack refresh for ${targetRackCode}`);
     try {
@@ -703,14 +695,14 @@ const WarehouseTwin = () => {
                 found = true;
                 return updatedItem;
               }
-              return r; // Retain exact object reference for unaffected racks
+              return r; 
             });
             return found ? updatedRacks : [...prevRacks, updatedItem];
           });
         }
       }
 
-      // Briefly highlight targeted rack DOM element
+      
       const el = rackRefs.current[targetRackCode.toUpperCase()] || rackRefs.current[targetRackCode];
       if (el) {
         el.classList.add('ring-4', 'ring-emerald-500', 'scale-[1.05]', 'z-20');
@@ -733,7 +725,7 @@ const WarehouseTwin = () => {
     }
   }, [selectedRack, fetchRackMaterials, fetchRecentMovements, fetchWarehouseStats]);
 
-  // Real-Time React state refresh handler (Phase 2 Step 6)
+  
   const refreshDigitalTwin = useCallback(() => {
     console.log('[Digital Twin] Real-time state refresh invoked');
     fetchRackInventory(false);
@@ -750,15 +742,15 @@ const WarehouseTwin = () => {
 
   useEffect(() => {
     fetchWarehouseStats();
-    const statsInterval = setInterval(fetchWarehouseStats, 30000); // 30s refresh for executive stats
+    const statsInterval = setInterval(fetchWarehouseStats, 30000); 
     return () => clearInterval(statsInterval);
   }, [fetchWarehouseStats]);
 
   useEffect(() => {
-    // Expose globally
+    
     (window as any).refreshDigitalTwin = refreshDigitalTwin;
 
-    // Listen to custom transactional update events with targeted rack detail
+    
     const handleUpdate = (e: Event) => {
       const detail = (e as CustomEvent).detail;
       const targetRackCode = detail && typeof detail.rackCode === 'string' ? detail.rackCode : null;
@@ -776,7 +768,7 @@ const WarehouseTwin = () => {
     };
   }, [refreshDigitalTwin, refreshSingleRack]);
 
-  // Phase 4 Step 3: Detect new movements and trigger flow animations
+  
   useEffect(() => {
     if (!movements || movements.length === 0) return;
     const latest = movements[0];
@@ -794,19 +786,19 @@ const WarehouseTwin = () => {
 
     setActiveFlows(prev => [newFlow, ...prev].slice(0, 3));
 
-    // Begin fade-out at 2.2s
+    
     const fadeTimer = setTimeout(() => {
       setActiveFlows(prev =>
         prev.map(f => f.id === newFlow.id ? { ...f, fading: true } : f)
       );
     }, 2200);
 
-    // Fully remove at 2.7s
+    
     const removeTimer = setTimeout(() => {
       setActiveFlows(prev => prev.filter(f => f.id !== newFlow.id));
     }, 2700);
 
-    // Trigger visual package flow animation on the floor map layout
+    
     const activeCodes = racks.map(r => r.rack_code.toUpperCase());
     const rackCode = getRackCodeFromMovement(latest, activeCodes);
     if (rackCode) {
@@ -850,7 +842,7 @@ const WarehouseTwin = () => {
 
           setParticles(prev => [...prev, newParticle]);
 
-          // Transition package to destination in the next frame
+          
           setTimeout(() => {
             setParticles(prev =>
               prev.map(p =>
@@ -861,7 +853,7 @@ const WarehouseTwin = () => {
             );
           }, 50);
 
-          // Clean up package element after transition completes
+          
           setTimeout(() => {
             setParticles(prev => prev.filter(p => p.id !== particleId));
           }, 2500);
@@ -875,10 +867,10 @@ const WarehouseTwin = () => {
     };
   }, [movements]);
 
-  // ── Helper: get rack by code
+  
   const getRack = (code: string) => racks.find(r => r.rack_code === code);
 
-  // ── Summary metrics
+  
   const emptyRacks       = racks.filter(r => r.occupancy_percentage === 0).length;
   const criticalRacks    = racks.filter(r => r.color_status === 'RED').length;
   const totalCapacity    = racks.reduce((a, r) => a + r.max_capacity, 0);
@@ -887,7 +879,7 @@ const WarehouseTwin = () => {
   const hotZones         = racks.filter(r => r.occupancy_percentage > 85);
   const coldZones        = racks.filter(r => r.occupancy_percentage > 0 && r.occupancy_percentage < 20);
 
-  // ── Health Score Calculations
+  
   const overloadCount = racks.filter(r => r.occupancy_percentage >= 100).length;
   const activeAlertsCount = hotZones.length + racks.filter(r => r.current_capacity > r.max_capacity).length;
   
@@ -904,7 +896,7 @@ const WarehouseTwin = () => {
     }
   });
 
-  // ── Utilization Gauge Calculations
+  
   let utilLabel = 'Optimal';
   let utilColor = 'text-emerald-600 bg-emerald-50 border-emerald-100';
   let utilBarColor = '#10b981';
@@ -927,9 +919,9 @@ const WarehouseTwin = () => {
   const gaugeHalfCircumference = gaugeCircumference / 2;
   const utilStrokeOffset = gaugeHalfCircumference - (Math.min(100, Math.max(0, avgUtil)) / 100) * gaugeHalfCircumference;
 
-  // Filter racks containing materials matching searchQuery (Phase 6 Step 7) - removed local matching, using searchResults state
+  
 
-  // ── Compute dynamic Zone Config ───────────────────────────────────────────────
+  
   const dynamicZoneConfig = useMemo(() => {
     const rowsMap: Record<string, string[]> = {};
     racks.forEach(r => {
@@ -983,7 +975,7 @@ const WarehouseTwin = () => {
     });
   }, [racks]);
 
-  // ── Zone stats metrics
+  
   const getZoneStats = (zoneRacksList: string[]) => {
     const zoneRacks = racks.filter(r => zoneRacksList.includes(r.rack_code));
     const numRacks = zoneRacks.length;
@@ -1013,7 +1005,7 @@ const WarehouseTwin = () => {
     };
   };
 
-  // ── Click rack handler
+  
   const handleRackClick = (rack: RackInventoryItem | undefined) => {
     if (!rack) return;
     setSelectedRack(rack);
@@ -1022,7 +1014,7 @@ const WarehouseTwin = () => {
     fetchRackMaterials(rack.rack_code, true);
   };
 
-  // ── Select search result handler (Scroll & Flash Auto-Focus)
+  
   const handleSelectSearchResult = (result: any) => {
     const targetRack = racks.find(r => r.rack_code === result.rack_code);
     if (targetRack) {
@@ -1044,7 +1036,7 @@ const WarehouseTwin = () => {
     }
   };
 
-  // ── Rack Cell renderer
+  
   const renderRackCell = (code: string) => {
     const rack = getRack(code);
 
@@ -1100,7 +1092,7 @@ const WarehouseTwin = () => {
             isMatched && !isSelected && 'ring-4 ring-amber-500 scale-[1.04] shadow-[0_0_20px_rgba(245,158,11,0.8)] z-10 animate-pulse border-transparent'
           )}
         >
-          {/* Health Badge */}
+          
           <span className={cn('absolute top-2 left-2 text-[7px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded border shadow-sm z-10', hStatus.color)}>
             H: {hScore}
           </span>
@@ -1125,7 +1117,7 @@ const WarehouseTwin = () => {
       );
     }
 
-    // Original view code
+    
     const cfg = getRackDisplayConfig(occ, parseFloat(String(rack.current_capacity)) || 0, parseFloat(String(rack.max_capacity)) || 100);
     return (
       <div
@@ -1145,10 +1137,10 @@ const WarehouseTwin = () => {
           isMatched && !isSelected && 'ring-4 ring-amber-500 scale-[1.04] shadow-[0_0_20px_rgba(245,158,11,0.8)] z-10 animate-pulse border-transparent'
         )}
       >
-        {/* Top stripe */}
+        
         <div className={cn('absolute top-0 left-0 right-0 h-1 rounded-t-2xl', cfg.bar)} />
 
-        {/* Header row */}
+        
         <div className="flex items-start justify-between pt-1">
           <div>
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -1167,7 +1159,7 @@ const WarehouseTwin = () => {
           <span className={cn('w-2.5 h-2.5 rounded-full flex-shrink-0 mt-0.5', cfg.dot)} />
         </div>
 
-        {/* Occupancy data */}
+        
         <div className="space-y-1.5">
           <div className="flex justify-between text-[9px] font-black uppercase tracking-wider text-slate-500">
             <span>{rack.current_capacity} / {parseFloat(String(rack.max_capacity)) >= 999999 ? 'Unlimited' : `${rack.max_capacity} KG`}</span>
@@ -1195,7 +1187,7 @@ const WarehouseTwin = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-7xl mx-auto px-4 md:px-6 py-2">
 
-      {/* CSS keyframes for material flow animations (Phase 4 Step 3) */}
+      
       <style>{`
         @keyframes dotTravel {
           0%   { left: 0;                  opacity: 0; }
@@ -1209,7 +1201,7 @@ const WarehouseTwin = () => {
         }
       `}</style>
 
-      {/* ── Page Header ─────────────────────────────────────────────────────── */}
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-2xl shadow-lg shadow-blue-500/30">
@@ -1246,10 +1238,10 @@ const WarehouseTwin = () => {
         </div>
       </div>
 
-      {/* Module 1: AI Prediction Engine Spatial Overlay */}
+      
       <DigitalTwinPredictionOverlay />
 
-      {/* ── High Traffic Alert Block (Phase 4 Step 7) ───────────────────────── */}
+      
       {highTrafficRack && (
         <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg shadow-orange-500/25 animate-in fade-in duration-300">
           <div className="flex items-center gap-3.5">
@@ -1273,7 +1265,7 @@ const WarehouseTwin = () => {
         </div>
       )}
 
-      {/* ── Hot Zones Alerts ─────────────────────────────────────────────────── */}
+      
       {hotZones.length > 0 && (
         <div className="bg-rose-50/70 border border-red-200 rounded-2xl p-4 flex flex-col gap-2.5 shadow-sm animate-in fade-in duration-300">
           <div className="flex items-center gap-2 text-red-600 font-black text-xs uppercase tracking-wider">
@@ -1298,7 +1290,7 @@ const WarehouseTwin = () => {
         </div>
       )}
 
-      {/* ── Space Optimization Suggestions ────────────────────────────────────── */}
+      
       {coldZones.length > 0 && (
         <div className="bg-sky-50/70 border border-sky-200 rounded-2xl p-4 flex flex-col gap-2.5 shadow-sm animate-in fade-in duration-300">
           <div className="flex items-center gap-2 text-sky-600 font-black text-xs uppercase tracking-wider">
@@ -1328,7 +1320,7 @@ const WarehouseTwin = () => {
         </div>
       )}
 
-      {/* ── Summary KPI Strip ─────────────────────────────────────────────────── */}
+      
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {[
           {
@@ -1428,13 +1420,13 @@ const WarehouseTwin = () => {
         })}
       </div>
 
-      {/* ── Main Split Dashboard Layout ───────────────────────────────────────── */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         
-        {/* Left Column (Zone Stats & Map) */}
+        
         <div className="lg:col-span-3 space-y-6">
           
-          {/* Zone Statistics */}
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {dynamicZoneConfig.map(zone => {
               const zoneStats = getZoneStats(zone.racks);
@@ -1467,7 +1459,7 @@ const WarehouseTwin = () => {
                       </div>
                     </div>
 
-                    {/* Glowing Health Status Badge */}
+                    
                     <span className={cn(
                       "px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest border flex items-center gap-1.5 shadow-sm",
                       health.color
@@ -1510,10 +1502,10 @@ const WarehouseTwin = () => {
             })}
           </div>
 
-          {/* Main Floor Map */}
+          
           <div ref={containerRef} className="relative bg-white/60 backdrop-blur-md border border-slate-150 rounded-3xl shadow-sm overflow-hidden">
             
-            {/* Map header */}
+            
             <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-xs font-black text-slate-800 uppercase tracking-widest">
@@ -1525,7 +1517,7 @@ const WarehouseTwin = () => {
               </div>
 
               <div className="flex items-center gap-4 self-end sm:self-auto">
-                {/* Occupied / Empty Interactive Highlight Control */}
+                
                 <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-sm">
                   <button
                     type="button"
@@ -1559,7 +1551,7 @@ const WarehouseTwin = () => {
                   </button>
                 </div>
 
-                {/* Heatmap Toggle Control */}
+                
                 <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-sm">
                   <button
                     onClick={() => setShowHeatmap(false)}
@@ -1581,7 +1573,7 @@ const WarehouseTwin = () => {
                   </button>
                 </div>
 
-                {/* Live pulse indicator */}
+                
                 <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-600 uppercase tracking-wider">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -1592,7 +1584,7 @@ const WarehouseTwin = () => {
               </div>
             </div>
 
-            {/* Color legend above the map */}
+            
             <div className="px-6 py-3 border-b border-slate-100 bg-slate-50/30 flex flex-wrap gap-4 items-center justify-start">
               <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 mr-2">Map Legend:</span>
               {showHeatmap ? (
@@ -1623,7 +1615,7 @@ const WarehouseTwin = () => {
               )}
             </div>
 
-            {/* ── Active Material Flow Animations (Phase 4 Step 3) ──────────── */}
+            
             {activeFlows.length > 0 && (
               <div className="px-4 py-2.5 border-b border-slate-100 bg-white/40 space-y-1.5">
                 {activeFlows.map(flow => (
@@ -1639,7 +1631,7 @@ const WarehouseTwin = () => {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {/* Visual Inward/Outward terminals */}
+                  
                   <div className="flex flex-col sm:flex-row justify-between items-center bg-slate-50/50 border border-slate-100 p-3.5 rounded-2xl gap-3 shadow-inner">
                     <div ref={scannerRef} className="flex items-center gap-2.5 px-3 py-2 bg-indigo-50 border border-indigo-100 text-indigo-700 rounded-xl font-extrabold text-xs shadow-sm">
                       <span className="flex h-2.5 w-2.5 relative">
@@ -1660,7 +1652,7 @@ const WarehouseTwin = () => {
                     </div>
                   </div>
 
-                  {/* ── Material Locator Search Bar (Phase 6 Step 7) ──────────────── */}
+                  
                   <div className="bg-slate-50/60 border border-slate-200 p-4.5 rounded-2xl space-y-3.5 shadow-sm">
                     <div className="flex items-center gap-2">
                       <div className="p-1 bg-indigo-50 text-indigo-600 rounded-lg border border-indigo-100 flex-shrink-0">
@@ -1694,7 +1686,7 @@ const WarehouseTwin = () => {
                       )}
                     </div>
 
-                    {/* Search Results Display */}
+                    
                     {searchQuery.trim() && (
                       <div className="mt-2.5 pt-3 border-t border-slate-100 space-y-2.5">
                         <div className="flex justify-between items-center text-[8px] font-black text-slate-400 uppercase tracking-widest">
@@ -1740,7 +1732,7 @@ const WarehouseTwin = () => {
                                       <div className="col-span-2"><span className="text-slate-400 font-normal">Last Scan:</span> {formatDateTime(result.last_scan_time)}</div>
                                     )}
                                     
-                                    {/* Movement History */}
+                                    
                                     {result.movement_history && result.movement_history.length > 0 && (
                                       <div className="col-span-2 mt-2 pt-2 border-t border-dashed border-slate-100 space-y-1">
                                         <span className="text-[7.5px] font-black text-slate-400 uppercase tracking-widest block">Movement History</span>
@@ -1774,7 +1766,7 @@ const WarehouseTwin = () => {
                     const ZoneIcon = zone.icon;
                     return (
                       <div key={zone.zone_name}>
-                        {/* Zone label header */}
+                        
                         <div className={cn(
                           'flex items-center justify-between px-4 py-2.5 rounded-xl mb-3 border',
                           zone.bg, zone.border
@@ -1795,12 +1787,12 @@ const WarehouseTwin = () => {
                           </span>
                         </div>
 
-                        {/* 4-column rack grid */}
+                        
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                           {zone.racks.map(code => renderRackCell(code))}
                         </div>
 
-                        {/* Aisle divider between zones */}
+                        
                         {zoneIdx < dynamicZoneConfig.length - 1 && (
                           <div className="mt-5 h-8 bg-slate-50/60 rounded-xl border border-dashed border-slate-200 flex items-center justify-center">
                             <span className="text-[9px] font-black text-slate-355 uppercase tracking-[0.2em] select-none">
@@ -1815,7 +1807,7 @@ const WarehouseTwin = () => {
               )}
             </div>
 
-            {/* Flowing visual particles overlay */}
+            
             {particles.map(p => (
               <div
                 key={p.id}
@@ -1844,7 +1836,7 @@ const WarehouseTwin = () => {
               </div>
             ))}
 
-          {/* AI Recommendation Panel */}
+          
             <div className="bg-white/60 backdrop-blur-md border border-slate-150 rounded-3xl shadow-sm overflow-hidden mt-6">
               <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -1934,10 +1926,10 @@ const WarehouseTwin = () => {
           </div>
         </div>
 
-        {/* Right Column (Health Score + Live Movement Feed) */}
+        
         <div className="lg:col-span-1 space-y-6">
 
-          {/* ── Warehouse Utilization Gauge Widget ───────────────────────────── */}
+          
           <div className="bg-white/70 backdrop-blur-md border border-slate-150 rounded-3xl p-5 shadow-sm space-y-5">
             <div>
               <h2 className="text-xs font-black text-slate-800 uppercase tracking-widest">
@@ -1948,10 +1940,10 @@ const WarehouseTwin = () => {
               </p>
             </div>
 
-            {/* SVG Gauge Chart */}
+            
             <div className="flex flex-col items-center justify-center pt-2">
               <svg className="w-36 h-20 overflow-visible" viewBox="0 0 120 70">
-                {/* Background Arc */}
+                
                 <path
                   d="M 10,60 A 50,50 0 0,1 110,60"
                   fill="none"
@@ -1959,7 +1951,7 @@ const WarehouseTwin = () => {
                   strokeWidth="10"
                   strokeLinecap="round"
                 />
-                {/* Foreground Arc */}
+                
                 <path
                   d="M 10,60 A 50,50 0 0,1 110,60"
                   fill="none"
@@ -1970,7 +1962,7 @@ const WarehouseTwin = () => {
                   strokeDashoffset={utilStrokeOffset}
                   className="transition-all duration-1000 ease-out"
                 />
-                {/* Text inside the gauge */}
+                
                 <text x="60" y="52" textAnchor="middle" className="text-xl font-black fill-slate-900 leading-none font-mono">
                   {avgUtil}%
                 </text>
@@ -1979,7 +1971,7 @@ const WarehouseTwin = () => {
                 </text>
               </svg>
 
-              {/* Status Badge */}
+              
               <span className={cn(
                 'px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border mt-3',
                 utilColor
@@ -1988,7 +1980,7 @@ const WarehouseTwin = () => {
               </span>
             </div>
 
-            {/* Metrics Breakdown list */}
+            
             <div className="space-y-2.5 pt-4 border-t border-slate-100">
               {[
                 { label: 'Avg Occupancy', value: `${avgUtil}%` },
@@ -2011,9 +2003,9 @@ const WarehouseTwin = () => {
             </div>
           </div>
 
-          {/* ── Live Movement Feed ───────────────────────────────────────────── */}
+          
           <div className="bg-white/70 backdrop-blur-md border border-slate-150 rounded-3xl shadow-sm overflow-hidden">
-            {/* Card header */}
+            
             <div className="px-4 py-3.5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg border border-indigo-100">
@@ -2028,7 +2020,7 @@ const WarehouseTwin = () => {
                   </p>
                 </div>
               </div>
-              {/* Live pulse */}
+              
               <div className="flex items-center gap-1.5 text-[9px] font-bold text-indigo-500 uppercase tracking-wider">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
@@ -2038,7 +2030,7 @@ const WarehouseTwin = () => {
               </div>
             </div>
 
-            {/* Scrollable feed */}
+            
             <div className="overflow-y-auto max-h-[420px] divide-y divide-slate-50">
               {movements.length === 0 ? (
                 <div className="py-10 flex flex-col items-center justify-center gap-2 text-slate-300">
@@ -2054,7 +2046,7 @@ const WarehouseTwin = () => {
                       key={mv.id ?? idx}
                       className="px-4 py-3 hover:bg-slate-50/60 transition-colors duration-150 group"
                     >
-                      {/* Top row: time badge + movement type chip */}
+                      
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="flex items-center gap-1 text-[9px] font-black text-slate-400 uppercase tracking-wider">
                           <Clock className="w-2.5 h-2.5" />
@@ -2070,7 +2062,7 @@ const WarehouseTwin = () => {
                         </span>
                       </div>
 
-                      {/* Human-friendly timeline message */}
+                      
                       <p className="text-xs font-semibold text-slate-700 leading-normal">
                         {isInward
                           ? `${mv.material_name || mv.barcode_id || 'Material'} inwarded to ${mv.destination_location || 'Warehouse'}`
@@ -2083,7 +2075,7 @@ const WarehouseTwin = () => {
               )}
             </div>
 
-            {/* Footer */}
+            
             {movements.length > 0 && (
               <div className="px-4 py-2.5 border-t border-slate-100 bg-slate-50/50">
                 <p className="text-[8px] font-black text-slate-350 uppercase tracking-wider text-center">
@@ -2097,8 +2089,8 @@ const WarehouseTwin = () => {
 
       </div>
 
-      {/* ── Side Drawer ──────────────────────────────────────────────────────── */}
-      {/* Backdrop */}
+      
+      {}
       {drawerOpen && (
         <div
           className="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-40"
@@ -2106,7 +2098,7 @@ const WarehouseTwin = () => {
         />
       )}
 
-      {/* Drawer panel */}
+      
       <div className={cn(
         'fixed top-0 right-0 h-full w-full max-w-sm z-50 flex flex-col',
         'bg-white/95 backdrop-blur-xl border-l border-slate-200 shadow-2xl',
@@ -2119,7 +2111,7 @@ const WarehouseTwin = () => {
           const cfg = getRackDisplayConfig(occ);
           return (
             <>
-              {/* Drawer header */}
+              
               <div className={cn(
                 'flex items-start justify-between p-6 border-b border-slate-100',
                 'bg-gradient-to-r from-slate-50 to-white'
@@ -2146,10 +2138,10 @@ const WarehouseTwin = () => {
                 </button>
               </div>
 
-              {/* Drawer content */}
+              
               <div className="flex-1 overflow-y-auto p-6 space-y-5">
 
-                {/* Status badge */}
+                
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                     Occupancy Status
@@ -2163,7 +2155,7 @@ const WarehouseTwin = () => {
                   </span>
                 </div>
 
-                {/* Occupancy visual */}
+                
                 <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-3">
                   <div className="flex justify-between items-baseline">
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
@@ -2185,7 +2177,7 @@ const WarehouseTwin = () => {
                   </div>
                 </div>
 
-                {/* Capacity & Material info grid (10-Field Digital Twin Inspector) */}
+                
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { icon: Database,   label: 'Rack Code (ID)',   value: `${displayRack.rack_code} (#${displayRack.id || 'N/A'})`, mono: true, span: false  },
@@ -2212,7 +2204,7 @@ const WarehouseTwin = () => {
                   ))}
                 </div>
 
-                {/* Occupancy % detail */}
+                
                 <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
                   <div className="flex items-center gap-1.5 text-slate-400 mb-2">
                     <Activity className="w-3.5 h-3.5" />
@@ -2239,7 +2231,7 @@ const WarehouseTwin = () => {
                   </div>
                 )}
 
-                {/* ── Materials Inside ─────────────────────────────────────── */}
+                
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest">
@@ -2283,7 +2275,7 @@ const WarehouseTwin = () => {
                             key={mat.id || mat.material_name}
                             className="bg-white border border-slate-100 rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all duration-200 space-y-2.5"
                           >
-                            {/* Header row */}
+                            
                             <div className="flex items-start justify-between">
                               <div className="flex items-center gap-2">
                                 <div className={cn(
@@ -2302,7 +2294,7 @@ const WarehouseTwin = () => {
                               </span>
                             </div>
 
-                            {/* Details layout */}
+                            
                             <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-500 font-bold border-t border-slate-100 pt-2">
                               <div>
                                 <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">Quantity</span>
@@ -2314,7 +2306,7 @@ const WarehouseTwin = () => {
                               </div>
                             </div>
 
-                            {/* Extra details (weight / batch) */}
+                            
                             <div className="flex justify-between items-center text-[9px] text-slate-400 border-t border-slate-50 pt-1.5 mt-1 font-semibold">
                               <span>Weight: {mat.weight} KG</span>
                               {mat.batch_number && (
@@ -2327,7 +2319,7 @@ const WarehouseTwin = () => {
                         );
                       })}
 
-                      {/* Total details card */}
+                      
                       <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 mt-2 space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
@@ -2361,7 +2353,7 @@ const WarehouseTwin = () => {
                   )}
                 </div>
 
-                {/* Last Scan Time */}
+                
                 <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
                   <div className="flex items-center gap-1.5 text-slate-400 mb-2">
                     <Clock className="w-3.5 h-3.5" />
@@ -2372,7 +2364,7 @@ const WarehouseTwin = () => {
                   </p>
                 </div>
 
-                {/* Rack ID footer */}
+                
                 <div className="text-center pt-1">
                   <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
                     Rack DB ID: #{displayRack.id}
@@ -2380,8 +2372,7 @@ const WarehouseTwin = () => {
                 </div>
               </div>
 
-              {/* Drawer footer */}
-
+              
               <div className="p-4 border-t border-slate-100 bg-slate-50/50">
                 <button
                   onClick={() => setDrawerOpen(false)}

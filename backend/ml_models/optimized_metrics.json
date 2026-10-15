@@ -1,0 +1,35 @@
+{
+  "baseline_comparison": {
+    "baseline": {
+      "mae": 0.5715,
+      "rmse": 3.1109,
+      "mape_pct": 41.05,
+      "r2_score": 0.9717,
+      "cv_r2": 0.8725,
+      "cv_rmse": 25.2627
+    },
+    "optimized": {
+      "mae": 0.4422794117647059,
+      "rmse": 2.5789099740804766,
+      "mape_pct": 33.416666666666664,
+      "r2_score": 0.9805336386544728,
+      "cv_r2": 0.937557966157437,
+      "cv_rmse": 26.280898790258487
+    },
+    "improvement": {
+      "mae_diff": -0.1292205882352941,
+      "rmse_diff": -0.5319900259195234,
+      "cv_r2_diff": 0.06505796615743697,
+      "cv_rmse_diff": 1.018198790258488
+    }
+  },
+  "overfitting_analysis": {
+    "train_r2": 0.9999930420029496,
+    "test_r2": 0.9805336386544728,
+    "cv_r2": 0.937557966157437,
+    "generalization_gap": 0.062435075845512555,
+    "status": "Healthy"
+  },
+  "decision": "Improved",
+  "recommendation": "Deploy Optimized Model"
+}

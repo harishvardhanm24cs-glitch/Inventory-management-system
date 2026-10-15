@@ -24,7 +24,7 @@ export const getCleaningReport = async (req, res, next) => {
   try {
     const jsonPath = path.join(mlDatasetsDir, 'clean_warehouse_dataset.json');
     if (!fs.existsSync(jsonPath)) {
-      // Run pipeline if clean dataset does not exist yet
+      
       const result = await dataCleaningPipelineService.runCleaningPipeline({});
       return res.status(200).json({
         status: 'success',
@@ -51,7 +51,7 @@ export const downloadCleanDataset = async (req, res, next) => {
     const filePath = path.join(mlDatasetsDir, filename);
 
     if (!fs.existsSync(filePath)) {
-      // Run pipeline if clean dataset does not exist yet
+      
       await dataCleaningPipelineService.runCleaningPipeline({});
     }
 

@@ -1,9 +1,9 @@
 {
   "pipeline_name": "RM Monitor Feature Engineering Pipeline",
   "version": "v1.0.0",
-  "generated_at": "2026-07-25T19:53:23.356Z",
-  "execution_time_ms": 10,
-  "total_feature_rows": 96,
+  "generated_at": "2026-07-27T19:48:52.239Z",
+  "execution_time_ms": 38,
+  "total_feature_rows": 170,
   "feature_groups": {
     "material_features": [
       "current_stock",

@@ -1,16 +1,14 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosResponse } from 'axios';
 
-// Create Axios Instance
 const apiClient: AxiosInstance = axios.create({
     baseURL: 'http://localhost:5000/api',
-    timeout: 5000,
+    timeout: 30000, 
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-// Request Interceptor: Automatically attach JWT token to every request
 apiClient.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
@@ -24,27 +22,26 @@ apiClient.interceptors.request.use(
     }
 );
 
-// Response Interceptor: Centralized Error Handling with Retry Logic
 apiClient.interceptors.response.use(
     (response: AxiosResponse) => response.data,
     async (error) => {
         const config = error.config;
         
-        // 1. Retry Mechanism if request failed due to network
+        
         if (config && (!error.response) && (!config._retryCount || config._retryCount < 3)) {
             config._retryCount = (config._retryCount || 0) + 1;
             console.warn(`[API Retry] Attempt ${config._retryCount} for ${config.url}`);
             
-            // Wait 1.5 seconds before retrying
+            
             await new Promise((resolve) => setTimeout(resolve, 1500));
             return apiClient(config);
         }
 
-        // 2. Error Translation
+        
         let message = error.response?.data?.message || error.response?.data?.error || error.message || 'An unexpected error occurred';
         
-        if (message.includes('Network Error') || message.includes('ECONNREFUSED')) {
-            message = 'Backend not running';
+        if (message.includes('Network Error') || message.includes('ECONNREFUSED') || message.includes('ERR_CONNECTION_RESET')) {
+            message = 'Backend service temporarily unavailable — please retry.';
         }
 
         console.error('[API Error]:', message);
@@ -52,7 +49,6 @@ apiClient.interceptors.response.use(
     }
 );
 
-// Helper to map backend material DB structure to React RawMaterial structure
 const mapMaterial = (m: any) => ({
     id: String(m.id),
     barcode: m.barcode,
@@ -75,7 +71,6 @@ const mapMaterial = (m: any) => ({
     weight: parseFloat(m.quantity) || 0,
 });
 
-// Helper to map backend predictions structure to React Prediction structure
 const mapPrediction = (p: any) => {
     let riskVal: 'high' | 'medium' | 'stable' = 'stable';
     if (p.risk) {
@@ -96,19 +91,18 @@ const mapPrediction = (p: any) => {
     };
 };
 
-// API Service Functions
 export const apiService = {
-    // --- Generic HTTP Methods ---
+    
     get: (url: string, config?: any): Promise<any> => apiClient.get(url, config),
     post: (url: string, data?: any, config?: any): Promise<any> => apiClient.post(url, data, config),
     put: (url: string, data?: any, config?: any): Promise<any> => apiClient.put(url, data, config),
     delete: (url: string, config?: any): Promise<any> => apiClient.delete(url, config),
 
-    // --- Health ---
+    
     getHealth: async (): Promise<any> => {
         console.log('[API Call] GET /health');
         try {
-            // Hit backend custom health endpoint
+            
             const res = await axios.get('http://localhost:5000/health');
             console.log('[API Success] GET /health:', res.data);
             return res.data;
@@ -118,8 +112,7 @@ export const apiService = {
         }
     },
 
-
-    // --- Authentication ---
+    
     loginUser: async (data: any): Promise<any> => {
         console.log('[API Call] POST /auth/login with email:', data.email);
         try {
@@ -144,7 +137,7 @@ export const apiService = {
         }
     },
 
-    // --- Inventory / Materials ---
+    
     getInventory: (): Promise<any> => apiService.getMaterials(),
     getMaterials: async (): Promise<any> => {
         console.log('[API Call] GET /materials');
@@ -166,7 +159,7 @@ export const apiService = {
         }
     },
     getInventorySummary: async (): Promise<any> => {
-        // Fallback or calculate summary from materials
+        
         const mats = await apiService.getMaterials();
         return {
             totalMaterials: mats.length,
@@ -216,12 +209,12 @@ export const apiService = {
             const res: any = await apiClient.post(`/materials/${id}/stock`, backendData);
             console.log('[API Success] POST /materials/' + id + '/stock raw response:', JSON.stringify(res));
 
-            // Defensive: res.material and res.transaction may be undefined if backend shape differs
+            
             const m = res?.material || res?.data?.material || null;
             const t = res?.transaction || res?.data?.transaction || null;
 
             if (!m || !t) {
-                // Return a minimal success object so callers don't crash
+                
                 console.warn('[API Warn] updateStock: material or transaction missing in response. Returning raw.');
                 return res;
             }
@@ -254,7 +247,7 @@ export const apiService = {
             const res: any = await apiClient.put(`/materials/${id}`, backendData);
             console.log('[API Success] PUT /materials/' + id + ' raw response:', JSON.stringify(res));
 
-            // Defensive: res.material may be undefined if backend shape differs
+            
             const m = res?.material || res?.data?.material || null;
             if (!m) {
                 console.warn('[API Warn] updateLimits: material missing in response. Returning raw.');
@@ -290,15 +283,15 @@ export const apiService = {
     },
     updateSubstitute: (id: string, substituteId: string | null): Promise<any> => Promise.resolve({ success: true }),
 
-    // --- Products ---
+    
     getProduct: (productId: string): Promise<any> => Promise.resolve({}),
     createProduct: (data: any): Promise<any> => Promise.resolve({}),
     bulkCreateProducts: (products: any[]): Promise<any> => Promise.resolve({ success: true }),
 
-    // --- IoT & Tracking ---
+    
     iotUpdate: (data: any): Promise<any> => Promise.resolve({ success: true }),
 
-    // --- Analytics & Alerts ---
+    
     getAlerts: async (): Promise<any> => {
         console.log('[API Call] GET /alerts');
         try {
@@ -377,7 +370,7 @@ export const apiService = {
             throw err;
         }
     },
-    // --- AI Prediction Engine (Module 1) ---
+    
     getPredictionEngineOverview: async (): Promise<any> => {
         console.log('[API Call] GET /ai/prediction-engine/overview');
         try {
@@ -448,7 +441,7 @@ export const apiService = {
             throw err;
         }
     },
-    // --- Module 2: Machine Learning Data Pipeline ---
+    
     mlPipelineRun: async (datasetName = 'warehouse_ml_dataset'): Promise<any> => {
         console.log('[API Call] POST /ai/ml-pipeline/run');
         try {
@@ -489,7 +482,7 @@ export const apiService = {
             return null;
         }
     },
-    // --- Module 3: Feature Engineering ---
+    
     getFeatures: async (): Promise<any> => {
         console.log('[API Call] GET /ai/features');
         try {
@@ -530,7 +523,7 @@ export const apiService = {
             return [];
         }
     },
-    // --- Module 4: Model Management ---
+    
     getModels: async (): Promise<any> => {
         console.log('[API Call] GET /ai/models');
         try {
@@ -581,7 +574,7 @@ export const apiService = {
             return null;
         }
     },
-    // --- Module 5: AI Recommendation Engine ---
+    
     getRecommendationsEngine: async (): Promise<any> => {
         console.log('[API Call] GET /ai/recommendations/engine');
         try {
@@ -612,7 +605,7 @@ export const apiService = {
             throw err;
         }
     },
-    // --- Module 6: Explainable AI (XAI) ---
+    
     explainMaterial: async (materialId: string): Promise<any> => {
         console.log(`[API Call] GET /ai/xai/explain/material/${materialId}`);
         try {
@@ -673,7 +666,7 @@ export const apiService = {
             return null;
         }
     },
-    // --- Module 7: AI Monitoring ---
+    
     getAiHealth: async (): Promise<any> => {
         console.log('[API Call] GET /ai/monitoring/health');
         try {
@@ -702,6 +695,355 @@ export const apiService = {
         } catch (err: any) {
             console.error('[API Failure] POST /ai/monitoring/reset failed:', err.message);
             throw err;
+        }
+    },
+    
+    getDataCollectionStatus: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/data-collection/status');
+        try {
+            const res: any = await apiClient.get('/ai/data-collection/status');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/data-collection/status failed:', err.message);
+            return null;
+        }
+    },
+    getDataCollectionStatistics: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/data-collection/statistics');
+        try {
+            const res: any = await apiClient.get('/ai/data-collection/statistics');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/data-collection/statistics failed:', err.message);
+            return null;
+        }
+    },
+    collectDataTransaction: async (payload: any): Promise<any> => {
+        console.log('[API Call] POST /ai/data-collection/collect');
+        try {
+            const res: any = await apiClient.post('/ai/data-collection/collect', payload);
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/data-collection/collect failed:', err.message);
+            throw err;
+        }
+    },
+    getDataCollectionLogs: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/data-collection/logs');
+        try {
+            const res: any = await apiClient.get('/ai/data-collection/logs');
+            return res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/data-collection/logs failed:', err.message);
+            return null;
+        }
+    },
+
+    
+    getDatasets: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/datasets');
+        try {
+            const res: any = await apiClient.get('/ai/datasets');
+            return Array.isArray(res?.datasets) ? res.datasets : (Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []));
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/datasets failed:', err.message);
+            return [];
+        }
+    },
+    getCurrentDataset: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/datasets/current');
+        try {
+            const res: any = await apiClient.get('/ai/datasets/current');
+            return res.dataset || res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/datasets/current failed:', err.message);
+            return null;
+        }
+    },
+    getDatasetByVersion: async (versionTag: string): Promise<any> => {
+        console.log(`[API Call] GET /ai/datasets/${versionTag}`);
+        try {
+            const res: any = await apiClient.get(`/ai/datasets/${versionTag}`);
+            return res.dataset || res.data || res || null;
+        } catch (err: any) {
+            console.error(`[API Failure] GET /ai/datasets/${versionTag} failed:`, err.message);
+            return null;
+        }
+    },
+    createDatasetSnapshot: async (payload: any): Promise<any> => {
+        console.log('[API Call] POST /ai/datasets/create');
+        try {
+            const res: any = await apiClient.post('/ai/datasets/create', payload);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/datasets/create failed:', err.message);
+            throw err;
+        }
+    },
+    archiveDataset: async (versionTag: string): Promise<any> => {
+        console.log(`[API Call] POST /ai/datasets/archive (${versionTag})`);
+        try {
+            const res: any = await apiClient.post('/ai/datasets/archive', { version_tag: versionTag });
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/datasets/archive failed:', err.message);
+            throw err;
+        }
+    },
+    restoreDataset: async (versionTag: string): Promise<any> => {
+        console.log(`[API Call] POST /ai/datasets/restore (${versionTag})`);
+        try {
+            const res: any = await apiClient.post('/ai/datasets/restore', { version_tag: versionTag });
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/datasets/restore failed:', err.message);
+            throw err;
+        }
+    },
+    selectDataset: async (versionTag: string): Promise<any> => {
+        console.log(`[API Call] POST /ai/datasets/select (${versionTag})`);
+        try {
+            const res: any = await apiClient.post('/ai/datasets/select', { version_tag: versionTag });
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/datasets/select failed:', err.message);
+            throw err;
+        }
+    },
+    getDatasetStatistics: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/datasets/statistics');
+        try {
+            const res: any = await apiClient.get('/ai/datasets/statistics');
+            return res.statistics || res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/datasets/statistics failed:', err.message);
+            return null;
+        }
+    },
+    getDatasetHistory: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/datasets/history');
+        try {
+            const res: any = await apiClient.get('/ai/datasets/history');
+            return res.history || res.data || res || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/datasets/history failed:', err.message);
+            return [];
+        }
+    },
+    verifyDatasetIntegrity: async (versionTag?: string): Promise<any> => {
+        console.log('[API Call] GET /ai/datasets/integrity');
+        try {
+            const res: any = await apiClient.get('/ai/datasets/integrity', { params: { version: versionTag } });
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/datasets/integrity failed:', err.message);
+            return null;
+        }
+    },
+
+    
+    getRegisteredModels: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/models/registry');
+        try {
+            const res: any = await apiClient.get('/ai/models/registry');
+            return res.models || res.data || res || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/models/registry failed:', err.message);
+            return [];
+        }
+    },
+    getCurrentProductionModel: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/models/current');
+        try {
+            const res: any = await apiClient.get('/ai/models/current');
+            return res.model || res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/models/current failed:', err.message);
+            return null;
+        }
+    },
+    getRegisteredModelByVersion: async (versionTag: string): Promise<any> => {
+        console.log(`[API Call] GET /ai/models/version/${versionTag}`);
+        try {
+            const res: any = await apiClient.get(`/ai/models/version/${versionTag}`);
+            return res.model || res.data || res || null;
+        } catch (err: any) {
+            console.error(`[API Failure] GET /ai/models/version/${versionTag} failed:`, err.message);
+            return null;
+        }
+    },
+    registerNewModel: async (payload: any): Promise<any> => {
+        console.log('[API Call] POST /ai/models/register-new');
+        try {
+            const res: any = await apiClient.post('/ai/models/register-new', payload);
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/models/register-new failed:', err.message);
+            throw err;
+        }
+    },
+    archiveModelVersion: async (versionTag: string): Promise<any> => {
+        console.log(`[API Call] POST /ai/models/archive-version (${versionTag})`);
+        try {
+            const res: any = await apiClient.post('/ai/models/archive-version', { model_version: versionTag });
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/models/archive-version failed:', err.message);
+            throw err;
+        }
+    },
+    promoteModelToProduction: async (versionTag: string): Promise<any> => {
+        console.log(`[API Call] POST /ai/models/promote (${versionTag})`);
+        try {
+            const res: any = await apiClient.post('/ai/models/promote', { model_version: versionTag });
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/models/promote failed:', err.message);
+            throw err;
+        }
+    },
+    updateModelStatus: async (versionTag: string, status: string): Promise<any> => {
+        console.log(`[API Call] POST /ai/models/status (${versionTag} -> ${status})`);
+        try {
+            const res: any = await apiClient.post('/ai/models/status', { model_version: versionTag, status });
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/models/status failed:', err.message);
+            throw err;
+        }
+    },
+    getModelRegistryHistory: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/models/history');
+        try {
+            const res: any = await apiClient.get('/ai/models/history');
+            return res.history || res.data || res || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/models/history failed:', err.message);
+            return [];
+        }
+    },
+    getModelRegistryMetrics: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/models/metrics');
+        try {
+            const res: any = await apiClient.get('/ai/models/metrics');
+            return res.metrics || res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/models/metrics failed:', err.message);
+            return null;
+        }
+    },
+    getModelArtifacts: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/models/artifacts');
+        try {
+            const res: any = await apiClient.get('/ai/models/artifacts');
+            return res.artifacts || res.data || res || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/models/artifacts failed:', err.message);
+            return [];
+        }
+    },
+
+    
+    compareModels: async (payload?: any): Promise<any> => {
+        console.log('[API Call] POST /ai/models/compare');
+        try {
+            const res: any = await apiClient.post('/ai/models/compare', payload || {});
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/models/compare failed:', err.message);
+            return null;
+        }
+    },
+    getModelRanking: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/models/ranking');
+        try {
+            const res: any = await apiClient.get('/ai/models/ranking');
+            return res.rankings || res.data || res || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/models/ranking failed:', err.message);
+            return [];
+        }
+    },
+    getModelComparisons: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/models/comparisons');
+        try {
+            const res: any = await apiClient.get('/ai/models/comparisons');
+            return res.comparisons || res.data || res || [];
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/models/comparisons failed:', err.message);
+            return [];
+        }
+    },
+    getModelRecommendation: async (prodVersion?: string, candVersion?: string): Promise<any> => {
+        console.log('[API Call] GET /ai/models/recommendation');
+        try {
+            const res: any = await apiClient.get('/ai/models/recommendation', { params: { production: prodVersion, candidate: candVersion } });
+            return res.recommendation || res.data || res || null;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/models/recommendation failed:', err.message);
+            return null;
+        }
+    },
+
+    
+    evaluateDeploymentCandidate: async (payload?: any): Promise<any> => {
+        console.log('[API Call] POST /ai/deployment/evaluate');
+        try {
+            const res: any = await apiClient.post('/ai/deployment/evaluate', payload || {});
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/deployment/evaluate failed:', err.message);
+            return null;
+        }
+    },
+    getDeploymentDecision: async (decisionId?: string): Promise<any> => {
+        console.log('[API Call] GET /ai/deployment/decision');
+        try {
+            const res: any = await apiClient.get('/ai/deployment/decision', { params: { decision_id: decisionId } });
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/deployment/decision failed:', err.message);
+            return null;
+        }
+    },
+    getDeploymentHistory: async (filterType?: string): Promise<any> => {
+        console.log('[API Call] GET /ai/deployment/history');
+        try {
+            const res: any = await apiClient.get('/ai/deployment/history', { params: { filter: filterType } });
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/deployment/history failed:', err.message);
+            return [];
+        }
+    },
+    overrideDeploymentDecision: async (payload?: any): Promise<any> => {
+        console.log('[API Call] POST /ai/deployment/override');
+        try {
+            const res: any = await apiClient.post('/ai/deployment/override', payload || {});
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/deployment/override failed:', err.message);
+            return null;
+        }
+    },
+    getDeploymentPolicies: async (): Promise<any> => {
+        console.log('[API Call] GET /ai/deployment/policies');
+        try {
+            const res: any = await apiClient.get('/ai/deployment/policies');
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] GET /ai/deployment/policies failed:', err.message);
+            return null;
+        }
+    },
+    saveDeploymentPolicies: async (payload?: any): Promise<any> => {
+        console.log('[API Call] POST /ai/deployment/policies');
+        try {
+            const res: any = await apiClient.post('/ai/deployment/policies', payload || {});
+            return res;
+        } catch (err: any) {
+            console.error('[API Failure] POST /ai/deployment/policies failed:', err.message);
+            return null;
         }
     },
     getLowStockIntelligence: async (): Promise<any> => {
@@ -862,7 +1204,7 @@ export const apiService = {
         }
     },
 
-    // --- Barcode Master & Registry ---
+    
     getNextBarcodeId: (): Promise<any> => Promise.resolve({ nextId: 'BAR-' + Date.now() }),
     getBarcodeMaster: (barcodeId: string): Promise<any> => Promise.resolve({}),
     createBarcodeMaster: (data: any): Promise<any> => apiService.createMaterial(data),
@@ -870,7 +1212,7 @@ export const apiService = {
     createBarcodeRegistry: (data: any): Promise<any> => Promise.resolve({ success: true }),
     getNextRegistryId: (): Promise<any> => Promise.resolve({ nextId: 'REG-' + Date.now() }),
 
-    // --- Batches ---
+    
     getBatches: async (): Promise<any> => {
         console.log('[API Call] fetching batches via GET /materials');
         try {
@@ -896,10 +1238,10 @@ export const apiService = {
     },
     createBatch: (data: any): Promise<any> => Promise.resolve({ success: true }),
 
-    // --- Notifications ---
+    
     sendLowStockAlert: (data: any): Promise<any> => Promise.resolve({ success: true }),
 
-    // --- Scanning Logic ---
+    
     processScan: async (data: any): Promise<any> => {
         console.log('[API Call] processScan with:', data);
         try {
@@ -932,7 +1274,7 @@ export const apiService = {
     createSKU: (data: any): Promise<any> => apiService.createMaterial(data),
     getSKUs: (): Promise<any> => apiService.getMaterials(),
 
-    // --- QR Archive ---
+    
     saveQR: (data: any): Promise<any> => Promise.resolve({ success: true }),
     getAllQRs: (): Promise<any> => Promise.resolve([]),
     getQRById: (id: string): Promise<any> => Promise.resolve({}),
@@ -1030,7 +1372,7 @@ export const apiService = {
         }
     },
 
-    // --- Racks ---
+    
     getRacks: async (): Promise<any> => {
         console.log('[API Call] GET /racks');
         try {
@@ -1144,7 +1486,7 @@ export const apiService = {
             return res;
         } catch (err: any) {
             console.error('[API Failure] POST /movements failed:', err.message);
-            // Non-fatal — don't block the scanner flow
+            
             return null;
         }
     },
@@ -1306,7 +1648,7 @@ export const apiService = {
         }
     },
     
-    // Legacy Aliases
+    
     addInventory: (data: any): Promise<any> => apiService.createMaterial(data),
     removeInventory: (data: any): Promise<any> => apiService.deleteMaterial(data.id),
     updateMaterialLimits: async (id: string, minLimit: number, criticalLimit: number): Promise<any> => {
@@ -1324,5 +1666,37 @@ export const exportAuditLogs = apiService.exportAuditLogs;
 export const getDashboardStats = apiService.getDashboardStats;
 export const getWarehouseAnalytics = apiService.getWarehouseAnalytics;
 export const getConsumptionAnalytics = apiService.getConsumptionAnalytics;
+
+export const getDataCollectionStatus = apiService.getDataCollectionStatus;
+export const getDataCollectionStatistics = apiService.getDataCollectionStatistics;
+export const collectDataTransaction = apiService.collectDataTransaction;
+export const getDataCollectionLogs = apiService.getDataCollectionLogs;
+
+export const getDatasets = apiService.getDatasets;
+export const getCurrentDataset = apiService.getCurrentDataset;
+export const getDatasetByVersion = apiService.getDatasetByVersion;
+export const createDatasetSnapshot = apiService.createDatasetSnapshot;
+export const archiveDataset = apiService.archiveDataset;
+export const restoreDataset = apiService.restoreDataset;
+export const selectDataset = apiService.selectDataset;
+export const getDatasetStatistics = apiService.getDatasetStatistics;
+export const getDatasetHistory = apiService.getDatasetHistory;
+export const verifyDatasetIntegrity = apiService.verifyDatasetIntegrity;
+
+export const getRegisteredModels = apiService.getRegisteredModels;
+export const getCurrentProductionModel = apiService.getCurrentProductionModel;
+export const getRegisteredModelByVersion = apiService.getRegisteredModelByVersion;
+export const registerNewModel = apiService.registerNewModel;
+export const archiveModelVersion = apiService.archiveModelVersion;
+export const promoteModelToProduction = apiService.promoteModelToProduction;
+export const updateModelStatus = apiService.updateModelStatus;
+export const getModelRegistryHistory = apiService.getModelRegistryHistory;
+export const getModelRegistryMetrics = apiService.getModelRegistryMetrics;
+export const getModelArtifacts = apiService.getModelArtifacts;
+
+export const compareModels = apiService.compareModels;
+export const getModelRanking = apiService.getModelRanking;
+export const getModelComparisons = apiService.getModelComparisons;
+export const getModelRecommendation = apiService.getModelRecommendation;
 
 export default apiService;

@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-
 class ModelEvaluator:
     """
     ModelEvaluator
@@ -17,11 +16,9 @@ class ModelEvaluator:
         """
         Calculates performance metrics and prediction error statistics.
         """
-        # Predictions
         y_train_pred = model.predict(X_train)
         y_test_pred = model.predict(X_test)
 
-        # Performance Metrics
         mae = float(mean_absolute_error(y_test, y_test_pred))
         mse = float(mean_squared_error(y_test, y_test_pred))
         rmse = float(np.sqrt(mse))
@@ -31,7 +28,6 @@ class ModelEvaluator:
         train_rmse = float(np.sqrt(mean_squared_error(y_train, y_train_pred)))
         train_r2 = float(r2_score(y_train, y_train_pred))
 
-        # Prediction Residual Error Summary (Residuals = y_test - y_test_pred)
         residuals = y_test.values - y_test_pred
         abs_errors = np.abs(residuals)
 
@@ -68,7 +64,6 @@ class ModelEvaluator:
             f"[ModelEvaluator] Evaluation Results -> MAE: {mae:.4f}, RMSE: {rmse:.4f}, R² Score: {r2:.4f}"
         )
         return evaluation_results
-
 
 if __name__ == "__main__":
     print("[ModelEvaluator] Evaluation framework loaded.")

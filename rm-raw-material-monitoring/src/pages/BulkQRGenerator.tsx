@@ -55,13 +55,13 @@ const BulkQRGenerator = () => {
                 setSuccessMsg(`Successfully generated ${res.generated} QR labels for ${materialName.trim()}!`);
                 setGeneratedQRs(res.data || []);
                 
-                // Reset form fields
+                
                 setMaterialName('');
                 setBuckets('');
                 setQtyPerBucket('');
                 setRackCode('');
 
-                // Trigger automatic refresh of the global inventory context (overview, batch, list views)
+                
                 await refreshData();
                 window.dispatchEvent(new CustomEvent('rack-inventory-update'));
                 if (typeof (window as any).refreshDigitalTwin === 'function') {
@@ -78,10 +78,10 @@ const BulkQRGenerator = () => {
     };
 
     const handleDownload = (path: string, id: string) => {
-        // Form absolute URL to image file
+        
         const imageUrl = `http://localhost:5000${path}`;
         
-        // Trigger file download helper
+        
         const link = document.createElement('a');
         link.href = imageUrl;
         link.download = `qr_${id}.png`;
@@ -104,7 +104,7 @@ const BulkQRGenerator = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                {/* Form Card */}
+                
                 <div className="glass-panel p-6 bg-white border border-slate-200/60 rounded-2xl shadow-sm space-y-6 lg:col-span-1">
                     <div className="flex justify-between items-center pb-4 border-b border-slate-100">
                         <h3 className="text-sm font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
@@ -200,7 +200,7 @@ const BulkQRGenerator = () => {
                     </form>
                 </div>
 
-                {/* Previews Panel */}
+                
                 <div className="glass-panel p-6 bg-white border border-slate-200/60 rounded-2xl shadow-sm space-y-6 lg:col-span-2 min-h-[400px] flex flex-col">
                     <div className="flex justify-between items-center pb-4 border-b border-slate-100">
                         <h3 className="text-sm font-bold text-slate-800 tracking-tight flex items-center gap-1.5">

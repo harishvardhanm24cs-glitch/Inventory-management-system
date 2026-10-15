@@ -13,7 +13,7 @@ export const generateQR = async (req, res, next) => {
   try {
     const { material_name, weight, quantity, batch_number, manufacturing_date, rack_code } = req.body;
 
-    // Validate material_name
+    
     if (!material_name) {
       return res.status(400).json({
         status: 'error',
@@ -21,12 +21,12 @@ export const generateQR = async (req, res, next) => {
       });
     }
 
-    // Automatically generate unique barcode ID
+    
     const barcodeId = `BAR-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
     const finalWeight = weight !== undefined ? parseFloat(weight) : (quantity !== undefined ? parseFloat(quantity) : 0.00);
 
-    // Prepare JSON payload for the QR code
+    
     const qrDataObj = {
       barcode_id: barcodeId,
       material_name,
@@ -38,17 +38,17 @@ export const generateQR = async (req, res, next) => {
 
     const qrDataString = JSON.stringify(qrDataObj);
 
-    // Ensure uploads directory exists
+    
     const uploadsDir = path.join(process.cwd(), 'uploads');
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
-    // Generate relative file path and absolute destination path
+    
     const filePath = `uploads/qr_${barcodeId}.png`;
     const fullPath = path.join(process.cwd(), filePath);
 
-    // Save QR code as PNG image file
+    
     await QRCode.toFile(fullPath, qrDataString, {
       width: 512,
       margin: 2
@@ -58,13 +58,13 @@ export const generateQR = async (req, res, next) => {
     console.log('QR image saved successfully');
     console.log(`generated file path: /${filePath}`);
 
-    // Save QR relative file path (as qr_data) and material details in the database
+    
     const [result] = await db.query(
       'INSERT INTO qr_codes (barcode_id, material_name, quantity, units, rack_code, qr_data, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [
         barcodeId,
         material_name,
-        1.00, // 1 container
+        1.00, 
         finalWeight,
         rack_code || null,
         filePath,
@@ -100,7 +100,7 @@ export const generateQR = async (req, res, next) => {
       action_details: `Generated single QR code for material ${material_name} (Barcode: ${barcodeId})`
     });
 
-    // Return the response payload
+    
     res.status(201).json({
       status: 'success',
       message: 'QR generated and material registered successfully',
@@ -108,7 +108,7 @@ export const generateQR = async (req, res, next) => {
       data: {
         barcode_id: barcodeId
       },
-      qr_image_path: `/${filePath}`, // prefixed with a leading slash
+      qr_image_path: `/${filePath}`, 
       material_name: material_name,
       batch_number: batch_number || null,
       rack_code: rack_code || null
@@ -146,7 +146,7 @@ export const bulkGenerateQR = async (req, res, next) => {
       });
     }
 
-    // 1. Extract initials-based prefix from material name (e.g. "Dark Blue Paint" -> "DB")
+    
     const words = material_name
       .split(' ')
       .filter(w => !['paint', 'material', 'raw', 'color', 'ink', 'powder', 'chemical'].includes(w.toLowerCase()));
@@ -157,11 +157,11 @@ export const bulkGenerateQR = async (req, res, next) => {
     } else if (words.length === 1) {
       prefix = words[0].slice(0, 2).toUpperCase();
     }
-    // Clean prefix of non-alphabetic chars
+    
     prefix = prefix.replace(/[^A-Z]/g, '');
     if (!prefix) prefix = 'QR';
 
-    // 2. Query existing barcode IDs starting with this prefix to identify the next sequential number
+    
     const [existingQrCodes] = await connection.query(
       'SELECT barcode_id FROM qr_codes WHERE barcode_id LIKE ?',
       [`${prefix}%`]
@@ -191,13 +191,13 @@ export const bulkGenerateQR = async (req, res, next) => {
     let nextNumber = maxNum + 1;
     const generatedList = [];
 
-    // Ensure uploads directory exists
+    
     const uploadsDir = path.join(process.cwd(), 'uploads');
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
-    // 3. Loop and generate QR codes
+    
     for (let i = 0; i < count; i++) {
       const barcodeId = `${prefix}${String(nextNumber).padStart(3, '0')}`;
       nextNumber++;
@@ -215,20 +215,20 @@ export const bulkGenerateQR = async (req, res, next) => {
       const filePath = `uploads/qr_${barcodeId}.png`;
       const fullPath = path.join(process.cwd(), filePath);
 
-      // Save QR code as PNG image file
+      
       await QRCode.toFile(fullPath, qrDataString, {
         width: 512,
         margin: 2
       });
 
       console.log(`[Bulk QR DB] Inserting into qr_codes: barcode_id=${barcodeId}, material_name=${material_name}, quantity=1.00, units=${units !== undefined ? parseFloat(units) : 0.00}, rack_code=${rack_code || null}, qr_data=${filePath}`);
-      // Insert into qr_codes table
+      
       await connection.query(
         'INSERT INTO qr_codes (barcode_id, material_name, quantity, units, rack_code, qr_data, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [
           barcodeId,
           material_name,
-          1.00, // 1 container
+          1.00, 
           units !== undefined ? parseFloat(units) : 0.00,
           rack_code || null,
           filePath,
@@ -318,7 +318,7 @@ export const getQrCodesList = async (req, res, next) => {
 
     const queryParams = [];
 
-    // Search filter
+    
     if (q) {
       const searchPattern = `%${q}%`;
       countQuery += ` AND (q.material_name LIKE ? OR q.barcode_id LIKE ?)`;
@@ -326,17 +326,17 @@ export const getQrCodesList = async (req, res, next) => {
       queryParams.push(searchPattern, searchPattern);
     }
 
-    // Status filter
+    
     if (status && status !== 'all') {
       countQuery += ` AND q.status = ?`;
       dataQuery += ` AND q.status = ?`;
       queryParams.push(status);
     }
 
-    // Sort by creation date descending
+    
     dataQuery += ` ORDER BY q.created_at DESC`;
 
-    // Pagination limits
+    
     dataQuery += ` LIMIT ? OFFSET ?`;
     
     const countParams = [...queryParams];
@@ -366,7 +366,7 @@ export const getQrTrace = async (req, res, next) => {
   try {
     const { barcode_id } = req.params;
 
-    // 1. Fetch QR code record and join with the user who scanned it
+    
     const [qrRecords] = await db.query(
       `SELECT q.id, q.barcode_id, q.material_name, q.quantity, q.units, 
               COALESCE(q.rack_code, 'Not Assigned') AS rack_code, q.status, 
@@ -387,8 +387,8 @@ export const getQrTrace = async (req, res, next) => {
 
     const qrCode = qrRecords[0];
 
-    // 2. Fetch transaction history of the associated material
-    // We map barcode_id to materials.barcode
+    
+    
     const [materials] = await db.query(
       'SELECT id, quantity AS current_stock, unit FROM materials WHERE barcode = ?',
       [barcode_id]
@@ -491,7 +491,7 @@ export const getQrHistoryByBarcode = async (req, res, next) => {
  */
 export const getTrafficAnalytics = async (req, res, next) => {
   try {
-    // 1. Most Active Rack
+    
     const [mostActiveRacks] = await db.query(
       `SELECT rack_code, COUNT(*) AS count
        FROM qr_history
@@ -502,7 +502,7 @@ export const getTrafficAnalytics = async (req, res, next) => {
     );
     const mostActiveRack = mostActiveRacks.length > 0 ? mostActiveRacks[0] : { rack_code: 'N/A', count: 0 };
 
-    // 2. Least Active Rack (Rank all registered racks by activity count, including 0 count racks)
+    
     const [leastActiveRacks] = await db.query(
       `SELECT r.rack_code, COUNT(qh.id) AS count
        FROM racks r
@@ -513,7 +513,7 @@ export const getTrafficAnalytics = async (req, res, next) => {
     );
     const leastActiveRack = leastActiveRacks.length > 0 ? leastActiveRacks[0] : { rack_code: 'N/A', count: 0 };
 
-    // 3. Most Moved Material
+    
     const [mostMovedMaterials] = await db.query(
       `SELECT material_name, COUNT(*) AS count
        FROM qr_history
@@ -524,21 +524,21 @@ export const getTrafficAnalytics = async (req, res, next) => {
     );
     const mostMovedMaterial = mostMovedMaterials.length > 0 ? mostMovedMaterials[0] : { material_name: 'N/A', count: 0 };
 
-    // 4. Today's Movements
+    
     const [[{ todayCount }]] = await db.query(
       `SELECT COUNT(*) AS todayCount
        FROM qr_history
        WHERE DATE(created_at) = CURDATE()`
     );
 
-    // 5. This Week Movements
+    
     const [[{ thisWeekCount }]] = await db.query(
       `SELECT COUNT(*) AS thisWeekCount
        FROM qr_history
        WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)`
     );
 
-    // 6. Daily Movements Chart Data (Last 7 days)
+    
     const [dailyLogs] = await db.query(
       `SELECT DATE_FORMAT(created_at, '%Y-%m-%d') AS date, COUNT(*) AS count
        FROM qr_history
@@ -547,7 +547,7 @@ export const getTrafficAnalytics = async (req, res, next) => {
        ORDER BY date ASC`
     );
 
-    // 7. Top 5 Rack Activity Chart Data
+    
     const [rackActivityLogs] = await db.query(
       `SELECT rack_code, COUNT(*) AS count
        FROM qr_history

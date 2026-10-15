@@ -70,7 +70,7 @@ export const IntelligenceCategorySection: React.FC<IntelligenceCategorySectionPr
 
   return (
     <div className={`rounded-2xl border ${theme.borderSection} p-6 backdrop-blur-md transition-all shadow-lg space-y-4`}>
-      {/* Section Header */}
+      
       <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
         <div className="flex items-center gap-3">
           <div className={`flex h-10 w-10 items-center justify-center rounded-xl border ${theme.bgHeader}`}>
@@ -88,7 +88,7 @@ export const IntelligenceCategorySection: React.FC<IntelligenceCategorySectionPr
         </span>
       </div>
 
-      {/* Materials Grid Table */}
+      
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -102,13 +102,13 @@ export const IntelligenceCategorySection: React.FC<IntelligenceCategorySectionPr
           </thead>
           <tbody className="divide-y divide-slate-800/60 text-xs">
             {items.map((item) => {
-              // Calculate stock level progress percentage (relative to maxThreshold)
+              
               const maxVal = item.maxThreshold > 0 ? item.maxThreshold : item.minThreshold * 4;
               const fillPct = Math.min(100, Math.max(5, (item.stock / maxVal) * 100));
 
               return (
                 <tr key={item.id} className="hover:bg-slate-800/40 transition-colors group">
-                  {/* Material Name */}
+                  
                   <td className="py-3.5 px-3">
                     <div className="flex flex-col">
                       <span className="font-bold text-slate-100 group-hover:text-cyan-400 transition-colors">
@@ -120,7 +120,7 @@ export const IntelligenceCategorySection: React.FC<IntelligenceCategorySectionPr
                     </div>
                   </td>
 
-                  {/* Current Quantity */}
+                  
                   <td className="py-3.5 px-3">
                     <div className="space-y-1">
                       <div className="flex items-baseline gap-1 font-mono">
@@ -136,17 +136,17 @@ export const IntelligenceCategorySection: React.FC<IntelligenceCategorySectionPr
                     </div>
                   </td>
 
-                  {/* Min Threshold */}
+                  
                   <td className="py-3.5 px-3 font-mono font-medium text-slate-300">
                     {item.minThreshold.toLocaleString()} {item.unit}
                   </td>
 
-                  {/* Max Threshold */}
+                  
                   <td className="py-3.5 px-3 font-mono font-medium text-slate-300">
                     {item.maxThreshold >= 99999999 ? 'Unlimited' : `${item.maxThreshold.toLocaleString()} ${item.unit}`}
                   </td>
 
-                  {/* Recommended Status */}
+                  
                   <td className="py-3.5 px-3 text-right">
                     <div className="inline-flex flex-col items-end">
                       <span className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border ${theme.statusBg}`}>

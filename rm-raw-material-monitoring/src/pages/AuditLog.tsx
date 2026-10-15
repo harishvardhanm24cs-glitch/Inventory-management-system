@@ -43,7 +43,7 @@ interface SummaryStats {
 }
 
 const AuditLog: React.FC = () => {
-    // Audit Records & Pagination state
+    
     const [records, setRecords] = useState<AuditRecord[]>([]);
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState<SummaryStats>({
@@ -59,7 +59,7 @@ const AuditLog: React.FC = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [totalRecords, setTotalRecords] = useState(0);
 
-    // Filter states
+    
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedActionType, setSelectedActionType] = useState('All');
     const [filterDate, setFilterDate] = useState('');
@@ -68,11 +68,11 @@ const AuditLog: React.FC = () => {
     const [filterUser, setFilterUser] = useState('');
     const [showFilters, setShowFilters] = useState(false);
 
-    // Sorting state
+    
     const [sortBy, setSortBy] = useState('timestamp');
     const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('DESC');
 
-    // Auto Refresh state
+    
     const [autoRefresh, setAutoRefresh] = useState(true);
 
     const actionTypes = [
@@ -128,12 +128,12 @@ const AuditLog: React.FC = () => {
          }
     }, [page, limit, sortBy, sortOrder, selectedActionType, filterDate, filterMaterial, filterRack, filterUser, searchQuery]);
 
-    // Fetch logs on change
+    
     useEffect(() => {
         fetchLogs();
     }, [fetchLogs]);
 
-    // Live Auto Refresh (every 10 seconds)
+    
     useEffect(() => {
         if (!autoRefresh) return;
         const interval = setInterval(() => {
@@ -231,10 +231,10 @@ const AuditLog: React.FC = () => {
             if (res && res.status === 'success' && Array.isArray(res.data)) {
                 const doc = new jsPDF();
                 
-                // Add header info
+                
                 doc.setFont('Helvetica', 'bold');
                 doc.setFontSize(20);
-                doc.setTextColor(15, 23, 42); // slate-900
+                doc.setTextColor(15, 23, 42); 
                 doc.text('RM Monitor - Industrial Audit Trail', 14, 20);
                 
                 doc.setFontSize(9);
@@ -293,7 +293,7 @@ const AuditLog: React.FC = () => {
 
     return (
         <div className="space-y-8 pb-12 text-slate-800 animate-saas-fade">
-            {/* Header section */}
+            
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
                 <div>
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-wider border border-blue-100">
@@ -309,7 +309,7 @@ const AuditLog: React.FC = () => {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    {/* Auto Refresh Toggle */}
+                    
                     <div className="flex items-center gap-2.5 px-4 py-2 bg-slate-50 border border-slate-200/60 rounded-xl">
                         <span className="relative flex h-2 w-2">
                             {autoRefresh && (
@@ -337,9 +337,9 @@ const AuditLog: React.FC = () => {
                 </div>
             </div>
 
-            {/* Dashboard Card summary panel */}
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-                {/* 1. Today's Actions */}
+                
                 <div className="saas-card p-5 hover:scale-[1.01] transition-transform duration-300">
                     <div className="flex justify-between items-center mb-4">
                         <div className="icon-container bg-slate-100 text-slate-700">

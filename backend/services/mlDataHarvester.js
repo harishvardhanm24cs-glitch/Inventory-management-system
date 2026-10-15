@@ -1,24 +1,7 @@
 import db from '../config/db.js';
 
-/**
- * mlDataHarvester.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Read-Only Data Ingestion & Harvesting Layer for ML Pipeline.
- *
- * Harvests multi-source historical warehouse data across:
- * • Inventory (materials table)
- * • Transactions (transactions & material_usage_history tables)
- * • Scanner events (qr_history & audit_logs tables)
- * • Rack changes (racks, rack_inventory, rack_overload_history tables)
- * • Alerts (alerts table)
- *
- * CRITICAL RULE: Uses 100% read-only SQL queries. Never modifies operational tables.
- */
-
 export const mlDataHarvester = {
-  /**
-   * 1. Harvest raw inventory snapshot data
-   */
+  
   async harvestInventoryData() {
     try {
       const [rows] = await db.query(
@@ -28,19 +11,17 @@ export const mlDataHarvester = {
     } catch (err) {
       console.warn('[mlDataHarvester] harvestInventoryData (using fallback telemetry data):', err.message);
     }
-    // Fallback sample records for offline/demo operation
+    
     return [
       { id: 1, barcode: 'MAT-STEEL-001', material_name: 'Structural Steel Beams', quantity: 150.0, threshold_limit: 50.0, unit: 'TONS', rack_code: 'RK-A1', created_at: '2026-07-01T10:00:00Z' },
       { id: 2, barcode: 'MAT-COPPER-002', material_name: 'Copper Wire Spools', quantity: 15.0, threshold_limit: 30.0, unit: 'UNITS', rack_code: 'RK-B2', created_at: '2026-07-02T11:30:00Z' },
       { id: 3, barcode: 'MAT-ALUM-003', material_name: 'Aluminum Sheets', quantity: 0.0, threshold_limit: 25.0, unit: 'SHEETS', rack_code: 'RK-C3', created_at: '2026-07-05T09:15:00Z' },
       { id: 4, barcode: 'MAT-POLY-004', material_name: 'Polymer Resin Pellets', quantity: 450.0, threshold_limit: 100.0, unit: 'KG', rack_code: 'RK-D4', created_at: '2026-07-10T14:20:00Z' },
-      { id: 5, barcode: 'MAT-COPPER-002', material_name: 'Copper Wire Spools', quantity: 15.0, threshold_limit: 30.0, unit: 'UNITS', rack_code: 'RK-B2', created_at: '2026-07-02T11:30:00Z' } // duplicate for dedup test
+      { id: 5, barcode: 'MAT-COPPER-002', material_name: 'Copper Wire Spools', quantity: 15.0, threshold_limit: 30.0, unit: 'UNITS', rack_code: 'RK-B2', created_at: '2026-07-02T11:30:00Z' } 
     ];
   },
 
-  /**
-   * 2. Harvest historical transactions data
-   */
+  
   async harvestTransactionData() {
     try {
       const [rows] = await db.query(`
@@ -69,9 +50,7 @@ export const mlDataHarvester = {
     ];
   },
 
-  /**
-   * 3. Harvest scanner event logs & audit trails
-   */
+  
   async harvestScannerData() {
     let scanLogs = [];
     try {
@@ -109,9 +88,7 @@ export const mlDataHarvester = {
     };
   },
 
-  /**
-   * 4. Harvest rack states, inventory allocations & overload history
-   */
+  
   async harvestRackData() {
     let racks = [];
     try {
@@ -155,9 +132,7 @@ export const mlDataHarvester = {
     };
   },
 
-  /**
-   * 5. Harvest system alerts and status logs
-   */
+  
   async harvestAlertData() {
     try {
       const [rows] = await db.query(`
@@ -173,9 +148,7 @@ export const mlDataHarvester = {
     ];
   },
 
-  /**
-   * Comprehensive Harvest Execution: Collects raw multi-source datasets
-   */
+  
   async harvestAllWarehouseData() {
     const [inventory, transactions, scanner, rackData, alerts] = await Promise.all([
       this.harvestInventoryData(),

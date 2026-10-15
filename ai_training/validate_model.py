@@ -31,19 +31,16 @@ from datetime import datetime
 from sklearn.model_selection import KFold
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-# Configure sys.stdout for UTF-8 encoding if supported
 if hasattr(sys.stdout, "reconfigure"):
     try:
         sys.stdout.reconfigure(encoding="utf-8")
     except Exception:
         pass
 
-# Ensure sys.path includes ai_training/ and project root
 AI_TRAINING_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = AI_TRAINING_DIR.parent
 sys.path.insert(0, str(AI_TRAINING_DIR))
 sys.path.insert(0, str(PROJECT_ROOT))
-
 
 try:
     from config import (
@@ -60,7 +57,6 @@ except ImportError:
     from ai_training.dataset_loader import DatasetLoader
     from ai_training.preprocessing import DataPreprocessor
 
-
 class ModelValidationDiagnostics:
     def __init__(self):
         self.reports_dir = Path(REPORTS_DIR)
@@ -73,15 +69,11 @@ class ModelValidationDiagnostics:
         print(msg)
         self.logs.append(msg)
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 1: TRAINING PIPELINE VALIDATION
-    # ──────────────────────────────────────────────────────────────────────────
     def validate_training_pipeline(self):
         self.log("\n" + "=" * 80)
         self.log("SECTION 1: TRAINING PIPELINE & MODEL ARTIFACT VALIDATION")
         self.log("=" * 80)
 
-        # Find latest model artifact in EXPORT_MODEL_DIR or MODEL_REGISTRY_JSON
         registry_path = Path(MODEL_REGISTRY_JSON)
         latest_model_path = None
         model_version = "v1"
@@ -102,7 +94,6 @@ class ModelValidationDiagnostics:
                 self.log(f"   • Notice reading registry: {e}")
 
         if not latest_model_path or not latest_model_path.exists():
-            # Fallback to scan ai/models/ for highest version joblib
             export_dir = Path(EXPORT_MODEL_DIR)
             joblib_files = list(export_dir.glob("rm_model_v*.joblib"))
             if joblib_files:
@@ -117,7 +108,6 @@ class ModelValidationDiagnostics:
         self.log(f"   • Model Path        : '{latest_model_path}'")
         self.log(f"   • File Exists       : {latest_model_path.exists()}")
 
-        # Load Model
         try:
             model = joblib.load(latest_model_path)
             self.log(f"   • Model Load        : SUCCESS")
@@ -146,9 +136,6 @@ class ModelValidationDiagnostics:
         self.results["section_1_pipeline_validation"] = section1_summary
         return model, latest_model_path, section1_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 2: TARGET COLUMN VALIDATION
-    # ──────────────────────────────────────────────────────────────────────────
     def validate_target_column(self, df: pd.DataFrame):
         self.log("\n" + "=" * 80)
         self.log(f"SECTION 2: TARGET COLUMN VALIDATION ('{TARGET_COLUMN}')")
@@ -162,7 +149,6 @@ class ModelValidationDiagnostics:
         raw_target_series = df[TARGET_COLUMN]
         null_count = int(raw_target_series.isnull().sum())
 
-        # Convert to numeric float for statistical calculation
         numeric_target = pd.to_numeric(raw_target_series, errors="coerce").fillna(0.0)
 
         min_val = float(numeric_target.min())
@@ -208,9 +194,6 @@ class ModelValidationDiagnostics:
         self.results["section_2_target_validation"] = section2_summary
         return numeric_target, is_constant, section2_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 3: FEATURE VALIDATION
-    # ──────────────────────────────────────────────────────────────────────────
     def validate_features(self, df: pd.DataFrame, X: pd.DataFrame, model):
         self.log("\n" + "=" * 80)
         self.log("SECTION 3: FEATURE VALIDATION (X vs TARGET)")
@@ -244,9 +227,6 @@ class ModelValidationDiagnostics:
         self.results["section_3_feature_validation"] = section3_summary
         return section3_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 4: CONSTANT FEATURE DETECTION
-    # ──────────────────────────────────────────────────────────────────────────
     def detect_constant_features(self, X: pd.DataFrame):
         self.log("\n" + "=" * 80)
         self.log("SECTION 4: CONSTANT & NEAR-CONSTANT FEATURE DETECTION")
@@ -311,9 +291,6 @@ class ModelValidationDiagnostics:
         self.results["section_4_constant_features"] = section4_summary
         return pd.DataFrame(feature_diag_records), section4_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 5: TARGET LEAKAGE DETECTION
-    # ──────────────────────────────────────────────────────────────────────────
     def detect_target_leakage(self, X: pd.DataFrame, y: pd.Series):
         self.log("\n" + "=" * 80)
         self.log("SECTION 5: TARGET LEAKAGE DETECTION")
@@ -327,9 +304,7 @@ class ModelValidationDiagnostics:
         for col in X.columns:
             series = X[col]
 
-
             if not y_is_const:
-                # Check duplicate / identical when target is non-constant
                 if series.equals(y):
                     leakage_suspects.append({
                         "feature": col,
@@ -337,7 +312,6 @@ class ModelValidationDiagnostics:
                         "risk_level": "CRITICAL"
                     })
 
-                # Check Correlation
                 if series.std() > 0:
                     corr = float(series.corr(y))
                     correlations[col] = round(corr, 4)
@@ -364,7 +338,6 @@ class ModelValidationDiagnostics:
         else:
             self.log("   ✅ No target leakage or perfect correlation (>0.99) detected among features.")
 
-
         section5_summary = {
             "target_is_constant": y_is_const,
             "leakage_suspects_count": len(leakage_suspects),
@@ -375,15 +348,11 @@ class ModelValidationDiagnostics:
         self.results["section_5_target_leakage"] = section5_summary
         return section5_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 6: MODEL PREDICTION VALIDATION
-    # ──────────────────────────────────────────────────────────────────────────
     def validate_predictions(self, X: pd.DataFrame, y: pd.Series, model):
         self.log("\n" + "=" * 80)
         self.log("SECTION 6: MODEL PREDICTION VALIDATION (15 RANDOM SAMPLES)")
         self.log("=" * 80)
 
-        # Randomly select 15 rows using seed 42
         np.random.seed(RANDOM_STATE)
         sample_indices = np.random.choice(len(X), size=min(15, len(X)), replace=False)
         sample_indices.sort()
@@ -422,9 +391,6 @@ class ModelValidationDiagnostics:
         self.results["section_6_prediction_validation"] = section6_summary
         return pred_df, section6_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 7: FEATURE IMPORTANCE VALIDATION & DIAGNOSIS
-    # ──────────────────────────────────────────────────────────────────────────
     def validate_feature_importance(self, model, is_target_constant: bool):
         self.log("\n" + "=" * 80)
         self.log("SECTION 7: FEATURE IMPORTANCE VALIDATION & ANOMALY DIAGNOSIS")
@@ -465,9 +431,6 @@ class ModelValidationDiagnostics:
         self.results["section_7_feature_importance_validation"] = section7_summary
         return section7_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 8: CROSS VALIDATION
-    # ──────────────────────────────────────────────────────────────────────────
     def perform_cross_validation(self, X: pd.DataFrame, y: pd.Series, model):
         self.log("\n" + "=" * 80)
         self.log("SECTION 8: 5-FOLD CROSS-VALIDATION AUDIT")
@@ -484,7 +447,6 @@ class ModelValidationDiagnostics:
             X_tr, X_va = X.iloc[train_idx], X.iloc[val_idx]
             y_tr, y_va = y.iloc[train_idx], y.iloc[val_idx]
 
-            # Clone & fit model on fold
             fold_model = model.__class__(**model.get_params())
             fold_model.fit(X_tr, y_tr)
             y_va_pred = fold_model.predict(X_va)
@@ -542,9 +504,6 @@ class ModelValidationDiagnostics:
         self.results["section_8_cross_validation"] = section8_summary
         return section8_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 9: MODEL SANITY CHECK
-    # ──────────────────────────────────────────────────────────────────────────
     def perform_sanity_check(self, X: pd.DataFrame, model):
         self.log("\n" + "=" * 80)
         self.log("SECTION 9: MODEL SANITY CHECK & PREDICTION DISTRIBUTION")
@@ -575,46 +534,31 @@ class ModelValidationDiagnostics:
         self.results["section_9_model_sanity_check"] = section9_summary
         return section9_summary
 
-    # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 10: FINAL DIAGNOSIS & REPORT GENERATION
-    # ──────────────────────────────────────────────────────────────────────────
     def run_all_diagnostics(self):
-        # Ingest
         loader = DatasetLoader()
         df, val_summary = loader.load_and_validate_feature_dataset()
 
-        # Section 1
         model, model_path, sec1 = self.validate_training_pipeline()
 
-        # Section 2
         y, is_target_const, sec2 = self.validate_target_column(df)
 
-        # Preprocess for X
         preprocessor = DataPreprocessor(target_column=TARGET_COLUMN)
         X, _, feature_names = preprocessor.preprocess_dataset(df)
 
-        # Section 3
         sec3 = self.validate_features(df, X, model)
 
-        # Section 4
         feat_diag_df, sec4 = self.detect_constant_features(X)
 
-        # Section 5
         sec5 = self.detect_target_leakage(X, y)
 
-        # Section 6
         pred_df, sec6 = self.validate_predictions(X, y, model)
 
-        # Section 7
         sec7 = self.validate_feature_importance(model, is_target_const)
 
-        # Section 8
         sec8 = self.perform_cross_validation(X, y, model)
 
-        # Section 9
         sec9 = self.perform_sanity_check(X, model)
 
-        # Section 10: Final Diagnosis
         self.log("\n" + "=" * 80)
         self.log("SECTION 10: FINAL DIAGNOSIS & READINESS VERDICT")
         self.log("=" * 80)
@@ -658,23 +602,17 @@ class ModelValidationDiagnostics:
         }
         self.results["section_10_final_diagnosis"] = sec10_summary
 
-        # ──────────────────────────────────────────────────────────────────────
-        # GENERATE ALL 8 REQUIRED REPORT FILES
-        # ──────────────────────────────────────────────────────────────────────
         self.log("\n" + "=" * 80)
         self.log("GENERATING DIAGNOSTIC REPORT ARTIFACTS...")
         self.log("=" * 80)
 
-        # 1. model_validation_report.json
         json_report_path = self.reports_dir / "model_validation_report.json"
         with open(json_report_path, "w", encoding="utf-8") as f:
             json.dump(self.results, f, indent=2)
 
-        # 2. prediction_validation.csv
         pred_csv_path = self.reports_dir / "prediction_validation.csv"
         pred_df.to_csv(pred_csv_path, index=False)
 
-        # 3. target_analysis.csv
         target_df = pd.DataFrame([{
             "target_column": TARGET_COLUMN,
             "total_rows": sec2["total_rows"],
@@ -691,16 +629,13 @@ class ModelValidationDiagnostics:
         target_csv_path = self.reports_dir / "target_analysis.csv"
         target_df.to_csv(target_csv_path, index=False)
 
-        # 4. feature_diagnostics.csv
         feat_diag_csv_path = self.reports_dir / "feature_diagnostics.csv"
         feat_diag_df.to_csv(feat_diag_csv_path, index=False)
 
-        # 5. cross_validation_report.json
         cv_json_path = self.reports_dir / "cross_validation_report.json"
         with open(cv_json_path, "w", encoding="utf-8") as f:
             json.dump(sec8, f, indent=2)
 
-        # 6. leakage_report.md
         leakage_md_lines = [
             "# RM Monitor - Target Leakage Audit Report",
             "",
@@ -723,7 +658,6 @@ class ModelValidationDiagnostics:
         with open(leakage_md_path, "w", encoding="utf-8") as f:
             f.write("\n".join(leakage_md_lines))
 
-        # 7. training_diagnostics.md
         diag_md_lines = [
             "# RM Monitor - Model Training Diagnostic Explanation",
             "",
@@ -757,7 +691,6 @@ class ModelValidationDiagnostics:
         with open(diag_md_path, "w", encoding="utf-8") as f:
             f.write("\n".join(diag_md_lines))
 
-        # 8. model_validation_report.md
         val_md_lines = [
             "# RM Monitor - Machine Learning Model Validation Report",
             "",
@@ -818,7 +751,6 @@ class ModelValidationDiagnostics:
         self.log(f"   • Saved '{diag_md_path.name}'")
         self.log(f"   • Saved '{val_md_path.name}'")
 
-        # Terminal Output Criteria
         self.log("\n" + "=" * 80)
         if is_ready:
             self.log("✅ Model Validation Passed")
@@ -831,7 +763,6 @@ class ModelValidationDiagnostics:
         self.log("=" * 80)
 
         return is_ready
-
 
 if __name__ == "__main__":
     diag = ModelValidationDiagnostics()

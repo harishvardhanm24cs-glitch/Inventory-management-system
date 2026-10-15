@@ -1,17 +1,4 @@
-/**
- * lowStockIntelligence.ts
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 2 – Low Stock Intelligence Client Engine
- *
- * Dedicated client-side module for dynamic low stock analysis.
- * Analyzes Current Quantity, Threshold Limit, Consumption Rate (burn rate),
- * and Recent Transactions to evaluate dynamic states (SAFE, MONITOR, REORDER_SOON, CRITICAL).
- *
- * Provides typed methods for:
- * • Dashboard KPI Widgets & Stock Health Cards
- * • Reorder Priority Tables & Action Timelines
- * • Support for pluggable client-side ML Predictor models
- */
+
 
 import api from './api';
 
@@ -45,9 +32,7 @@ export interface LowStockSummary {
 }
 
 class ClientLowStockIntelligence {
-  /**
-   * Fetch live low-stock analytical predictions from backend engine
-   */
+  
   async getAnalysis(): Promise<LowStockAnalysisItem[]> {
     try {
       const res: any = await api.getLowStockIntelligence();
@@ -61,9 +46,7 @@ class ClientLowStockIntelligence {
     }
   }
 
-  /**
-   * Summarize warehouse inventory health for executive widgets
-   */
+  
   async getSummary(): Promise<LowStockSummary> {
     const items = await this.getAnalysis();
 

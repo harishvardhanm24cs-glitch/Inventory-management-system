@@ -1,9 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Alert = require('../models/alertModel');
 
-// @desc    Get all active unresolved alerts
-// @route   GET /api/alerts
-// @access  Private (Manager & Engineer)
 const getAlerts = asyncHandler(async (req, res) => {
   const alerts = await Alert.getActiveAlerts();
   
@@ -14,9 +11,6 @@ const getAlerts = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Manually mark an alert as resolved
-// @route   PUT /api/alerts/:id/resolve
-// @access  Private (Manager)
 const resolveAlert = asyncHandler(async (req, res) => {
   const affected = await Alert.resolveAlert(req.params.id);
 

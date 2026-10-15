@@ -4,8 +4,6 @@ import { protect, anyRole } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// GET /api/transactions
-// Retrieves all stock adjustment logs (inward/outward) joined with material info
 router.get('/', protect, anyRole, async (req, res, next) => {
   try {
     const [transactions] = await db.query(

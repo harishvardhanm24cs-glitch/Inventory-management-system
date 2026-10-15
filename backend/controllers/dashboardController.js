@@ -2,31 +2,31 @@ import db from '../config/db.js';
 
 export const getDashboardStats = async (req, res, next) => {
   try {
-    // 1. Count materials from materials table
+    
     const [[{ total: total_materials }]] = await db.query('SELECT COUNT(*) AS total FROM materials');
 
-    // 2. Count total inventory (sum of quantity from materials table)
+    
     const [[{ total: total_inventory_raw }]] = await db.query('SELECT SUM(quantity) AS total FROM materials');
     const total_inventory = parseFloat(total_inventory_raw) || 0.00;
 
-    // 3. Count racks from rack_inventory table
+    
     const [[{ total: total_racks }]] = await db.query('SELECT COUNT(*) AS total FROM rack_inventory');
 
-    // 4. Count occupied racks (where current_capacity > 0)
+    
     const [[{ total: occupied_racks }]] = await db.query('SELECT COUNT(*) AS total FROM rack_inventory WHERE current_capacity > 0');
 
-    // 5. Count empty racks (where current_capacity = 0)
+    
     const [[{ total: empty_racks }]] = await db.query('SELECT COUNT(*) AS total FROM rack_inventory WHERE current_capacity = 0');
 
-    // 6. Count QR codes
+    
     const [[{ total: total_qr_codes }]] = await db.query('SELECT COUNT(*) AS total FROM qr_codes');
     const [[{ total: used_qr_codes }]] = await db.query("SELECT COUNT(*) AS total FROM qr_codes WHERE status = 'used'");
     const [[{ total: unused_qr_codes }]] = await db.query("SELECT COUNT(*) AS total FROM qr_codes WHERE status = 'unused'");
 
-    // 7. Count active alerts
+    
     const [[{ total: active_alerts }]] = await db.query("SELECT COUNT(*) AS total FROM alerts WHERE alert_status = 'active'");
 
-    // 8. Warehouse capacities (total, occupied, available)
+    
     const [[{ total_curr, total_max }]] = await db.query(
       'SELECT SUM(current_capacity) AS total_curr, SUM(max_capacity) AS total_max FROM rack_inventory'
     );
@@ -37,18 +37,18 @@ export const getDashboardStats = async (req, res, next) => {
       ? parseFloat(((occupied_capacity / total_warehouse_capacity) * 100).toFixed(2)) 
       : 0.00;
 
-    // 9. Count active workers/users from users table
+    
     const [[{ total: active_workers }]] = await db.query('SELECT COUNT(*) AS total FROM users');
 
-    // 10. Count low stock items (quantity <= threshold_limit)
+    
     const [[{ total: low_stock_items }]] = await db.query('SELECT COUNT(*) AS total FROM materials WHERE quantity <= threshold_limit');
 
-    // 11. Count Today's Inward Transactions
+    
     const [[{ total: todays_inward }]] = await db.query(
       "SELECT COUNT(*) AS total FROM transactions WHERE LOWER(transaction_type) = 'inward' AND DATE(created_at) = CURDATE()"
     );
 
-    // 12. Count Today's Outward Transactions
+    
     const [[{ total: todays_outward }]] = await db.query(
       "SELECT COUNT(*) AS total FROM transactions WHERE LOWER(transaction_type) = 'outward' AND DATE(created_at) = CURDATE()"
     );
@@ -88,7 +88,7 @@ export const getWarehouseAnalytics = async (req, res, next) => {
   try {
     const { dateRange = '30d', material = 'all', rack = 'all', transactionType = 'all' } = req.query;
 
-    // Build date filter clause for transactions/history
+    
     let dateInterval = '30 DAY';
     if (dateRange === '7d') dateInterval = '7 DAY';
     else if (dateRange === '90d') dateInterval = '90 DAY';
@@ -96,7 +96,7 @@ export const getWarehouseAnalytics = async (req, res, next) => {
 
     const useDateFilter = dateRange !== 'all';
 
-    // 1. Inventory by Material
+    
     let matQuery = 'SELECT id, barcode, material_name, quantity, threshold_limit, unit FROM materials';
     const matParams = [];
     if (material !== 'all') {
@@ -114,7 +114,7 @@ export const getWarehouseAnalytics = async (req, res, next) => {
       unit: m.unit || 'KG'
     }));
 
-    // 2. Inventory by Rack
+    
     let rackQuery = 'SELECT rack_code, material_name, current_capacity, max_capacity FROM rack_inventory';
     const rackParams = [];
     if (rack !== 'all') {
@@ -134,7 +134,7 @@ export const getWarehouseAnalytics = async (req, res, next) => {
         : 0
     }));
 
-    // 3. Warehouse Utilization Summary
+    
     const [[{ total_curr, total_max }]] = await db.query(
       'SELECT SUM(current_capacity) AS total_curr, SUM(max_capacity) AS total_max FROM rack_inventory'
     );
@@ -150,7 +150,7 @@ export const getWarehouseAnalytics = async (req, res, next) => {
       utilizationPercentage: utilPct
     };
 
-    // 4. Material Distribution (Percentage shares)
+    
     const [distRows] = await db.query(
       'SELECT material_name, SUM(quantity) AS total_stock FROM materials GROUP BY material_name ORDER BY total_stock DESC LIMIT 8'
     );
@@ -164,7 +164,7 @@ export const getWarehouseAnalytics = async (req, res, next) => {
       };
     });
 
-    // 5. Daily Material Movement
+    
     let dailyWhere = 'WHERE 1=1';
     const dailyParams = [];
     if (useDateFilter) {
@@ -198,7 +198,7 @@ export const getWarehouseAnalytics = async (req, res, next) => {
       total: (parseFloat(r.inward) || 0) + (parseFloat(r.outward) || 0)
     }));
 
-    // 6. Weekly Transactions
+    
     const [weeklyRows] = await db.query(
       `SELECT YEARWEEK(created_at, 1) AS yw,
               CONCAT('Week ', WEEK(created_at, 1)) AS label,
@@ -216,7 +216,7 @@ export const getWarehouseAnalytics = async (req, res, next) => {
       outward: parseFloat(r.outward) || 0
     }));
 
-    // 7. Monthly Transactions
+    
     const [monthlyRows] = await db.query(
       `SELECT DATE_FORMAT(created_at, '%b %Y') AS month,
               SUM(CASE WHEN LOWER(transaction_type) = 'inward' THEN quantity ELSE 0 END) AS inward,
@@ -249,5 +249,4 @@ export const getWarehouseAnalytics = async (req, res, next) => {
     next(error);
   }
 };
-
 

@@ -11,37 +11,20 @@ if (!fs.existsSync(mlDatasetsDir)) {
   fs.mkdirSync(mlDatasetsDir, { recursive: true });
 }
 
-/**
- * dataCleaningPipelineService.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Dedicated Machine Learning Data Cleaning Pipeline for RM Monitor.
- *
- * Performs automated data hygiene, missing value detection, duplicate purging,
- * timestamp validation, record filtering, Min-Max numerical scaling, and
- * One-Hot/Label categorical encoding.
- *
- * Exports cleaned dataset files:
- * • backend/ml_datasets/clean_warehouse_dataset.csv
- * • backend/ml_datasets/clean_warehouse_dataset.json
- */
 export class DataCleaningPipelineService {
 
-  /**
-   * Helper: Min-Max scaler
-   */
+  
   minMaxScale(value, min, max) {
     if (max === min) return 0.0;
     const scaled = (value - min) / (max - min);
     return parseFloat(Math.max(0, Math.min(1, scaled)).toFixed(4));
   }
 
-  /**
-   * Main Data Cleaning & Preprocessing Pipeline
-   */
+  
   async runCleaningPipeline(options = {}) {
     const startTime = Date.now();
 
-    // 1. Fetch raw input dataset rows from Dataset Generator or provided array
+    
     let rawRows = options.raw_rows;
     if (!rawRows || !Array.isArray(rawRows)) {
       rawRows = await datasetGeneratorService.extractDatasetRows();
@@ -55,14 +38,14 @@ export class DataCleaningPipelineService {
     const validTransactionTypes = ['INWARD', 'OUTWARD', 'ADJUSTMENT', 'TRANSFER'];
     const validMovementTypes = ['INWARD', 'OUTWARD', 'TRANSFER'];
 
-    // 2. Validate, Clean, & Filter Invalid Records
+    
     const validatedRows = [];
     const seenDuplicateKeys = new Set();
 
     for (let i = 0; i < rawRows.length; i++) {
       const row = { ...rawRows[i] };
 
-      // Missing Value Check & Imputation
+      
       if (!row.material_name || row.material_name === '' || row.material_name === 'null') {
         missingValuesDetected++;
         row.material_name = 'Unknown Material';
@@ -80,7 +63,7 @@ export class DataCleaningPipelineService {
         row.unit = 'KG';
       }
 
-      // Numeric Validation & Type Conversion
+      
       const matId = parseInt(row.material_id, 10);
       const stock = parseFloat(row.current_stock);
       const threshold = parseFloat(row.threshold);
@@ -90,7 +73,7 @@ export class DataCleaningPipelineService {
       const rackQty = parseFloat(row.current_rack_quantity);
       const occPct = parseFloat(row.occupancy_percentage);
 
-      // Timestamp Validation
+      
       const tsDate = new Date(row.timestamp);
       const isCorruptedDate = isNaN(tsDate.getTime());
 
@@ -98,7 +81,7 @@ export class DataCleaningPipelineService {
       const movTypeUpper = String(row.movement_type || '').toUpperCase();
       const rackCode = String(row.rack_code || '').trim();
 
-      // Check for Invalid Record Criteria
+      
       let isInvalid = false;
       if (isNaN(matId) || matId <= 0) isInvalid = true;
       if (isNaN(stock) || stock < 0) isInvalid = true;
@@ -112,18 +95,18 @@ export class DataCleaningPipelineService {
 
       if (isInvalid) {
         invalidRecordsDetected++;
-        continue; // Drop corrupted/invalid record
+        continue; 
       }
 
-      // Duplicate Check (Preserve earliest valid record)
+      
       const dupKey = `${matId}_${row.transaction_id || i}_${tsDate.toISOString()}_${qty}`;
       if (seenDuplicateKeys.has(dupKey)) {
         duplicateRowsRemoved++;
-        continue; // Purge duplicate
+        continue; 
       }
       seenDuplicateKeys.add(dupKey);
 
-      // Save sanitized numbers
+      
       row.material_id = matId;
       row.current_stock = stock;
       row.threshold = threshold;
@@ -140,10 +123,10 @@ export class DataCleaningPipelineService {
       validatedRows.push(row);
     }
 
-    // 3. Sort Data Chronologically (Timestamp Ascending)
+    
     validatedRows.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
-    // 4. Calculate Min-Max Bounds for Numerical Normalization
+    
     let minStock = Infinity, maxStock = -Infinity;
     let minThresh = Infinity, maxThresh = -Infinity;
     let minQty = Infinity, maxQty = -Infinity;
@@ -180,7 +163,7 @@ export class DataCleaningPipelineService {
       minCap = 0; maxCap = 1000;
     }
 
-    // 5. Categorical Encoding Dictionaries (Label Encoding & One-Hot Encoding)
+    
     const uniqueMaterials = Array.from(new Set(validatedRows.map((r) => r.material_name))).sort();
     const uniqueRacks = Array.from(new Set(validatedRows.map((r) => r.rack_code))).sort();
 
@@ -193,9 +176,9 @@ export class DataCleaningPipelineService {
     const txTypeMap = { Inward: 0, Outward: 1, Adjustment: 2, Transfer: 3 };
     const movTypeMap = { INWARD: 0, OUTWARD: 1, TRANSFER: 2 };
 
-    // 6. Enrich Rows with Scaled Normalization & Categorical Encodings
+    
     const cleanedRows = validatedRows.map((r) => {
-      // Min-Max Scaled Normalized Values
+      
       const norm_current_stock = this.minMaxScale(r.current_stock, minStock, maxStock);
       const norm_threshold = this.minMaxScale(r.threshold, minThresh, maxThresh);
       const norm_quantity = this.minMaxScale(r.quantity, minQty, maxQty);
@@ -203,13 +186,13 @@ export class DataCleaningPipelineService {
       const norm_occupancy = this.minMaxScale(r.occupancy_percentage, minOcc, maxOcc);
       const norm_capacity = this.minMaxScale(r.rack_capacity, minCap, maxCap);
 
-      // Label Encodings
+      
       const encoded_transaction_type = txTypeMap[r.transaction_type] ?? 0;
       const encoded_movement_type = movTypeMap[r.movement_type] ?? 0;
       const encoded_material_name = materialMap[r.material_name] ?? 0;
       const encoded_rack_code = rackMap[r.rack_code] ?? 0;
 
-      // One-Hot Encodings
+      
       const ohe_tx_Inward = r.transaction_type === 'Inward' ? 1 : 0;
       const ohe_tx_Outward = r.transaction_type === 'Outward' ? 1 : 0;
 
@@ -220,7 +203,7 @@ export class DataCleaningPipelineService {
       return {
         ...r,
 
-        // Min-Max Normalization Features
+        
         norm_current_stock,
         norm_threshold,
         norm_quantity,
@@ -228,13 +211,13 @@ export class DataCleaningPipelineService {
         norm_occupancy,
         norm_capacity,
 
-        // Categorical Label Encodings
+        
         encoded_transaction_type,
         encoded_movement_type,
         encoded_material_name,
         encoded_rack_code,
 
-        // One-Hot Encodings
+        
         ohe_tx_Inward,
         ohe_tx_Outward,
         ohe_mov_INWARD,
@@ -246,7 +229,7 @@ export class DataCleaningPipelineService {
     const rowsRetained = cleanedRows.length;
     const rowsRemoved = totalProcessed - rowsRetained;
 
-    // 7. Generate Cleaning Report
+    
     const cleaningReport = {
       pipeline_version: 'v1.0.0',
       execution_timestamp: new Date().toISOString(),
@@ -279,15 +262,15 @@ export class DataCleaningPipelineService {
       }
     };
 
-    // 8. Export Clean Datasets to `backend/ml_datasets/`
+    
     const csvPath = path.join(mlDatasetsDir, 'clean_warehouse_dataset.csv');
     const jsonPath = path.join(mlDatasetsDir, 'clean_warehouse_dataset.json');
 
-    // CSV Export
+    
     const csvContent = datasetGeneratorService.convertToCSV(cleanedRows);
     fs.writeFileSync(csvPath, csvContent, 'utf8');
 
-    // JSON Export (Data + Full Cleaning Report)
+    
     const jsonPayload = {
       cleaning_report: cleaningReport,
       data: cleanedRows

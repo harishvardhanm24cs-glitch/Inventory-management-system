@@ -26,11 +26,11 @@ const AddMaterialModal: React.FC<AddMaterialModalProps> = ({ isOpen, onClose }) 
 
     useEffect(() => {
         if (isOpen) {
-            // Generate unique ID RM-{timestamp}
+            
             const newId = `RM-${Date.now()}`;
             setId(newId);
 
-            // Generate QR code for the new ID
+            
             generateQRCode(newId).then(setQrCodeUrl);
         }
     }, [isOpen]);
@@ -49,7 +49,7 @@ const AddMaterialModal: React.FC<AddMaterialModalProps> = ({ isOpen, onClose }) 
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            // Prepare product object for database save (aligned with backend expectations)
+            
             const materialData = {
                 sku_id: id,
                 paint_name: formData.name,
@@ -60,7 +60,7 @@ const AddMaterialModal: React.FC<AddMaterialModalProps> = ({ isOpen, onClose }) 
             await refreshData();
 
             onClose();
-            // Reset form
+            
             setFormData({
                 name: '',
                 stock: 0,
@@ -85,7 +85,7 @@ const AddMaterialModal: React.FC<AddMaterialModalProps> = ({ isOpen, onClose }) 
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity" onClick={onClose} />
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                 <div className="glass-panel max-w-2xl w-full rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
-                    {/* Left: QR Preview (Show QR instantly) */}
+                    
                     <div className="w-full md:w-1/3 bg-primary/5 p-8 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-100/50">
                         <div className="text-center mb-6">
                             <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-1">Generated QR</h4>
@@ -113,7 +113,7 @@ const AddMaterialModal: React.FC<AddMaterialModalProps> = ({ isOpen, onClose }) 
                         </div>
                     </div>
 
-                    {/* Right: Form */}
+                    
                     <div className="flex-1 p-8">
                         <div className="flex items-center justify-between mb-8">
                             <div>

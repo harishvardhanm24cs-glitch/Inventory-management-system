@@ -4,7 +4,7 @@ import { LayoutDashboard, Package, Settings, BarChart2 } from 'lucide-react';
 function App() {
   return (
     <div className="dashboard-container">
-      {/* Sidebar */}
+      
       <aside className="sidebar">
         <div className="brand">RM Monitor</div>
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -23,7 +23,7 @@ function App() {
         </nav>
       </aside>
 
-      {/* Main Content */}
+      
       <main className="main-content">
         <header className="header">
           <h1>Raw Material Overview</h1>

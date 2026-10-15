@@ -83,7 +83,7 @@ const ManagerDashboard: React.FC = () => {
                 const now = new Date();
                 setLastUpdated(now.toTimeString().split(' ')[0]);
             } else if (response && response.total_materials !== undefined) {
-                // Handle direct payload responses if any
+                
                 setStats(response);
                 setError(null);
                 const now = new Date();
@@ -103,7 +103,7 @@ const ManagerDashboard: React.FC = () => {
     useEffect(() => {
         fetchStats();
 
-        // Auto Refresh every 10 seconds
+        
         const interval = setInterval(() => {
             fetchStats(true);
         }, 10000);
@@ -138,7 +138,7 @@ const ManagerDashboard: React.FC = () => {
         );
     }
 
-    // Recharts Data Preparations
+    
     const rackOccupancyData = stats ? [
         { name: 'Occupied Racks', value: Number(stats.occupied_racks), color: '#4F8CFF' },
         { name: 'Empty Racks', value: Number(stats.empty_racks), color: '#E2E8F0' }
@@ -149,7 +149,7 @@ const ManagerDashboard: React.FC = () => {
         { name: 'Unused QR Codes', value: Number(stats.unused_qr_codes), color: '#F59E0B' }
     ] : [];
 
-    // Sort materials by quantity descending to display material distribution
+    
     const topMaterials = [...materials]
         .sort((a, b) => b.stock - a.stock)
         .slice(0, 8)
@@ -163,7 +163,7 @@ const ManagerDashboard: React.FC = () => {
 
     return (
         <div className="space-y-10 pb-20 animate-saas-fade">
-            {/* Header section */}
+            
             <header className="flex flex-col md:flex-row justify-between items-center gap-6">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -189,9 +189,9 @@ const ManagerDashboard: React.FC = () => {
                 </div>
             </header>
 
-            {/* KPI Cards Grid */}
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                {/* 📦 Total Materials */}
+                
                 <StatsCard 
                     title="Total Materials" 
                     value={stats.total_materials} 
@@ -200,7 +200,7 @@ const ManagerDashboard: React.FC = () => {
                     subtitle="Registered SKUs cataloged"
                 />
 
-                {/* 🏭 Total Inventory */}
+                
                 <StatsCard 
                     title="Total Inventory" 
                     value={`${stats.total_inventory.toLocaleString()} KG`} 
@@ -209,7 +209,7 @@ const ManagerDashboard: React.FC = () => {
                     subtitle="Sum of active materials"
                 />
 
-                {/* 🗄 Total Racks */}
+                
                 <StatsCard 
                     title="Total Racks" 
                     value={stats.total_racks} 
@@ -218,7 +218,7 @@ const ManagerDashboard: React.FC = () => {
                     subtitle="Warehouse physical slots"
                 />
 
-                {/* 📍 Occupied Racks */}
+                
                 <StatsCard 
                     title="Occupied Racks" 
                     value={stats.occupied_racks} 
@@ -227,7 +227,7 @@ const ManagerDashboard: React.FC = () => {
                     subtitle="Slots containing items"
                 />
 
-                {/* 📭 Empty Racks */}
+                
                 <StatsCard 
                     title="Empty Racks" 
                     value={stats.empty_racks} 
@@ -236,7 +236,7 @@ const ManagerDashboard: React.FC = () => {
                     subtitle="Open slots available"
                 />
 
-                {/* 🔳 Total QR Codes */}
+                
                 <StatsCard 
                     title="Total QR Codes" 
                     value={stats.total_qr_codes} 
@@ -245,7 +245,7 @@ const ManagerDashboard: React.FC = () => {
                     subtitle="Printed QR tracker tags"
                 />
 
-                {/* ✅ Used QR Codes */}
+                
                 <StatsCard 
                     title="Used QR Codes" 
                     value={stats.used_qr_codes} 
@@ -254,7 +254,7 @@ const ManagerDashboard: React.FC = () => {
                     subtitle="Assigned QR references"
                 />
 
-                {/* ⭕ Unused QR Codes */}
+                
                 <StatsCard 
                     title="Unused QR Codes" 
                     value={stats.unused_qr_codes} 
@@ -263,7 +263,7 @@ const ManagerDashboard: React.FC = () => {
                     subtitle="Unlinked tracker labels"
                 />
 
-                {/* ⚠ Active Alerts */}
+                
                 <StatsCard 
                     title="Active Alerts" 
                     value={stats.active_alerts} 
@@ -276,7 +276,7 @@ const ManagerDashboard: React.FC = () => {
                     subtitle="Critical anomalies unresolved"
                 />
 
-                {/* 📊 Warehouse Utilization % */}
+                
                 <StatsCard 
                     title="Utilization %" 
                     value={`${stats.warehouse_utilization.toFixed(2)}%`} 
@@ -286,9 +286,9 @@ const ManagerDashboard: React.FC = () => {
                 />
             </div>
 
-            {/* Charts Row */}
+            
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* 1. Material Distribution Chart (Bar) */}
+                
                 <Card className="lg:col-span-6 border-none shadow-md overflow-hidden rounded-3xl bg-white">
                     <CardHeader className="p-6 border-b border-slate-50 bg-slate-50/20">
                         <CardTitle className="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
@@ -321,7 +321,7 @@ const ManagerDashboard: React.FC = () => {
                     </CardContent>
                 </Card>
 
-                {/* 2. Rack Occupancy Chart (Pie) */}
+                
                 <Card className="lg:col-span-3 border-none shadow-md overflow-hidden rounded-3xl bg-white">
                     <CardHeader className="p-6 border-b border-slate-50 bg-slate-50/20">
                         <CardTitle className="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
@@ -371,7 +371,7 @@ const ManagerDashboard: React.FC = () => {
                     </CardContent>
                 </Card>
 
-                {/* 3. QR Usage Chart (Pie/Donut) */}
+                
                 <Card className="lg:col-span-3 border-none shadow-md overflow-hidden rounded-3xl bg-white">
                     <CardHeader className="p-6 border-b border-slate-50 bg-slate-50/20">
                         <CardTitle className="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">

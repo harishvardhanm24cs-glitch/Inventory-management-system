@@ -1,34 +1,11 @@
 import db from '../config/db.js';
 
-/**
- * lowStockIntelligence.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 2 – Low Stock Intelligence Engine
- *
- * Dynamically analyzes:
- * • Current Quantity
- * • Threshold Limit
- * • Consumption Rate (burn rate per day)
- * • Recent Transaction velocity
- *
- * Evaluates dynamic health states:
- * • SAFE         ➔ Q > 1.3 * T and Days Remaining > 14
- * • MONITOR      ➔ 1.0 * T < Q <= 1.3 * T or Days Remaining 7–14
- * • REORDER_SOON ➔ 0.7 * T < Q <= 1.0 * T or Days Remaining 3–7
- * • CRITICAL     ➔ Q <= 0.7 * T or Days Remaining < 3 or Q === 0
- *
- * Features:
- * • Dynamic Message Generation (no hardcoded static strings)
- * • Pluggable ML Predictor Strategy (supports future ML model integration)
- */
-
-// ── Default Rule-Based Velocity Predictor ─────────────────────────────────────
 const velocityRulePredictor = (mat, txs) => {
   const current_stock = parseFloat(mat.quantity) || 0.00;
   const threshold_limit = parseFloat(mat.threshold_limit) || 0.00;
   const unitStr = mat.unit || 'KG';
 
-  // Calculate daily burn rate velocity
+  
   let burn_rate = 0.00;
   if (txs.length > 0) {
     const oldestTxDate = new Date(txs[0].created_at);
@@ -39,13 +16,13 @@ const velocityRulePredictor = (mat, txs) => {
     burn_rate = parseFloat((totalOutward / diffDays).toFixed(2));
   }
 
-  // Days remaining until zero stock
+  
   let days_remaining = null;
   if (burn_rate > 0) {
     days_remaining = parseFloat((current_stock / burn_rate).toFixed(1));
   }
 
-  // Days until safety threshold is breached
+  
   let days_until_threshold = null;
   if (current_stock <= threshold_limit) {
     days_until_threshold = 0;
@@ -53,15 +30,15 @@ const velocityRulePredictor = (mat, txs) => {
     days_until_threshold = Math.max(0, Math.ceil((current_stock - threshold_limit) / burn_rate));
   }
 
-  // Calculate Recommended Reorder Quantity
+  
   let recommended_reorder_qty = 0;
   if (burn_rate > 0) {
-    recommended_reorder_qty = Math.max(100, Math.round(burn_rate * 21)); // 3 weeks supply
+    recommended_reorder_qty = Math.max(100, Math.round(burn_rate * 21)); 
   } else {
     recommended_reorder_qty = Math.max(100, Math.round(threshold_limit * 2));
   }
 
-  // ── Evaluate Dynamic Status State ──
+  
   let status = 'SAFE';
 
   if (current_stock === 0 || current_stock <= threshold_limit * 0.7 || (days_remaining !== null && days_remaining <= 3)) {
@@ -74,7 +51,7 @@ const velocityRulePredictor = (mat, txs) => {
     status = 'SAFE';
   }
 
-  // ── Generate Dynamic Timeframe & Recommendation Text ──
+  
   let suggested_timeframe = 'Routine Schedule';
   let recommendation = '';
 
@@ -118,22 +95,17 @@ const velocityRulePredictor = (mat, txs) => {
   };
 };
 
-// ── Pluggable Predictor Container ─────────────────────────────────────────────
 class LowStockIntelligenceEngine {
   constructor() {
     this.customPredictor = null;
   }
 
-  /**
-   * Register a custom ML predictor algorithm to override or enrich rule calculations
-   */
+  
   setCustomPredictor(predictorFn) {
     this.customPredictor = predictorFn;
   }
 
-  /**
-   * Execute low stock analysis across all materials using live DB records
-   */
+  
   async analyzeAll() {
     const [materials] = await db.query('SELECT id, barcode, material_name, quantity, threshold_limit, unit FROM materials ORDER BY material_name ASC');
 
@@ -162,13 +134,13 @@ class LowStockIntelligenceEngine {
     return materials.map((mat) => {
       const txs = txMap[mat.id] || [];
 
-      // 1. Try custom ML predictor if registered
+      
       if (this.customPredictor) {
         const mlResult = this.customPredictor(mat, txs);
         if (mlResult) return mlResult;
       }
 
-      // 2. Default to velocity rule predictor
+      
       return velocityRulePredictor(mat, txs);
     });
   }

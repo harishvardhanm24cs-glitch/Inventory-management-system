@@ -31,7 +31,7 @@ export const TrainingPlatformConsole: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [actionLoading, setActionLoading] = useState<boolean>(false);
 
-  // Form State for Training Configuration
+  
   const [cfgName, setCfgName] = useState<string>('Custom Deep Neural Network Config');
   const [cfgFramework, setCfgFramework] = useState<'TensorFlow' | 'PyTorch' | 'Scikit-Learn' | 'ONNX'>('TensorFlow');
   const [cfgLr, setCfgLr] = useState<number>(0.001);
@@ -152,7 +152,7 @@ export const TrainingPlatformConsole: React.FC = () => {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 pb-20">
-      {/* Header Banner */}
+      
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/90 p-6 rounded-2xl border border-slate-800/80 shadow-2xl backdrop-blur-xl">
         <div className="flex items-center gap-3.5">
           <div className="p-3 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/20">
@@ -193,7 +193,7 @@ export const TrainingPlatformConsole: React.FC = () => {
         </div>
       </div>
 
-      {/* Active Production Model Summary Card */}
+      
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between">
           <div>
@@ -232,7 +232,7 @@ export const TrainingPlatformConsole: React.FC = () => {
         </div>
       </div>
 
-      {/* Navigation Tabs */}
+      
       <div className="flex bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 gap-1 overflow-x-auto">
         {[
           { id: 'evaluations', label: 'Model Evaluation & Benchmarks', icon: BarChart3 },
@@ -260,7 +260,7 @@ export const TrainingPlatformConsole: React.FC = () => {
         })}
       </div>
 
-      {/* TAB CONTENT 1: Model Evaluation & Benchmarks */}
+      
       {activeTab === 'evaluations' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center">
@@ -329,7 +329,7 @@ export const TrainingPlatformConsole: React.FC = () => {
         </div>
       )}
 
-      {/* TAB CONTENT 2: Datasets & Feature Store */}
+      
       {activeTab === 'datasets' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center">
@@ -366,7 +366,7 @@ export const TrainingPlatformConsole: React.FC = () => {
         </div>
       )}
 
-      {/* TAB CONTENT 3: Training Configuration */}
+      
       {activeTab === 'configure' && (
         <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 max-w-2xl space-y-5">
           <div>
@@ -445,7 +445,7 @@ export const TrainingPlatformConsole: React.FC = () => {
         </div>
       )}
 
-      {/* TAB CONTENT 4: Training History Logs */}
+      
       {activeTab === 'history' && (
         <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
           <div className="p-4 border-b border-slate-800 flex justify-between items-center">
@@ -488,7 +488,7 @@ export const TrainingPlatformConsole: React.FC = () => {
         </div>
       )}
 
-      {/* TAB CONTENT 5: Deployment & 1-Click Rollback */}
+      
       {activeTab === 'deployment' && (
         <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-6">
           <div>

@@ -1,11 +1,5 @@
 import xaiEngineService from '../services/xaiEngineService.js';
 
-/**
- * xaiController.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 6: Explainable AI (XAI) Controller Layer
- */
-
 export const explainMaterial = async (req, res, next) => {
   try {
     const { id } = req.params;

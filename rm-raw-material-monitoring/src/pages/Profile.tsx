@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 const Profile = () => {
     const { role, profileName, user: authUser } = useAuth();
 
-    // Mock user data merged with real Auth data
+    
     const user = {
         name: profileName || 'Sarah Johnson',
         email: authUser?.email || 'sarah.johnson@manufacturing.com',
@@ -15,7 +15,7 @@ const Profile = () => {
         location: 'Manufacturing Plant - Zone A'
     };
 
-    // Generate initials for avatar
+    
     const initials = user.name
         .split(' ')
         .map(n => n[0])
@@ -32,18 +32,18 @@ const Profile = () => {
         <div className="max-w-4xl mx-auto space-y-6">
             <h1 className="text-2xl font-bold text-gray-800">User Profile</h1>
 
-            {/* Profile Card */}
+            
             <Card>
                 <CardContent className="p-8">
                     <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-                        {/* Avatar */}
+                        
                         <div className="flex-shrink-0">
                             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
                                 {initials}
                             </div>
                         </div>
 
-                        {/* User Info */}
+                        
                         <div className="flex-1">
                             <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
                             <div className="flex items-center gap-2 mt-1">
@@ -68,7 +68,7 @@ const Profile = () => {
                             </div>
                         </div>
 
-                        {/* Edit Button */}
+                        
                         <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-sm font-medium">
                             Edit Profile
                         </button>
@@ -76,7 +76,7 @@ const Profile = () => {
                 </CardContent>
             </Card>
 
-            {/* Additional Info */}
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                     <CardHeader>
@@ -119,7 +119,7 @@ const Profile = () => {
                 </Card>
             </div>
 
-            {/* Quick Actions */}
+            
             <Card>
                 <CardHeader>
                     <CardTitle className="text-base">Quick Actions</CardTitle>

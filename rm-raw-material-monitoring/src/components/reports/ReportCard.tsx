@@ -43,7 +43,7 @@ export const ReportCard: React.FC<ReportCardProps> = ({ option, onAction, loadin
       </div>
 
       <div className="mt-6 pt-4 border-t border-slate-800/80 space-y-2.5">
-        {/* PDF Buttons */}
+        
         <div className="flex gap-2">
           <button
             onClick={() => onAction(option.endpoint, 'preview', option.id, 'pdf')}
@@ -61,7 +61,7 @@ export const ReportCard: React.FC<ReportCardProps> = ({ option, onAction, loadin
           </button>
         </div>
 
-        {/* Excel & CSV Buttons */}
+        
         <div className="flex gap-2">
           <button
             onClick={() => onAction(option.endpoint, 'download', option.id, 'excel')}

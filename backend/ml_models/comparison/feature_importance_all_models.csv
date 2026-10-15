@@ -1,0 +1,269 @@
+model,feature_name,importance
+Random Forest,material_id,0.0007728433894455778
+Random Forest,current_stock,0.004144914171303083
+Random Forest,threshold,0.0
+Random Forest,stock_difference,0.001805683139694433
+Random Forest,stock_percentage,0.002462441475797524
+Random Forest,remaining_capacity,0.0021084986255947543
+Random Forest,material_weight,0.0017637204169266155
+Random Forest,daily_transactions,0.0021129149718069093
+Random Forest,weekly_transactions,0.0015405404014494123
+Random Forest,monthly_transactions,0.002499158081807623
+Random Forest,avg_transaction_quantity,0.00931136931187191
+Random Forest,total_inward,0.007795881647977504
+Random Forest,total_outward,0.005317185175957259
+Random Forest,net_inventory_change,0.0020650754244521093
+Random Forest,daily_consumption,0.010167244972926589
+Random Forest,weekly_consumption,0.0033366156173056157
+Random Forest,monthly_consumption,0.006460370344333899
+Random Forest,avg_daily_consumption,0.008931678637170058
+Random Forest,avg_weekly_consumption,0.009309750867739311
+Random Forest,avg_monthly_consumption,0.008823843115382729
+Random Forest,rack_occupancy_pct,0.0
+Random Forest,remaining_rack_capacity,0.0021084986255947543
+Random Forest,rack_utilization_score,0.0
+Random Forest,rack_load_ratio,0.0
+Random Forest,movement_count,0.0015492535867273787
+Random Forest,inward_count,0.002499569824307717
+Random Forest,outward_count,0.0021190512599621792
+Random Forest,transfer_count,0.0
+Random Forest,movement_frequency,0.0023134053946996954
+Random Forest,hour,0.0015393420075033005
+Random Forest,day,0.0021153709356714666
+Random Forest,week,0.002693886236088004
+Random Forest,month,0.001725830404730451
+Random Forest,quarter,0.000777031580771908
+Random Forest,year,0.0
+Random Forest,weekend_flag,0.003063942414918807
+Random Forest,business_hour_flag,0.0
+Random Forest,rolling_7d_consumption,0.007321624345227536
+Random Forest,rolling_14d_consumption,0.0045771374717640595
+Random Forest,rolling_30d_consumption,0.005810747013454289
+Random Forest,rolling_stock_avg,0.0022376223572056603
+Random Forest,rolling_movement_avg,0.0021110889353244664
+Random Forest,inventory_turnover,0.002679486647794114
+Random Forest,days_since_last_movement,0.001923943443029882
+Random Forest,days_since_last_scan,0.0021123889819061347
+Random Forest,inventory_health_score,0.003063594945106385
+Random Forest,rack_health_score,0.0
+Random Forest,material_activity_score,0.0026866948705550242
+Random Forest,warehouse_activity_score,0.0
+Random Forest,threshold_risk_score,0.002917172374621391
+Random Forest,low_stock_indicator,0.0024090857183243467
+Random Forest,critical_stock_indicator,0.0023222157223766055
+Random Forest,norm_current_stock,0.00182849097553664
+Random Forest,norm_threshold,0.0
+Random Forest,norm_quantity,0.5200318055759396
+Random Forest,norm_weight,0.0023203667938539647
+Random Forest,norm_occupancy,0.0
+Random Forest,norm_capacity,0.0009584084661794335
+Random Forest,encoded_transaction_type,0.0
+Random Forest,encoded_movement_type,0.10728591859192609
+Random Forest,encoded_material_name,0.0024968757790013807
+Random Forest,encoded_rack_code,0.003066907091774188
+Random Forest,ohe_tx_Inward,0.0
+Random Forest,ohe_tx_Outward,0.0
+Random Forest,ohe_mov_INWARD,0.10352265996766533
+Random Forest,ohe_mov_OUTWARD,0.10308085187151486
+Random Forest,ohe_mov_TRANSFER,0.0
+Extra Trees,material_id,4.87151800100769e-06
+Extra Trees,current_stock,0.004068475843901052
+Extra Trees,threshold,3.478998525201447e-07
+Extra Trees,stock_difference,0.0019572285229412104
+Extra Trees,stock_percentage,0.004942507716662508
+Extra Trees,remaining_capacity,0.0009584017975761554
+Extra Trees,material_weight,0.005889766496005511
+Extra Trees,daily_transactions,0.003837287453207314
+Extra Trees,weekly_transactions,0.0009624689481164935
+Extra Trees,monthly_transactions,0.0038224641720714706
+Extra Trees,avg_transaction_quantity,0.027482406875475374
+Extra Trees,total_inward,3.0561133160389117e-06
+Extra Trees,total_outward,0.02700606324063026
+Extra Trees,net_inventory_change,0.0029926397195266805
+Extra Trees,daily_consumption,0.01846805075248853
+Extra Trees,weekly_consumption,0.016551177577365715
+Extra Trees,monthly_consumption,0.022782214348857473
+Extra Trees,avg_daily_consumption,0.03075624134744109
+Extra Trees,avg_weekly_consumption,0.01751760510826691
+Extra Trees,avg_monthly_consumption,0.017517396368355403
+Extra Trees,rack_occupancy_pct,0.0
+Extra Trees,remaining_rack_capacity,0.004777185706744934
+Extra Trees,rack_utilization_score,0.0
+Extra Trees,rack_load_ratio,0.0
+Extra Trees,movement_count,0.0009647902739423668
+Extra Trees,inward_count,0.00572308554901112
+Extra Trees,outward_count,0.0047688390238259165
+Extra Trees,transfer_count,0.0
+Extra Trees,movement_frequency,0.0028627034374184967
+Extra Trees,hour,0.0009589584373401874
+Extra Trees,day,0.004772332807296182
+Extra Trees,week,0.0009668246287126645
+Extra Trees,month,0.0009584017975761554
+Extra Trees,quarter,0.0028640623744953155
+Extra Trees,year,0.0
+Extra Trees,weekend_flag,0.0
+Extra Trees,business_hour_flag,2.7831988201611577e-07
+Extra Trees,rolling_7d_consumption,0.020376310975115573
+Extra Trees,rolling_14d_consumption,0.015169696022729355
+Extra Trees,rolling_30d_consumption,0.013857181064641254
+Extra Trees,rolling_stock_avg,0.003984105919086352
+Extra Trees,rolling_movement_avg,0.001924440856282074
+Extra Trees,inventory_turnover,0.0015413054672663794
+Extra Trees,days_since_last_movement,0.003826144434974164
+Extra Trees,days_since_last_scan,4.355680596170939e-06
+Extra Trees,inventory_health_score,0.005054785268766372
+Extra Trees,rack_health_score,0.0
+Extra Trees,material_activity_score,0.003816051927340682
+Extra Trees,warehouse_activity_score,0.0
+Extra Trees,threshold_risk_score,0.0006179100882980758
+Extra Trees,low_stock_indicator,0.0019297067583041894
+Extra Trees,critical_stock_indicator,0.0015670093434445094
+Extra Trees,norm_current_stock,0.004918745857108713
+Extra Trees,norm_threshold,4.870597935282026e-07
+Extra Trees,norm_quantity,0.3648058521846376
+Extra Trees,norm_weight,0.003012983050664479
+Extra Trees,norm_occupancy,0.0
+Extra Trees,norm_capacity,0.0019019803140164677
+Extra Trees,encoded_transaction_type,0.0
+Extra Trees,encoded_movement_type,0.1059702448305467
+Extra Trees,encoded_material_name,0.0009588192773991796
+Extra Trees,encoded_rack_code,0.0019168035951523108
+Extra Trees,ohe_tx_Inward,0.0
+Extra Trees,ohe_tx_Outward,0.0
+Extra Trees,ohe_mov_INWARD,0.09350315720342355
+Extra Trees,ohe_mov_OUTWARD,0.11220378864410827
+Extra Trees,ohe_mov_TRANSFER,0.0
+Gradient Boosting,material_id,7.860395529958303e-06
+Gradient Boosting,current_stock,0.00020280265774440956
+Gradient Boosting,threshold,8.039546195197666e-09
+Gradient Boosting,stock_difference,0.007541990388900017
+Gradient Boosting,stock_percentage,0.0019114518575341051
+Gradient Boosting,remaining_capacity,6.863155816396684e-07
+Gradient Boosting,material_weight,0.011975776980250326
+Gradient Boosting,daily_transactions,0.00013055312026847066
+Gradient Boosting,weekly_transactions,2.299293967789611e-07
+Gradient Boosting,monthly_transactions,4.78751602797328e-05
+Gradient Boosting,avg_transaction_quantity,0.009972366541252602
+Gradient Boosting,total_inward,1.3638272815205802e-05
+Gradient Boosting,total_outward,0.014763967016791998
+Gradient Boosting,net_inventory_change,0.0005105035244857689
+Gradient Boosting,daily_consumption,0.0002557654356369441
+Gradient Boosting,weekly_consumption,1.7539620797485804e-05
+Gradient Boosting,monthly_consumption,0.0004553808552409069
+Gradient Boosting,avg_daily_consumption,4.364355864766496e-06
+Gradient Boosting,avg_weekly_consumption,1.279765098236851e-06
+Gradient Boosting,avg_monthly_consumption,2.071682319379806e-05
+Gradient Boosting,rack_occupancy_pct,0.0
+Gradient Boosting,remaining_rack_capacity,1.2822280823965757e-09
+Gradient Boosting,rack_utilization_score,0.0
+Gradient Boosting,rack_load_ratio,0.0
+Gradient Boosting,movement_count,0.0
+Gradient Boosting,inward_count,2.6471764994337705e-06
+Gradient Boosting,outward_count,6.709699352288792e-07
+Gradient Boosting,transfer_count,0.0
+Gradient Boosting,movement_frequency,3.6749004032863865e-06
+Gradient Boosting,hour,0.010825811907070888
+Gradient Boosting,day,2.1204986235646978e-05
+Gradient Boosting,week,2.2117504720354813e-08
+Gradient Boosting,month,0.0008051384037999808
+Gradient Boosting,quarter,7.601717277064671e-05
+Gradient Boosting,year,0.0
+Gradient Boosting,weekend_flag,3.35684516123718e-11
+Gradient Boosting,business_hour_flag,0.0
+Gradient Boosting,rolling_7d_consumption,0.0002770608528052764
+Gradient Boosting,rolling_14d_consumption,9.099632593416804e-05
+Gradient Boosting,rolling_30d_consumption,5.315862912084248e-06
+Gradient Boosting,rolling_stock_avg,0.0005742307515421268
+Gradient Boosting,rolling_movement_avg,0.018209635195980303
+Gradient Boosting,inventory_turnover,0.0003610710982772098
+Gradient Boosting,days_since_last_movement,8.032081537231181e-09
+Gradient Boosting,days_since_last_scan,1.4100914740859318e-05
+Gradient Boosting,inventory_health_score,0.009861424425571128
+Gradient Boosting,rack_health_score,0.0
+Gradient Boosting,material_activity_score,0.0027331685818044516
+Gradient Boosting,warehouse_activity_score,0.0
+Gradient Boosting,threshold_risk_score,1.349355471151692e-06
+Gradient Boosting,low_stock_indicator,0.0063038269820569325
+Gradient Boosting,critical_stock_indicator,0.000993396676999598
+Gradient Boosting,norm_current_stock,0.00018936415833557875
+Gradient Boosting,norm_threshold,2.549253131340863e-08
+Gradient Boosting,norm_quantity,0.5867058335387348
+Gradient Boosting,norm_weight,0.00012334266078973383
+Gradient Boosting,norm_occupancy,0.0
+Gradient Boosting,norm_capacity,0.0022143852679307823
+Gradient Boosting,encoded_transaction_type,0.0
+Gradient Boosting,encoded_movement_type,0.007260556695125941
+Gradient Boosting,encoded_material_name,3.1363622107389443e-09
+Gradient Boosting,encoded_rack_code,9.384836144524278e-05
+Gradient Boosting,ohe_tx_Inward,0.0
+Gradient Boosting,ohe_tx_Outward,0.0
+Gradient Boosting,ohe_mov_INWARD,0.1175678208115659
+Gradient Boosting,ohe_mov_OUTWARD,0.18684928881477592
+Gradient Boosting,ohe_mov_TRANSFER,0.0
+XGBoost,material_id,0.010521301068365574
+XGBoost,current_stock,0.02159557305276394
+XGBoost,threshold,1.192417857964756e-05
+XGBoost,stock_difference,0.0
+XGBoost,stock_percentage,0.0
+XGBoost,remaining_capacity,0.0
+XGBoost,material_weight,0.0
+XGBoost,daily_transactions,2.524461888242513e-05
+XGBoost,weekly_transactions,0.0
+XGBoost,monthly_transactions,0.0
+XGBoost,avg_transaction_quantity,0.03920447453856468
+XGBoost,total_inward,0.0
+XGBoost,total_outward,0.0
+XGBoost,net_inventory_change,0.0
+XGBoost,daily_consumption,0.0
+XGBoost,weekly_consumption,0.0
+XGBoost,monthly_consumption,0.0
+XGBoost,avg_daily_consumption,0.0
+XGBoost,avg_weekly_consumption,0.0
+XGBoost,avg_monthly_consumption,0.0
+XGBoost,rack_occupancy_pct,0.0
+XGBoost,remaining_rack_capacity,0.0
+XGBoost,rack_utilization_score,0.0
+XGBoost,rack_load_ratio,0.0
+XGBoost,movement_count,0.0
+XGBoost,inward_count,0.0
+XGBoost,outward_count,0.0
+XGBoost,transfer_count,0.0
+XGBoost,movement_frequency,0.0
+XGBoost,hour,1.3855447345001437e-10
+XGBoost,day,0.0
+XGBoost,week,0.0
+XGBoost,month,0.0
+XGBoost,quarter,0.0
+XGBoost,year,0.0
+XGBoost,weekend_flag,0.0
+XGBoost,business_hour_flag,6.608535940699767e-11
+XGBoost,rolling_7d_consumption,0.0
+XGBoost,rolling_14d_consumption,0.0
+XGBoost,rolling_30d_consumption,0.0
+XGBoost,rolling_stock_avg,0.0
+XGBoost,rolling_movement_avg,0.0
+XGBoost,inventory_turnover,0.0
+XGBoost,days_since_last_movement,0.0
+XGBoost,days_since_last_scan,0.0
+XGBoost,inventory_health_score,0.0
+XGBoost,rack_health_score,0.0
+XGBoost,material_activity_score,0.0
+XGBoost,warehouse_activity_score,0.0
+XGBoost,threshold_risk_score,0.0
+XGBoost,low_stock_indicator,0.0
+XGBoost,critical_stock_indicator,0.0
+XGBoost,norm_current_stock,0.0
+XGBoost,norm_threshold,0.0
+XGBoost,norm_quantity,0.7695558071136475
+XGBoost,norm_weight,0.0
+XGBoost,norm_occupancy,0.0
+XGBoost,norm_capacity,0.0
+XGBoost,encoded_transaction_type,0.0
+XGBoost,encoded_movement_type,0.15908564627170563
+XGBoost,encoded_material_name,0.0
+XGBoost,encoded_rack_code,0.0
+XGBoost,ohe_tx_Inward,0.0
+XGBoost,ohe_tx_Outward,0.0
+XGBoost,ohe_mov_INWARD,0.0
+XGBoost,ohe_mov_OUTWARD,0.0
+XGBoost,ohe_mov_TRANSFER,0.0

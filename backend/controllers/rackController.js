@@ -96,7 +96,7 @@ export const createRack = async (req, res, next) => {
   try {
     const { rack_code, material_name, batch_number, quantity, max_capacity, threshold_limit } = req.body;
 
-    // Validate rack_code
+    
     if (!rack_code) {
       return res.status(400).json({
         status: 'error',
@@ -129,7 +129,7 @@ export const createRack = async (req, res, next) => {
       });
     }
 
-    // Check for duplicate rack_code
+    
     const [existing] = await db.query('SELECT id FROM racks WHERE rack_code = ?', [rack_code]);
     if (existing.length > 0) {
       return res.status(400).json({
@@ -138,7 +138,7 @@ export const createRack = async (req, res, next) => {
       });
     }
 
-    // Insert into MySQL (Trigger will auto-calculate status)
+    
     const [result] = await db.query(
       'INSERT INTO racks (rack_code, material_name, batch_number, quantity, max_capacity, threshold_limit) VALUES (?, ?, ?, ?, ?, ?)',
       [rack_code, material_name || null, batch_number || null, qty, maxCap, limit]
@@ -146,7 +146,7 @@ export const createRack = async (req, res, next) => {
 
     const rackId = result.insertId;
 
-    // Fetch the newly created rack to return updated status
+    
     const [newRack] = await db.query('SELECT r.*, ri.occupancy_percentage FROM racks r LEFT JOIN rack_inventory ri ON r.rack_code = ri.rack_code WHERE r.id = ?', [rackId]);
 
     const createdRack = newRack[0];
@@ -186,7 +186,7 @@ export const updateRack = async (req, res, next) => {
     const { id } = req.params;
     const { rack_code, material_name, batch_number, quantity, max_capacity, threshold_limit } = req.body;
 
-    // Validate rack exists
+    
     const [existing] = await db.query('SELECT * FROM racks WHERE id = ?', [id]);
     if (existing.length === 0) {
       return res.status(404).json({
@@ -197,7 +197,7 @@ export const updateRack = async (req, res, next) => {
 
     const currentRack = existing[0];
 
-    // Validate fields if provided
+    
     const qty = quantity !== undefined && quantity !== null ? parseFloat(quantity) : undefined;
     if (qty !== undefined && (isNaN(qty) || qty < 0)) {
       return res.status(400).json({
@@ -222,7 +222,7 @@ export const updateRack = async (req, res, next) => {
       });
     }
 
-    // Check duplicate rack_code if it is being changed
+    
     if (rack_code && rack_code !== currentRack.rack_code) {
       const [duplicate] = await db.query('SELECT id FROM racks WHERE rack_code = ?', [rack_code]);
       if (duplicate.length > 0) {
@@ -261,7 +261,7 @@ export const updateRack = async (req, res, next) => {
       });
     }
 
-    // Update fields dynamically (Trigger will auto-calculate status on update)
+    
     await db.query(
       `UPDATE racks SET 
         rack_code = COALESCE(?, rack_code), 
@@ -282,7 +282,7 @@ export const updateRack = async (req, res, next) => {
       ]
     );
 
-    // Fetch updated record from MySQL
+    
     const [updated] = await db.query('SELECT r.*, ri.occupancy_percentage FROM racks r LEFT JOIN rack_inventory ri ON r.rack_code = ri.rack_code WHERE r.id = ?', [id]);
 
     const updatedRack = updated[0];
@@ -408,7 +408,7 @@ export const assignRack = async (req, res, next) => {
 
     await connection.beginTransaction();
 
-    // 1. Fetch material by ID
+    
     const [materials] = await connection.query(
       'SELECT material_name, batch_number, quantity, threshold_limit, unit, barcode FROM materials WHERE id = ?',
       [material_id]
@@ -428,7 +428,7 @@ export const assignRack = async (req, res, next) => {
     const thresholdLimit = parseFloat(materials[0].threshold_limit) || 0;
     const unit = materials[0].unit || 'KG';
 
-    // 2. Prevent duplicate assignment within a 5-second window
+    
     const [recentTx] = await connection.query(
       `SELECT id FROM transactions 
        WHERE material_id = ? AND transaction_type = 'inward' 
@@ -439,7 +439,7 @@ export const assignRack = async (req, res, next) => {
     if (recentTx.length > 0) {
       console.warn(`[Rack Assign] Duplicate assignment blocked for material ID: ${material_id}`);
       
-      // Query the rack where this material is assigned to return it to the client
+      
       const [existingAssigned] = await connection.query(
         'SELECT rack_code FROM racks WHERE material_name = ? ORDER BY quantity DESC LIMIT 1',
         [materialName]
@@ -454,10 +454,10 @@ export const assignRack = async (req, res, next) => {
       });
     }
 
-    // 3. Determine target rack
+    
     let targetRackCode = rack_code;
 
-    // RACK DEBUG logging
+    
     const [dbRacks] = await connection.query('SELECT * FROM racks');
     const racks = dbRacks.map(r => ({
       ...r,
@@ -480,7 +480,7 @@ export const assignRack = async (req, res, next) => {
     }
 
     if (!targetRackCode) {
-      // Find rack with lowest occupancy that is empty or has the same material
+      
       const [racks] = await connection.query(
         `SELECT rack_code FROM racks 
          WHERE (quantity = 0 OR material_name IS NULL OR material_name = ?) 
@@ -492,7 +492,7 @@ export const assignRack = async (req, res, next) => {
       if (racks.length > 0) {
         targetRackCode = racks[0].rack_code;
       } else {
-        // Automatically allocate the next available rack dynamically!
+        
         const [existingRacksList] = await connection.query('SELECT rack_code FROM racks');
         const existingCodes = existingRacksList.map(r => r.rack_code);
         targetRackCode = getNextRackCode(existingCodes);
@@ -500,7 +500,7 @@ export const assignRack = async (req, res, next) => {
       }
     }
 
-    // 4. Fetch/update target rack
+    
     const [existingRacks] = await connection.query(
       'SELECT id, quantity, max_capacity, material_name FROM racks WHERE rack_code = ?',
       [targetRackCode]
@@ -510,7 +510,7 @@ export const assignRack = async (req, res, next) => {
       const rack = existingRacks[0];
       const rackQty = parseFloat(rack.quantity) || 0;
 
-      // Prevent duplicate assignment conflict: if rack has another material
+      
       if (rackQty > 0 && rack.material_name && rack.material_name !== materialName) {
         await connection.rollback();
         return res.status(400).json({
@@ -529,27 +529,37 @@ export const assignRack = async (req, res, next) => {
     } else {
       const maxCap = 999999999.00;
       
-      // Create new rack if it doesn't exist
+      
       await connection.query(
         'INSERT INTO racks (rack_code, material_name, batch_number, quantity, max_capacity, threshold_limit) VALUES (?, ?, ?, ?, ?, ?)',
         [targetRackCode, materialName, batchNumber || null, scannedQty, maxCap, 10.00]
       );
     }
 
-    // 5. Update material quantity in materials table
+    
     const newMaterialQty = currentMaterialQty + scannedQty;
     await connection.query(
       'UPDATE materials SET quantity = ? WHERE id = ?',
       [newMaterialQty, material_id]
     );
 
-    // 6. Insert transaction
+    
     await connection.query(
       'INSERT INTO transactions (material_id, transaction_type, quantity, user_id) VALUES (?, ?, ?, ?)',
       [material_id, 'inward', scannedQty, req.user ? req.user.id : null]
     );
 
-    // 6.5. Log QR history lifecycle event (MOVED)
+    
+    import('../services/aiDataCollectionService.js').then(({ aiDataCollectionService }) => {
+      aiDataCollectionService.captureTransaction({
+        material_id: material_id,
+        quantity: scannedQty,
+        movement_type: 'INWARD',
+        created_at: new Date().toISOString()
+      });
+    }).catch(() => {});
+
+    
     await logQrHistory(connection, {
       barcode_id: materials[0].barcode,
       material_name: materialName,
@@ -561,7 +571,7 @@ export const assignRack = async (req, res, next) => {
 
     await connection.commit();
 
-    // 7. Check alerts and rack occupancy warnings
+    
     await processThresholdCheck(null, material_id);
     await processRackOccupancyCheck(null, targetRackCode);
     console.log("Alerts and rack occupancy checked");
@@ -593,7 +603,7 @@ export const getRackMaterials = async (req, res, next) => {
   try {
     const { rackCode } = req.params;
 
-    // Validate rackCode is present
+    
     if (!rackCode || !rackCode.trim()) {
       return res.status(400).json({
         success: false,
@@ -603,10 +613,10 @@ export const getRackMaterials = async (req, res, next) => {
 
     const code = rackCode.trim().toUpperCase();
 
-    // Delegate to service layer
+    
     const { exists, rack, materials } = await fetchRackMaterials(code);
 
-    // Rack does not exist in DB
+    
     if (!exists) {
       return res.status(404).json({
         success: false,
@@ -614,14 +624,14 @@ export const getRackMaterials = async (req, res, next) => {
       });
     }
 
-    // Compute aggregates
+    
     const materialCount = materials.length;
     const totalWeight   = materials.reduce(
       (sum, mat) => sum + (parseFloat(mat.weight) || 0),
       0
     );
 
-    // Shape each material for the response
+    
     const formattedMaterials = materials.map(mat => ({
       material_name:  mat.material_name,
       qr_code:        mat.qr_code        || null,
@@ -637,7 +647,7 @@ export const getRackMaterials = async (req, res, next) => {
 
     console.log(`[getRackMaterials] rack=${code}, found=${materialCount} material(s)`);
 
-    // Always 200 — empty racks return an empty materials array, never 404
+    
     return res.status(200).json({
       success:        true,
       rack_code:      code,

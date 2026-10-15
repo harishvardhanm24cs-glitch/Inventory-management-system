@@ -1,294 +1,206 @@
+
+
 import express from 'express';
-import { 
-  getAiPredictions, 
-  getAiRecommendations, 
-  getRackOptimizations, 
+import {
+  predictSingle,
+  predictBatch,
+  getModelStatus,
+  getFeaturesSchema,
+  validatePayload,
+  getInsights,
+  getLowStockIntelligence,
+  getSmartAlerts,
+  getRackOptimizationIntelligence,
+  getDeadStockIntelligence,
+  getConsumptionIntelligence,
+  getPredictions,
   getReorderRecommendations,
   getRiskAnalysis,
-  getLowStockIntelligence,
-  getConsumptionIntelligence,
-  getDeadStockIntelligence,
-  getRackOptimizationIntelligence,
-  getSmartAlerts,
-  getWarehouseHealthScore,
-  getAiAlertPrioritization
-} from '../controllers/aiController.js';
-import { protect, anyRole, adminOnly } from '../middleware/authMiddleware.js';
-
-const router = express.Router();
-
-import { 
+  getRackOptimization,
   getPredictionEngineOverview,
-  getDemandPredictions,
-  getDepletionPredictions,
-  getRackUtilizationPredictions,
-  getWarehouseRiskPredictions,
-  getConsumptionTrendPredictions,
-  getPredictiveRecommendations
-} from '../controllers/predictionEngineController.js';
-
-import {
-  runPipeline,
-  getPipelineStatus,
-  getDatasets,
-  exportDataset
-} from '../controllers/mlPipelineController.js';
-
-import {
-  getFeatures,
+  getPredictionDemand,
+  getPredictionDepletion,
+  getPredictionRackUtilization,
+  getPredictionWarehouseRisk,
+  getPredictionConsumptionTrend,
+  getPredictiveRecommendations,
+  runMlPipeline,
+  getMlPipelineStatus,
+  getMlPipelineDatasets,
+  exportMlPipeline,
   getMaterialFeatures,
   getWarehouseFeatures,
-  getFeatureCatalog
-} from '../controllers/featureController.js';
-
-import {
+  getFeatureCatalog,
   getModels,
   registerModel,
   switchModel,
   loadModel,
-  getModelPerformance
-} from '../controllers/modelController.js';
-
-import {
+  getModelPerformance,
   getRecommendationsEngine,
   getRecommendationsByCategory,
-  switchRecommendationStrategy
-} from '../controllers/recommendationController.js';
-
-import {
+  switchRecommendationStrategy,
   explainMaterial,
   explainRack,
-  getDashboardExplanations,
-  getDigitalTwinExplanations,
-  getReportsExplanations,
-  getManagerPortalExplanations
-} from '../controllers/xaiController.js';
+  getXaiDashboard,
+  getXaiDigitalTwin,
+  getXaiReports,
+  getXaiManagerPortal,
+  getMonitoringHealth,
+  getMonitoringMetrics,
+  resetMonitoringMetrics,
+  getWarehouseHealthScore,
+  getDataCollectionStatus,
+  getDataCollectionStatistics,
+  collectDataTransaction,
+  getDataCollectionLogs,
+  getDatasets,
+  getCurrentDataset,
+  getDatasetByVersion,
+  createDatasetSnapshot,
+  archiveDataset,
+  restoreDataset,
+  selectDataset,
+  getDatasetStatistics,
+  getDatasetHistory,
+  verifyDatasetIntegrity,
+  getRegisteredModels,
+  getCurrentProductionModel,
+  getRegisteredModelByVersion,
+  registerNewModel,
+  archiveModelVersion,
+  promoteModelToProduction,
+  updateModelStatus,
+  getModelRegistryHistory,
+  getModelRegistryMetrics,
+  getModelArtifacts,
+  compareModels,
+  getModelRanking,
+  getModelComparisons,
+  getModelRecommendation,
+  evaluateDeploymentCandidate,
+  getDeploymentDecision,
+  getDeploymentHistory,
+  overrideDeploymentDecision,
+  getDeploymentPolicies,
+  saveDeploymentPolicies,
+  
+  getRollbackEligible,
+  requestRollback,
+  simulateRollback,
+  approveRollback,
+  rejectRollback,
+  getRollbackHistory
+} from '../controllers/AIController.js';
+import { validatePredictPayload, validateBatchPayload } from '../middleware/AIValidation.js';
+import { protect, managerOnly, optionalAuth } from '../middleware/authMiddleware.js';
 
-import {
-  getAiHealth,
-  getAiMetrics,
-  resetAiMetrics
-} from '../controllers/aiMonitoringController.js';
+const router = express.Router();
 
-import {
-  getPlatformOverview,
-  generateDataset,
-  configureTraining,
-  simulateRun,
-  getHistory,
-  getEvaluations,
-  deployModel,
-  rollbackModel
-} from '../controllers/trainingPlatformController.js';
+router.post('/predict', optionalAuth, validatePredictPayload, predictSingle);
+router.post('/predict/batch', protect, managerOnly, validateBatchPayload, predictBatch);
+router.post('/validate', optionalAuth, validatePayload);
 
-import {
-  generateDataset as generateMlDataset,
-  getVersions as getDatasetVersions,
-  downloadDataset
-} from '../controllers/datasetGeneratorController.js';
+router.get('/model/status', optionalAuth, getModelStatus);
+router.get('/features', optionalAuth, getFeaturesSchema);
+router.get('/insights', optionalAuth, getInsights);
 
-import {
-  runCleaningPipeline,
-  getCleaningReport,
-  downloadCleanDataset
-} from '../controllers/dataCleaningPipelineController.js';
+router.get('/low-stock-intelligence', optionalAuth, getLowStockIntelligence);
+router.get('/smart-alerts', optionalAuth, getSmartAlerts);
+router.get('/rack-optimization-intelligence', optionalAuth, getRackOptimizationIntelligence);
+router.get('/dead-stock-intelligence', optionalAuth, getDeadStockIntelligence);
+router.get('/consumption-intelligence', optionalAuth, getConsumptionIntelligence);
 
-import {
-  runFeaturePipeline,
-  getFeatureMetadata,
-  getFeatureStatistics,
-  downloadFeatureDataset,
-  getFeatureRegistry,
-  getFeatureImportanceTemplate,
-  getPreprocessingConfig,
-  getFeaturePipelineDoc,
-  getModelRegistry
-} from '../controllers/featureEngineeringPipelineController.js';
+router.get('/predictions', optionalAuth, getPredictions);
+router.get('/recommendations', optionalAuth, getReorderRecommendations);
+router.get('/reorder-recommendations', optionalAuth, getReorderRecommendations);
+router.get('/risk-analysis', optionalAuth, getRiskAnalysis);
+router.get('/rack-optimization', optionalAuth, getRackOptimization);
+router.get('/alert-prioritization', optionalAuth, getSmartAlerts);
+router.get('/warehouse-health-score', optionalAuth, getWarehouseHealthScore);
 
-// --- Feature Engineering & Governance Endpoints ---
-router.post('/feature-engineering/run', protect, anyRole, runFeaturePipeline);
-router.get('/feature-engineering/metadata', protect, anyRole, getFeatureMetadata);
-router.get('/feature-engineering/statistics', protect, anyRole, getFeatureStatistics);
-router.get('/feature-engineering/download/:format', protect, anyRole, downloadFeatureDataset);
-router.get('/feature-engineering/registry', protect, anyRole, getFeatureRegistry);
-router.get('/feature-registry', protect, anyRole, getFeatureRegistry);
+router.get('/prediction-engine/overview', optionalAuth, getPredictionEngineOverview);
+router.get('/prediction-engine/demand', optionalAuth, getPredictionDemand);
+router.get('/prediction-engine/depletion', optionalAuth, getPredictionDepletion);
+router.get('/prediction-engine/rack-utilization', optionalAuth, getPredictionRackUtilization);
+router.get('/prediction-engine/warehouse-risk', optionalAuth, getPredictionWarehouseRisk);
+router.get('/prediction-engine/consumption-trend', optionalAuth, getPredictionConsumptionTrend);
+router.get('/prediction-engine/recommendations', optionalAuth, getPredictiveRecommendations);
 
-// --- AI Governance Metadata Endpoints ---
-router.get('/governance/feature-registry', protect, anyRole, getFeatureRegistry);
-router.get('/governance/feature-importance-template', protect, anyRole, getFeatureImportanceTemplate);
-router.get('/governance/preprocessing-config', protect, anyRole, getPreprocessingConfig);
-router.get('/governance/feature-pipeline', protect, anyRole, getFeaturePipelineDoc);
-router.get('/governance/model-registry', protect, anyRole, getModelRegistry);
+router.post('/ml-pipeline/run', optionalAuth, runMlPipeline);
+router.get('/ml-pipeline/status', optionalAuth, getMlPipelineStatus);
+router.get('/ml-pipeline/datasets', optionalAuth, getMlPipelineDatasets);
+router.get('/ml-pipeline/export/:framework', optionalAuth, exportMlPipeline);
 
-// --- ML Data Cleaning Pipeline Endpoints ---
-router.post('/data-cleaning/run', protect, anyRole, runCleaningPipeline);
-router.get('/data-cleaning/report', protect, anyRole, getCleaningReport);
-router.get('/data-cleaning/download/:format', protect, anyRole, downloadCleanDataset);
+router.get('/features/materials', optionalAuth, getMaterialFeatures);
+router.get('/features/warehouse', optionalAuth, getWarehouseFeatures);
+router.get('/features/catalog', optionalAuth, getFeatureCatalog);
 
-// --- AI Dataset Generator Endpoints ---
-router.post('/dataset-generator/generate', protect, anyRole, generateMlDataset);
-router.get('/dataset-generator/versions', protect, anyRole, getDatasetVersions);
-router.get('/dataset-generator/download/:filename', protect, anyRole, downloadDataset);
+router.get('/models', optionalAuth, getModels);
+router.post('/models/register', optionalAuth, registerModel);
+router.post('/models/switch', optionalAuth, switchModel);
+router.post('/models/load', optionalAuth, loadModel);
+router.get('/models/performance', optionalAuth, getModelPerformance);
 
-// --- Module 10: Future AI Training Platform Endpoints ---
-router.get('/training/overview', protect, anyRole, getPlatformOverview);
-router.post('/training/dataset/generate', protect, anyRole, generateDataset);
-router.post('/training/configure', protect, anyRole, configureTraining);
-router.post('/training/run', protect, anyRole, simulateRun);
-router.get('/training/history', protect, anyRole, getHistory);
-router.get('/training/evaluations', protect, anyRole, getEvaluations);
-router.post('/training/deploy', protect, anyRole, deployModel);
-router.post('/training/rollback', protect, anyRole, rollbackModel);
+router.get('/recommendations/engine', optionalAuth, getRecommendationsEngine);
+router.get('/recommendations/category/:category', optionalAuth, getRecommendationsByCategory);
+router.post('/recommendations/strategy', optionalAuth, switchRecommendationStrategy);
 
-// Get AI stock prediction insights
-// GET /api/ai/predictions
-router.get('/predictions', protect, anyRole, getAiPredictions);
+router.get('/xai/explain/material/:materialId', optionalAuth, explainMaterial);
+router.get('/xai/explain/rack/:rackCode', optionalAuth, explainRack);
+router.get('/xai/dashboard', optionalAuth, getXaiDashboard);
+router.get('/xai/digital-twin', optionalAuth, getXaiDigitalTwin);
+router.get('/xai/reports', optionalAuth, getXaiReports);
+router.get('/xai/manager-portal', optionalAuth, getXaiManagerPortal);
 
-// --- Module 7: AI Monitoring Endpoints ---
-// GET /api/ai/monitoring/health
-router.get('/monitoring/health', protect, anyRole, getAiHealth);
+router.get('/monitoring/health', optionalAuth, getMonitoringHealth);
+router.get('/monitoring/metrics', optionalAuth, getMonitoringMetrics);
+router.post('/monitoring/reset', optionalAuth, resetMonitoringMetrics);
 
-// GET /api/ai/monitoring/metrics
-router.get('/monitoring/metrics', protect, anyRole, getAiMetrics);
+router.get('/data-collection/status', optionalAuth, getDataCollectionStatus);
+router.get('/data-collection/statistics', optionalAuth, getDataCollectionStatistics);
+router.post('/data-collection/collect', optionalAuth, collectDataTransaction);
+router.get('/data-collection/logs', optionalAuth, getDataCollectionLogs);
 
-// POST /api/ai/monitoring/reset
-router.post('/monitoring/reset', protect, adminOnly, resetAiMetrics);
+router.get('/datasets', optionalAuth, getDatasets);
+router.get('/datasets/current', optionalAuth, getCurrentDataset);
+router.get('/datasets/statistics', optionalAuth, getDatasetStatistics);
+router.get('/datasets/history', optionalAuth, getDatasetHistory);
+router.get('/datasets/integrity', optionalAuth, verifyDatasetIntegrity);
+router.get('/datasets/:version', optionalAuth, getDatasetByVersion);
+router.post('/datasets/create', optionalAuth, createDatasetSnapshot);
+router.post('/datasets/archive', optionalAuth, archiveDataset);
+router.post('/datasets/restore', optionalAuth, restoreDataset);
+router.post('/datasets/select', optionalAuth, selectDataset);
 
-// --- Module 6: Explainable AI (XAI) Endpoints ---
-// GET /api/ai/xai/explain/material/:id
-router.get('/xai/explain/material/:id', protect, anyRole, explainMaterial);
+router.get('/models/registry', optionalAuth, getRegisteredModels);
+router.get('/models/current', optionalAuth, getCurrentProductionModel);
+router.get('/models/history', optionalAuth, getModelRegistryHistory);
+router.get('/models/metrics', optionalAuth, getModelRegistryMetrics);
+router.get('/models/artifacts', optionalAuth, getModelArtifacts);
+router.get('/models/version/:version', optionalAuth, getRegisteredModelByVersion);
+router.post('/models/register-new', optionalAuth, registerNewModel);
+router.post('/models/archive-version', optionalAuth, archiveModelVersion);
+router.post('/models/promote', optionalAuth, promoteModelToProduction);
+router.post('/models/status', optionalAuth, updateModelStatus);
 
-// GET /api/ai/xai/explain/rack/:code
-router.get('/xai/explain/rack/:code', protect, anyRole, explainRack);
+router.get('/models/compare', optionalAuth, compareModels);
+router.post('/models/compare', optionalAuth, compareModels);
+router.get('/models/ranking', optionalAuth, getModelRanking);
+router.get('/models/comparisons', optionalAuth, getModelComparisons);
+router.get('/models/recommendation', optionalAuth, getModelRecommendation);
 
-// GET /api/ai/xai/dashboard
-router.get('/xai/dashboard', protect, anyRole, getDashboardExplanations);
+router.post('/deployment/evaluate', optionalAuth, evaluateDeploymentCandidate);
+router.get('/deployment/decision', optionalAuth, getDeploymentDecision);
+router.get('/deployment/history', optionalAuth, getDeploymentHistory);
+router.post('/deployment/override', optionalAuth, overrideDeploymentDecision);
+router.get('/deployment/policies', optionalAuth, getDeploymentPolicies);
+router.post('/deployment/policies', optionalAuth, saveDeploymentPolicies);
 
-// GET /api/ai/xai/digital-twin
-router.get('/xai/digital-twin', protect, anyRole, getDigitalTwinExplanations);
-
-// GET /api/ai/xai/reports
-router.get('/xai/reports', protect, anyRole, getReportsExplanations);
-
-// GET /api/ai/xai/manager-portal
-router.get('/xai/manager-portal', protect, anyRole, getManagerPortalExplanations);
-
-// --- Module 5: AI Recommendation Engine Endpoints ---
-// GET /api/ai/recommendations/engine
-router.get('/recommendations/engine', protect, anyRole, getRecommendationsEngine);
-
-// GET /api/ai/recommendations/category/:category
-router.get('/recommendations/category/:category', protect, anyRole, getRecommendationsByCategory);
-
-// POST /api/ai/recommendations/strategy
-router.post('/recommendations/strategy', protect, anyRole, switchRecommendationStrategy);
-
-// --- Module 4: Model Management Endpoints ---
-// GET /api/ai/models
-router.get('/models', protect, anyRole, getModels);
-
-// POST /api/ai/models/register
-router.post('/models/register', protect, anyRole, registerModel);
-
-// POST /api/ai/models/switch
-router.post('/models/switch', protect, anyRole, switchModel);
-
-// POST /api/ai/models/load
-router.post('/models/load', protect, anyRole, loadModel);
-
-// GET /api/ai/models/performance
-router.get('/models/performance', protect, anyRole, getModelPerformance);
-
-// --- Module 3: Feature Engineering Endpoints ---
-// GET /api/ai/features
-router.get('/features', protect, anyRole, getFeatures);
-
-// GET /api/ai/features/materials
-router.get('/features/materials', protect, anyRole, getMaterialFeatures);
-
-// GET /api/ai/features/warehouse
-router.get('/features/warehouse', protect, anyRole, getWarehouseFeatures);
-
-// GET /api/ai/features/catalog
-router.get('/features/catalog', protect, anyRole, getFeatureCatalog);
-
-// --- Module 2: Machine Learning Data Pipeline Endpoints ---
-// POST /api/ai/ml-pipeline/run
-router.post('/ml-pipeline/run', protect, anyRole, runPipeline);
-
-// GET /api/ai/ml-pipeline/status
-router.get('/ml-pipeline/status', protect, anyRole, getPipelineStatus);
-
-// GET /api/ai/ml-pipeline/datasets
-router.get('/ml-pipeline/datasets', protect, anyRole, getDatasets);
-
-// GET /api/ai/ml-pipeline/export/:framework
-router.get('/ml-pipeline/export/:framework', protect, anyRole, exportDataset);
-
-// --- Module 1: AI Prediction Engine Endpoints ---
-// GET /api/ai/prediction-engine/overview
-router.get('/prediction-engine/overview', protect, anyRole, getPredictionEngineOverview);
-
-// GET /api/ai/prediction-engine/demand
-router.get('/prediction-engine/demand', protect, anyRole, getDemandPredictions);
-
-// GET /api/ai/prediction-engine/depletion
-router.get('/prediction-engine/depletion', protect, anyRole, getDepletionPredictions);
-
-// GET /api/ai/prediction-engine/rack-utilization
-router.get('/prediction-engine/rack-utilization', protect, anyRole, getRackUtilizationPredictions);
-
-// GET /api/ai/prediction-engine/warehouse-risk
-router.get('/prediction-engine/warehouse-risk', protect, anyRole, getWarehouseRiskPredictions);
-
-// GET /api/ai/prediction-engine/consumption-trend
-router.get('/prediction-engine/consumption-trend', protect, anyRole, getConsumptionTrendPredictions);
-
-// GET /api/ai/prediction-engine/recommendations
-router.get('/prediction-engine/recommendations', protect, anyRole, getPredictiveRecommendations);
-
-// Get Low Stock Intelligence (Module 2)
-// GET /api/ai/low-stock-intelligence
-router.get('/low-stock-intelligence', protect, anyRole, getLowStockIntelligence);
-
-// Get Consumption Intelligence (Module 4)
-// GET /api/ai/consumption-intelligence
-router.get('/consumption-intelligence', protect, anyRole, getConsumptionIntelligence);
-
-// Get Dead Stock Intelligence (Module 5)
-// GET /api/ai/dead-stock-intelligence
-router.get('/dead-stock-intelligence', protect, anyRole, getDeadStockIntelligence);
-
-// Get Rack Optimization Intelligence (Module 6)
-// GET /api/ai/rack-optimization-intelligence
-router.get('/rack-optimization-intelligence', protect, anyRole, getRackOptimizationIntelligence);
-
-// Get AI Smart Alerts (Module 7)
-// GET /api/ai/smart-alerts
-router.get('/smart-alerts', protect, anyRole, getSmartAlerts);
-
-// Get Warehouse Health Score (Module 10)
-// GET /api/ai/warehouse-health-score
-router.get('/warehouse-health-score', protect, anyRole, getWarehouseHealthScore);
-
-// Get AI reorder recommendations
-// GET /api/ai/reorder-recommendations
-router.get('/reorder-recommendations', protect, anyRole, getReorderRecommendations);
-
-// Get AI risk analysis
-// GET /api/ai/risk-analysis
-router.get('/risk-analysis', protect, anyRole, getRiskAnalysis);
-
-// Get AI recommendations
-// GET /api/ai/recommendations
-router.get('/recommendations', protect, anyRole, getAiRecommendations);
-
-// Get AI rack capacity optimizations
-// GET /api/ai/rack-optimization
-router.get('/rack-optimization', getRackOptimizations);
-
-// Get AI alert prioritization
-// GET /api/ai/alert-prioritization
-router.get('/alert-prioritization', protect, anyRole, getAiAlertPrioritization);
+router.get('/rollback/eligible',  optionalAuth, getRollbackEligible);
+router.post('/rollback/request',  optionalAuth, requestRollback);
+router.post('/rollback/simulate', optionalAuth, simulateRollback);
+router.post('/rollback/approve',  optionalAuth, approveRollback);
+router.post('/rollback/reject',   optionalAuth, rejectRollback);
+router.get('/rollback/history',   optionalAuth, getRollbackHistory);
 
 export default router;

@@ -82,7 +82,7 @@ export const WarehouseUtilizationChart: React.FC<WarehouseUtilizationChartProps>
         </div>
       </div>
 
-      {/* Metric Breakdown Summary */}
+      
       <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-800/80 text-xs font-mono">
         <div className="p-2 rounded-xl bg-slate-950/40 border border-slate-800/50">
           <span className="text-[10px] text-slate-400 uppercase block">Occupied</span>

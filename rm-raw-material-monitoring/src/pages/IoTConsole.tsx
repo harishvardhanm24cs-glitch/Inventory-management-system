@@ -99,7 +99,7 @@ const IoTConsole: React.FC = () => {
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Configuration & Control */}
+                
                 <div className="lg:col-span-1 space-y-6">
                     <Card className="border-none shadow-xl shadow-slate-100 bg-white/80 backdrop-blur-md overflow-hidden">
                         <div className="bg-slate-900 p-4 flex items-center justify-between">
@@ -212,7 +212,7 @@ const IoTConsole: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Real-time Log */}
+                
                 <Card className="lg:col-span-2 border-none shadow-2xl shadow-slate-200 bg-slate-900 flex flex-col min-h-[500px]">
                     <div className="p-5 border-b border-white/5 flex items-center justify-between">
                         <h3 className="text-white font-black text-xs uppercase tracking-widest flex items-center gap-2">
@@ -247,7 +247,7 @@ const IoTConsole: React.FC = () => {
                                             {log.status.toUpperCase()}
                                         </span>
                                     </div>
-                                    <span className="text-[10px] text-slate-400 uppercase">{log.type} // {log.weight}kg</span>
+                                    <span className="text-[10px] text-slate-400 uppercase">{log.type} {log.weight}kg</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-[11px]">
                                     <span className="text-primary font-bold">{log.materialName}</span>

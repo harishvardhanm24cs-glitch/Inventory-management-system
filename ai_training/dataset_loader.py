@@ -3,7 +3,6 @@ import sys
 from pathlib import Path
 import pandas as pd
 
-# Add ai_training directory to sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -12,11 +11,9 @@ try:
 except ImportError:
     from ai_training.config import FEATURE_DATASET_CSV, CLEAN_DATASET_CSV, TARGET_COLUMN, MIN_ROWS_REQUIRED
 
-
 class DatasetValidationError(Exception):
     """Custom exception raised when dataset validation checks fail."""
     pass
-
 
 class DatasetLoader:
     """
@@ -58,14 +55,12 @@ class DatasetLoader:
             "errors": []
         }
 
-        # 1. File existence
         if not self.feature_dataset_path.exists():
             err_msg = f"Dataset file does not exist at '{self.feature_dataset_path}'."
             validation_summary["errors"].append(err_msg)
             raise FileNotFoundError(err_msg)
         validation_summary["file_exists"] = True
 
-        # 2. Readability and empty check
         try:
             df = pd.read_csv(self.feature_dataset_path)
             validation_summary["readable"] = True
@@ -82,7 +77,6 @@ class DatasetLoader:
             validation_summary["errors"].append(err_msg)
             raise DatasetValidationError(err_msg)
 
-        # 3. Minimum row check
         if len(df) < MIN_ROWS_REQUIRED:
             err_msg = (
                 f"Insufficient data rows: Dataset contains {len(df)} rows, "
@@ -91,7 +85,6 @@ class DatasetLoader:
             validation_summary["errors"].append(err_msg)
             raise DatasetValidationError(err_msg)
 
-        # 4. Target column verification
         if TARGET_COLUMN not in df.columns:
             err_msg = (
                 f"Target column '{TARGET_COLUMN}' is missing from the dataset columns. "
@@ -101,7 +94,6 @@ class DatasetLoader:
             raise DatasetValidationError(err_msg)
         validation_summary["target_column_present"] = True
 
-        # 5. Duplicate detection & removal
         duplicate_count = int(df.duplicated().sum())
         validation_summary["duplicate_rows_detected"] = duplicate_count
         if duplicate_count > 0:
@@ -111,7 +103,6 @@ class DatasetLoader:
 
         validation_summary["final_rows"] = len(df)
 
-        # 6. Check again if rows after deduplication meet threshold
         if len(df) < MIN_ROWS_REQUIRED:
             err_msg = (
                 f"Insufficient data rows after duplicate removal: {len(df)} rows remain, "
@@ -120,7 +111,6 @@ class DatasetLoader:
             validation_summary["errors"].append(err_msg)
             raise DatasetValidationError(err_msg)
 
-        # 7. Missing value summary
         missing_counts = {col: int(df[col].isnull().sum()) for col in df.columns if df[col].isnull().sum() > 0}
         validation_summary["missing_values_count"] = missing_counts
         validation_summary["validation_status"] = "PASSED"
@@ -141,7 +131,6 @@ class DatasetLoader:
                 f"Clean warehouse dataset not found at '{CLEAN_DATASET_CSV}'."
             )
         return pd.read_csv(CLEAN_DATASET_CSV)
-
 
 if __name__ == "__main__":
     loader = DatasetLoader()

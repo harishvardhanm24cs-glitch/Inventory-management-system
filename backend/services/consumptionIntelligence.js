@@ -1,14 +1,5 @@
 import db from '../config/db.js';
 
-/**
- * consumptionIntelligence.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Module 4 – Consumption Intelligence Engine
- *
- * Calculates material consumption metrics across daily, weekly, and monthly
- * time horizons using existing database tables (materials, transactions, material_usage_history).
- */
-
 class ConsumptionIntelligenceEngine {
   async analyzeAll() {
     const [materials] = await db.query('SELECT id, barcode, material_name, quantity, unit FROM materials ORDER BY material_name ASC');
@@ -69,12 +60,12 @@ class ConsumptionIntelligenceEngine {
       const allTxs = txMap[mat.id] || [];
       const recent7dTxs = recent7dTxMap[mat.id] || [];
 
-      // Total consumed across all recorded time
+      
       const total_consumed = parseFloat(
         allTxs.reduce((sum, tx) => sum + parseFloat(tx.quantity || 0), 0).toFixed(2)
       );
 
-      // Average daily consumption calculation
+      
       let avg_daily_consumption = 0.00;
       if (allTxs.length > 0) {
         const oldestDate = new Date(allTxs[0].created_at);
@@ -83,13 +74,13 @@ class ConsumptionIntelligenceEngine {
         avg_daily_consumption = parseFloat((total_consumed / diffDays).toFixed(2));
       }
 
-      // 7-day recent consumption velocity
+      
       const recent_7d_consumed = parseFloat(
         recent7dTxs.reduce((sum, tx) => sum + parseFloat(tx.quantity || 0), 0).toFixed(2)
       );
       const recentDailyRate = parseFloat((recent_7d_consumed / 7).toFixed(2));
 
-      // Trend Evaluation Vector
+      
       let trend = 'Stable';
       let trend_percentage_change = 0;
 
@@ -132,7 +123,7 @@ class ConsumptionIntelligenceEngine {
       };
     });
 
-    // ── Rankings ──
+    
     const most_consumed = [...processedMaterials]
       .sort((a, b) => b.total_consumed - a.total_consumed)
       .slice(0, 5);

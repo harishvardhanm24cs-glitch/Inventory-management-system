@@ -29,7 +29,7 @@ export const ConsumptionTrendCharts: React.FC<ConsumptionTrendChartsProps> = ({ 
 
   return (
     <div className="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-6 backdrop-blur-md transition-all shadow-md space-y-4">
-      {/* Header & Tabs */}
+      
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
@@ -43,7 +43,7 @@ export const ConsumptionTrendCharts: React.FC<ConsumptionTrendChartsProps> = ({ 
           </div>
         </div>
 
-        {/* Granularity Pill Selector */}
+        
         <div className="flex items-center gap-1 rounded-xl border border-slate-800 bg-slate-950/80 p-1 text-xs">
           <button
             onClick={() => setActiveTrendTab('daily')}
@@ -78,7 +78,7 @@ export const ConsumptionTrendCharts: React.FC<ConsumptionTrendChartsProps> = ({ 
         </div>
       </div>
 
-      {/* Chart Canvas */}
+      
       <div className="h-[240px] w-full min-w-0">
         <ResponsiveContainer width="100%" height={240} minWidth={0} minHeight={240}>
           {activeTrendTab === 'daily' ? (

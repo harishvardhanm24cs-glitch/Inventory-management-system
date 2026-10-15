@@ -40,10 +40,10 @@ export const TrendAnalysisWidget: React.FC = memo(() => {
 
   return (
     <div className="bg-slate-900/90 border border-slate-800/80 rounded-2xl p-6 shadow-2xl backdrop-blur-xl relative overflow-hidden group hover:border-purple-500/30 transition-all duration-300">
-      {/* Glow Accent */}
+      
       <div className="absolute -right-10 -top-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-purple-500/20 transition-all duration-500" />
 
-      {/* Header */}
+      
       <div className="flex items-center justify-between mb-5 border-b border-slate-800/80 pb-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg shadow-purple-500/20">
@@ -71,7 +71,7 @@ export const TrendAnalysisWidget: React.FC = memo(() => {
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Anomaly Highlight Banner */}
+          
           <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
             <div>
               <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-0.5">Anomalies Detected</span>
@@ -93,9 +93,9 @@ export const TrendAnalysisWidget: React.FC = memo(() => {
             )}
           </div>
 
-          {/* Trend List */}
+          
           <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1 custom-scrollbar">
-            {trends.slice(0, 4).map((t) => {
+            {trends.slice(0, 4).map((t, idx) => {
               const isInc = t.trend_direction === 'INCREASING';
               const isDec = t.trend_direction === 'DECREASING';
 
@@ -109,7 +109,7 @@ export const TrendAnalysisWidget: React.FC = memo(() => {
 
               return (
                 <div
-                  key={t.material_id}
+                  key={t.material_id || t.id || t.date || `trend-${idx}`}
                   className="p-2.5 rounded-xl bg-slate-850/50 border border-slate-800/80 flex items-center justify-between hover:border-purple-500/30 transition-all text-xs"
                 >
                   <div>

@@ -1,31 +1,7 @@
 import db from '../config/db.js';
 
-/**
- * warehouseIntelligenceEngine.js
- * ─────────────────────────────────────────────────────────────────────────────
- * AI Warehouse Intelligence Engine Service (Module 1 - System Brain)
- *
- * Consumes real database data across:
- * • Inventory (materials table)
- * • Transactions (transactions & material_usage_history)
- * • Racks & Occupancy (racks & rack_inventory)
- * • Thresholds (threshold_limit)
- * • Alerts (alerts table)
- * • Movement History (qr_history)
- *
- * Generates structured intelligence objects consumed by:
- * • Dashboard
- * • Digital Twin
- * • Notifications / Alerts Engine
- * • Reports & Schedulers
- *
- * No mock data. No UI dependencies. No duplicate inventory data.
- */
-
 export const warehouseIntelligenceEngine = {
-  /**
-   * 1. Calculate Predictive Inventory Depletion & Risk Rankings
-   */
+  
   async generatePredictions() {
     const [materials] = await db.query('SELECT id, barcode, material_name, quantity, threshold_limit, unit FROM materials');
 
@@ -56,7 +32,7 @@ export const warehouseIntelligenceEngine = {
       const threshold_limit = parseFloat(mat.threshold_limit) || 0.00;
       const txs = txMap[mat.id] || [];
 
-      // Calculate average daily consumption velocity
+      
       let avg_daily_usage = 0.00;
       if (txs.length > 0) {
         const oldestTxDate = new Date(txs[0].created_at);
@@ -67,13 +43,13 @@ export const warehouseIntelligenceEngine = {
         avg_daily_usage = parseFloat((totalOutward / diffDays).toFixed(2));
       }
 
-      // Days Remaining until depletion
+      
       let days_remaining = null;
       if (avg_daily_usage > 0) {
         days_remaining = parseFloat((current_stock / avg_daily_usage).toFixed(1));
       }
 
-      // Days until threshold
+      
       let days_until_threshold = null;
       if (current_stock <= threshold_limit) {
         days_until_threshold = 0;
@@ -81,7 +57,7 @@ export const warehouseIntelligenceEngine = {
         days_until_threshold = Math.ceil((current_stock - threshold_limit) / avg_daily_usage);
       }
 
-      // Calculate Recommended Reorder Qty & Action
+      
       let recommended_reorder_qty = 0;
       let recommendation = 'Stock level stable. Normal monitoring.';
 
@@ -98,7 +74,7 @@ export const warehouseIntelligenceEngine = {
         }
       }
 
-      // Calculate Risk Score (0-100)
+      
       const stockRatio = threshold_limit > 0 ? (current_stock / threshold_limit) : 1.5;
       let baseScore = 0;
       if (current_stock === 0) baseScore = 60;
@@ -143,14 +119,12 @@ export const warehouseIntelligenceEngine = {
     });
   },
 
-  /**
-   * 2. Generate Actionable AI Warehouse Recommendations
-   */
+  
   async generateRecommendations() {
     const recommendations = [];
     const nowISO = new Date().toISOString();
 
-    // Fetch Rack state
+    
     const [racks] = await db.query(`
       SELECT 
         r.rack_code, 
@@ -162,20 +136,20 @@ export const warehouseIntelligenceEngine = {
       LEFT JOIN rack_inventory ri ON r.rack_code = ri.rack_code
     `);
 
-    // Fetch Material state
+    
     const [materials] = await db.query(`
       SELECT id, material_name, barcode, quantity, threshold_limit 
       FROM materials
     `);
 
-    // Fetch Movement History (last 30 days)
+    
     const [history] = await db.query(`
       SELECT rack_code, material_name, action, created_at 
       FROM qr_history
       WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
     `);
 
-    // --- 1. RACK CAPACITIES & BALANCING ---
+    
     (racks || []).forEach((rack) => {
       const occ = parseFloat(rack.occupancy_percentage) || 0;
       if (occ > 85) {
@@ -216,7 +190,7 @@ export const warehouseIntelligenceEngine = {
       });
     }
 
-    // --- 2. MATERIAL DEFICITS & THRESHOLDS ---
+    
     (materials || []).forEach((mat) => {
       const qty = parseFloat(mat.quantity) || 0;
       const threshold = parseFloat(mat.threshold_limit) || 0;
@@ -263,7 +237,7 @@ export const warehouseIntelligenceEngine = {
       }
     });
 
-    // --- 3. MOVEMENT VELOCITY & INACTIVE STOCK ---
+    
     (materials || []).forEach((mat) => {
       const matHistory = (history || []).filter(
         (h) => h.material_name && h.material_name.toLowerCase() === mat.material_name.toLowerCase()
@@ -287,9 +261,7 @@ export const warehouseIntelligenceEngine = {
     return recommendations;
   },
 
-  /**
-   * 3. Generate Rack Optimizations & Load Balancing Suggestions
-   */
+  
   async generateRackOptimizations() {
     const [racks] = await db.query(`
       SELECT 

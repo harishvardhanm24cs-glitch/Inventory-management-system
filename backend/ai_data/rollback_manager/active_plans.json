@@ -1,0 +1,1074 @@
+{
+  "RB-20260728-235742-v110": {
+    "rollback_id": "RB-20260728-235742-v110",
+    "status": "SIMULATED",
+    "current_production_model": "v1.0.0",
+    "current_model_name": "Production Baseline Model v1.0.0",
+    "current_model_algorithm": "GradientBoostingRegressor",
+    "target_model": "v1.1.0",
+    "target_model_name": "Candidate Retrained Model v1.1.0",
+    "target_model_algorithm": "GradientBoostingRegressor",
+    "target_model_status": "CANDIDATE",
+    "target_dataset_version": "2026.08.001",
+    "reason": "Simulation request",
+    "requested_by": "SAFETY_TEST",
+    "artifact_path": "D:\\atendence-main\\backend\\models\\gradientboostingregressor_v1_1_0.pkl",
+    "artifact_status": "VERIFIED",
+    "artifact_size_bytes": 48,
+    "checksum": "80e91cf4c1f5e4a5...",
+    "checksum_status": "VERIFIED",
+    "dataset_status": "VERIFIED",
+    "eligibility_result": {
+      "eligible": true,
+      "model_version": "v1.1.0",
+      "model_name": "Candidate Retrained Model v1.1.0",
+      "status": "CANDIDATE",
+      "checks": [
+        {
+          "check": "Status Eligibility",
+          "expected": "ARCHIVED or PREVIOUS_PRODUCTION",
+          "actual": "CANDIDATE",
+          "passed": true
+        },
+        {
+          "check": "Artifact File Exists",
+          "expected": "File present on disk",
+          "actual": "EXISTS",
+          "passed": true
+        },
+        {
+          "check": "Checksum Verification (SHA-256)",
+          "expected": "80e91cf4c1f5e4a5...",
+          "actual": "80e91cf4c1f5e4a5...",
+          "passed": true
+        },
+        {
+          "check": "Dataset Linkage",
+          "expected": "Dataset version assigned",
+          "actual": "2026.08.001",
+          "passed": true
+        },
+        {
+          "check": "Metadata Completeness",
+          "expected": "All required fields present",
+          "actual": "COMPLETE",
+          "passed": true
+        }
+      ],
+      "failure_reasons": [],
+      "passed_count": 5,
+      "total_checks": 5
+    },
+    "validation_result": "PASS",
+    "validation_failure_reasons": [],
+    "performance_delta": {
+      "mae_delta": 0.07,
+      "r2_delta": 0.02,
+      "rmse_delta": 0.1
+    },
+    "target_metrics": {
+      "mae": 0.78,
+      "rmse": 1.02,
+      "r2_score": 0.96,
+      "cv_score": 0.94
+    },
+    "current_metrics": {
+      "mae": 0.85,
+      "rmse": 1.12,
+      "r2_score": 0.94,
+      "cv_score": 0.92
+    },
+    "created_at": "2026-07-28T23:57:42.477485",
+    "simulation_result": {
+      "simulation_id": "SIM-20260728-235742",
+      "rollback_id": "RB-20260728-235742-v110",
+      "target_model": "v1.1.0",
+      "passed": true,
+      "status": "SIMULATION_PASSED",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Registry Consistency Check",
+          "description": "Verifying model version 'v1.1.0' exists in model registry.",
+          "passed": true,
+          "detail": "Model found in registry."
+        },
+        {
+          "step": 2,
+          "name": "Artifact Accessibility",
+          "description": "Verifying artifact file is readable at: gradientboostingregressor_v1_1_0.pkl",
+          "passed": true,
+          "detail": "Artifact file accessible and readable."
+        },
+        {
+          "step": 3,
+          "name": "Checksum Integrity (SHA-256)",
+          "description": "Computing SHA-256 checksum and comparing against stored manifest value.",
+          "passed": true,
+          "detail": "SHA-256 VERIFIED against registry."
+        },
+        {
+          "step": 4,
+          "name": "Dataset Linkage Validation",
+          "description": "Verifying rollback target is linked to a valid dataset version.",
+          "passed": true,
+          "detail": "Dataset version '2026.08.001' linked."
+        },
+        {
+          "step": 5,
+          "name": "Rollback Target Confirmation",
+          "description": "Confirming rollback target 'v1.1.0' is distinct from current production 'v1.0.0'.",
+          "passed": true,
+          "detail": "Rollback target 'v1.1.0' confirmed as distinct from production 'v1.0.0'."
+        }
+      ],
+      "steps_passed": 5,
+      "steps_total": 5,
+      "errors": [],
+      "duration_ms": 0,
+      "timestamp": "2026-07-28T23:57:42.479454",
+      "note": "DRY RUN ONLY \u2014 production model NOT modified."
+    },
+    "approval_status": "PENDING",
+    "reviewed_by": null,
+    "approved_at": null
+  },
+  "RB-20260728-235836-v110": {
+    "rollback_id": "RB-20260728-235836-v110",
+    "status": "SIMULATED",
+    "current_production_model": "v1.0.0",
+    "current_model_name": "Production Baseline Model v1.0.0",
+    "current_model_algorithm": "GradientBoostingRegressor",
+    "target_model": "v1.1.0",
+    "target_model_name": "Candidate Retrained Model v1.1.0",
+    "target_model_algorithm": "GradientBoostingRegressor",
+    "target_model_status": "CANDIDATE",
+    "target_dataset_version": "2026.08.001",
+    "reason": "Simulation request",
+    "requested_by": "SAFETY_TEST",
+    "artifact_path": "D:\\atendence-main\\backend\\models\\gradientboostingregressor_v1_1_0.pkl",
+    "artifact_status": "VERIFIED",
+    "artifact_size_bytes": 48,
+    "checksum": "80e91cf4c1f5e4a5...",
+    "checksum_status": "VERIFIED",
+    "dataset_status": "VERIFIED",
+    "eligibility_result": {
+      "eligible": true,
+      "model_version": "v1.1.0",
+      "model_name": "Candidate Retrained Model v1.1.0",
+      "status": "CANDIDATE",
+      "checks": [
+        {
+          "check": "Status Eligibility",
+          "expected": "ARCHIVED or PREVIOUS_PRODUCTION",
+          "actual": "CANDIDATE",
+          "passed": true
+        },
+        {
+          "check": "Artifact File Exists",
+          "expected": "File present on disk",
+          "actual": "EXISTS",
+          "passed": true
+        },
+        {
+          "check": "Checksum Verification (SHA-256)",
+          "expected": "80e91cf4c1f5e4a5...",
+          "actual": "80e91cf4c1f5e4a5...",
+          "passed": true
+        },
+        {
+          "check": "Dataset Linkage",
+          "expected": "Dataset version assigned",
+          "actual": "2026.08.001",
+          "passed": true
+        },
+        {
+          "check": "Metadata Completeness",
+          "expected": "All required fields present",
+          "actual": "COMPLETE",
+          "passed": true
+        }
+      ],
+      "failure_reasons": [],
+      "passed_count": 5,
+      "total_checks": 5
+    },
+    "validation_result": "PASS",
+    "validation_failure_reasons": [],
+    "performance_delta": {
+      "mae_delta": 0.07,
+      "r2_delta": 0.02,
+      "rmse_delta": 0.1
+    },
+    "target_metrics": {
+      "mae": 0.78,
+      "rmse": 1.02,
+      "r2_score": 0.96,
+      "cv_score": 0.94
+    },
+    "current_metrics": {
+      "mae": 0.85,
+      "rmse": 1.12,
+      "r2_score": 0.94,
+      "cv_score": 0.92
+    },
+    "created_at": "2026-07-28T23:58:36.687582",
+    "simulation_result": {
+      "simulation_id": "SIM-20260728-235836",
+      "rollback_id": "RB-20260728-235836-v110",
+      "target_model": "v1.1.0",
+      "passed": true,
+      "status": "SIMULATION_PASSED",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Registry Consistency Check",
+          "description": "Verifying model version 'v1.1.0' exists in model registry.",
+          "passed": true,
+          "detail": "Model found in registry."
+        },
+        {
+          "step": 2,
+          "name": "Artifact Accessibility",
+          "description": "Verifying artifact file is readable at: gradientboostingregressor_v1_1_0.pkl",
+          "passed": true,
+          "detail": "Artifact file accessible and readable."
+        },
+        {
+          "step": 3,
+          "name": "Checksum Integrity (SHA-256)",
+          "description": "Computing SHA-256 checksum and comparing against stored manifest value.",
+          "passed": true,
+          "detail": "SHA-256 VERIFIED against registry."
+        },
+        {
+          "step": 4,
+          "name": "Dataset Linkage Validation",
+          "description": "Verifying rollback target is linked to a valid dataset version.",
+          "passed": true,
+          "detail": "Dataset version '2026.08.001' linked."
+        },
+        {
+          "step": 5,
+          "name": "Rollback Target Confirmation",
+          "description": "Confirming rollback target 'v1.1.0' is distinct from current production 'v1.0.0'.",
+          "passed": true,
+          "detail": "Rollback target 'v1.1.0' confirmed as distinct from production 'v1.0.0'."
+        }
+      ],
+      "steps_passed": 5,
+      "steps_total": 5,
+      "errors": [],
+      "duration_ms": 0,
+      "timestamp": "2026-07-28T23:58:36.690701",
+      "note": "DRY RUN ONLY \u2014 production model NOT modified."
+    },
+    "approval_status": "PENDING",
+    "reviewed_by": null,
+    "approved_at": null
+  },
+  "RB-20260818-171235-v110": {
+    "rollback_id": "RB-20260818-171235-v110",
+    "status": "SIMULATED",
+    "current_production_model": "v1.0.0",
+    "current_model_name": "Production Baseline Model v1.0.0",
+    "current_model_algorithm": "GradientBoostingRegressor",
+    "target_model": "v1.1.0",
+    "target_model_name": "Candidate Retrained Model v1.1.0",
+    "target_model_algorithm": "GradientBoostingRegressor",
+    "target_model_status": "CANDIDATE",
+    "target_dataset_version": "2026.08.001",
+    "reason": "Simulation request",
+    "requested_by": "SYSTEM",
+    "artifact_path": "D:\\atendence-main\\backend\\models\\gradientboostingregressor_v1_1_0.pkl",
+    "artifact_status": "VERIFIED",
+    "artifact_size_bytes": 48,
+    "checksum": "80e91cf4c1f5e4a5...",
+    "checksum_status": "VERIFIED",
+    "dataset_status": "VERIFIED",
+    "eligibility_result": {
+      "eligible": true,
+      "model_version": "v1.1.0",
+      "model_name": "Candidate Retrained Model v1.1.0",
+      "status": "CANDIDATE",
+      "checks": [
+        {
+          "check": "Status Eligibility",
+          "expected": "ARCHIVED or PREVIOUS_PRODUCTION",
+          "actual": "CANDIDATE",
+          "passed": true
+        },
+        {
+          "check": "Artifact File Exists",
+          "expected": "File present on disk",
+          "actual": "EXISTS",
+          "passed": true
+        },
+        {
+          "check": "Checksum Verification (SHA-256)",
+          "expected": "80e91cf4c1f5e4a5...",
+          "actual": "80e91cf4c1f5e4a5...",
+          "passed": true
+        },
+        {
+          "check": "Dataset Linkage",
+          "expected": "Dataset version assigned",
+          "actual": "2026.08.001",
+          "passed": true
+        },
+        {
+          "check": "Metadata Completeness",
+          "expected": "All required fields present",
+          "actual": "COMPLETE",
+          "passed": true
+        }
+      ],
+      "failure_reasons": [],
+      "passed_count": 5,
+      "total_checks": 5
+    },
+    "validation_result": "PASS",
+    "validation_failure_reasons": [],
+    "performance_delta": {
+      "mae_delta": 0.07,
+      "r2_delta": 0.02,
+      "rmse_delta": 0.1
+    },
+    "target_metrics": {
+      "mae": 0.78,
+      "rmse": 1.02,
+      "r2_score": 0.96,
+      "cv_score": 0.94
+    },
+    "current_metrics": {
+      "mae": 0.85,
+      "rmse": 1.12,
+      "r2_score": 0.94,
+      "cv_score": 0.92
+    },
+    "created_at": "2026-08-18T17:12:35.914782",
+    "simulation_result": {
+      "simulation_id": "SIM-20260818-171235",
+      "rollback_id": "RB-20260818-171235-v110",
+      "target_model": "v1.1.0",
+      "passed": true,
+      "status": "SIMULATION_PASSED",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Registry Consistency Check",
+          "description": "Verifying model version 'v1.1.0' exists in model registry.",
+          "passed": true,
+          "detail": "Model found in registry."
+        },
+        {
+          "step": 2,
+          "name": "Artifact Accessibility",
+          "description": "Verifying artifact file is readable at: gradientboostingregressor_v1_1_0.pkl",
+          "passed": true,
+          "detail": "Artifact file accessible and readable."
+        },
+        {
+          "step": 3,
+          "name": "Checksum Integrity (SHA-256)",
+          "description": "Computing SHA-256 checksum and comparing against stored manifest value.",
+          "passed": true,
+          "detail": "SHA-256 VERIFIED against registry."
+        },
+        {
+          "step": 4,
+          "name": "Dataset Linkage Validation",
+          "description": "Verifying rollback target is linked to a valid dataset version.",
+          "passed": true,
+          "detail": "Dataset version '2026.08.001' linked."
+        },
+        {
+          "step": 5,
+          "name": "Rollback Target Confirmation",
+          "description": "Confirming rollback target 'v1.1.0' is distinct from current production 'v1.0.0'.",
+          "passed": true,
+          "detail": "Rollback target 'v1.1.0' confirmed as distinct from production 'v1.0.0'."
+        }
+      ],
+      "steps_passed": 5,
+      "steps_total": 5,
+      "errors": [],
+      "duration_ms": 6,
+      "timestamp": "2026-08-18T17:12:35.923581",
+      "note": "DRY RUN ONLY \u2014 production model NOT modified."
+    },
+    "approval_status": "PENDING",
+    "reviewed_by": null,
+    "approved_at": null
+  },
+  "RB-20260818-171245-v110": {
+    "rollback_id": "RB-20260818-171245-v110",
+    "status": "SIMULATED",
+    "current_production_model": "v1.0.0",
+    "current_model_name": "Production Baseline Model v1.0.0",
+    "current_model_algorithm": "GradientBoostingRegressor",
+    "target_model": "v1.1.0",
+    "target_model_name": "Candidate Retrained Model v1.1.0",
+    "target_model_algorithm": "GradientBoostingRegressor",
+    "target_model_status": "CANDIDATE",
+    "target_dataset_version": "2026.08.001",
+    "reason": "Simulation request",
+    "requested_by": "SYSTEM",
+    "artifact_path": "D:\\atendence-main\\backend\\models\\gradientboostingregressor_v1_1_0.pkl",
+    "artifact_status": "VERIFIED",
+    "artifact_size_bytes": 48,
+    "checksum": "80e91cf4c1f5e4a5...",
+    "checksum_status": "VERIFIED",
+    "dataset_status": "VERIFIED",
+    "eligibility_result": {
+      "eligible": true,
+      "model_version": "v1.1.0",
+      "model_name": "Candidate Retrained Model v1.1.0",
+      "status": "CANDIDATE",
+      "checks": [
+        {
+          "check": "Status Eligibility",
+          "expected": "ARCHIVED or PREVIOUS_PRODUCTION",
+          "actual": "CANDIDATE",
+          "passed": true
+        },
+        {
+          "check": "Artifact File Exists",
+          "expected": "File present on disk",
+          "actual": "EXISTS",
+          "passed": true
+        },
+        {
+          "check": "Checksum Verification (SHA-256)",
+          "expected": "80e91cf4c1f5e4a5...",
+          "actual": "80e91cf4c1f5e4a5...",
+          "passed": true
+        },
+        {
+          "check": "Dataset Linkage",
+          "expected": "Dataset version assigned",
+          "actual": "2026.08.001",
+          "passed": true
+        },
+        {
+          "check": "Metadata Completeness",
+          "expected": "All required fields present",
+          "actual": "COMPLETE",
+          "passed": true
+        }
+      ],
+      "failure_reasons": [],
+      "passed_count": 5,
+      "total_checks": 5
+    },
+    "validation_result": "PASS",
+    "validation_failure_reasons": [],
+    "performance_delta": {
+      "mae_delta": 0.07,
+      "r2_delta": 0.02,
+      "rmse_delta": 0.1
+    },
+    "target_metrics": {
+      "mae": 0.78,
+      "rmse": 1.02,
+      "r2_score": 0.96,
+      "cv_score": 0.94
+    },
+    "current_metrics": {
+      "mae": 0.85,
+      "rmse": 1.12,
+      "r2_score": 0.94,
+      "cv_score": 0.92
+    },
+    "created_at": "2026-08-18T17:12:45.140762",
+    "simulation_result": {
+      "simulation_id": "SIM-20260818-171245",
+      "rollback_id": "RB-20260818-171245-v110",
+      "target_model": "v1.1.0",
+      "passed": true,
+      "status": "SIMULATION_PASSED",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Registry Consistency Check",
+          "description": "Verifying model version 'v1.1.0' exists in model registry.",
+          "passed": true,
+          "detail": "Model found in registry."
+        },
+        {
+          "step": 2,
+          "name": "Artifact Accessibility",
+          "description": "Verifying artifact file is readable at: gradientboostingregressor_v1_1_0.pkl",
+          "passed": true,
+          "detail": "Artifact file accessible and readable."
+        },
+        {
+          "step": 3,
+          "name": "Checksum Integrity (SHA-256)",
+          "description": "Computing SHA-256 checksum and comparing against stored manifest value.",
+          "passed": true,
+          "detail": "SHA-256 VERIFIED against registry."
+        },
+        {
+          "step": 4,
+          "name": "Dataset Linkage Validation",
+          "description": "Verifying rollback target is linked to a valid dataset version.",
+          "passed": true,
+          "detail": "Dataset version '2026.08.001' linked."
+        },
+        {
+          "step": 5,
+          "name": "Rollback Target Confirmation",
+          "description": "Confirming rollback target 'v1.1.0' is distinct from current production 'v1.0.0'.",
+          "passed": true,
+          "detail": "Rollback target 'v1.1.0' confirmed as distinct from production 'v1.0.0'."
+        }
+      ],
+      "steps_passed": 5,
+      "steps_total": 5,
+      "errors": [],
+      "duration_ms": 0,
+      "timestamp": "2026-08-18T17:12:45.151029",
+      "note": "DRY RUN ONLY \u2014 production model NOT modified."
+    },
+    "approval_status": "PENDING",
+    "reviewed_by": null,
+    "approved_at": null
+  },
+  "RB-20260818-171254-v110": {
+    "rollback_id": "RB-20260818-171254-v110",
+    "status": "SIMULATED",
+    "current_production_model": "v1.0.0",
+    "current_model_name": "Production Baseline Model v1.0.0",
+    "current_model_algorithm": "GradientBoostingRegressor",
+    "target_model": "v1.1.0",
+    "target_model_name": "Candidate Retrained Model v1.1.0",
+    "target_model_algorithm": "GradientBoostingRegressor",
+    "target_model_status": "CANDIDATE",
+    "target_dataset_version": "2026.08.001",
+    "reason": "Simulation request",
+    "requested_by": "SYSTEM",
+    "artifact_path": "D:\\atendence-main\\backend\\models\\gradientboostingregressor_v1_1_0.pkl",
+    "artifact_status": "VERIFIED",
+    "artifact_size_bytes": 48,
+    "checksum": "80e91cf4c1f5e4a5...",
+    "checksum_status": "VERIFIED",
+    "dataset_status": "VERIFIED",
+    "eligibility_result": {
+      "eligible": true,
+      "model_version": "v1.1.0",
+      "model_name": "Candidate Retrained Model v1.1.0",
+      "status": "CANDIDATE",
+      "checks": [
+        {
+          "check": "Status Eligibility",
+          "expected": "ARCHIVED or PREVIOUS_PRODUCTION",
+          "actual": "CANDIDATE",
+          "passed": true
+        },
+        {
+          "check": "Artifact File Exists",
+          "expected": "File present on disk",
+          "actual": "EXISTS",
+          "passed": true
+        },
+        {
+          "check": "Checksum Verification (SHA-256)",
+          "expected": "80e91cf4c1f5e4a5...",
+          "actual": "80e91cf4c1f5e4a5...",
+          "passed": true
+        },
+        {
+          "check": "Dataset Linkage",
+          "expected": "Dataset version assigned",
+          "actual": "2026.08.001",
+          "passed": true
+        },
+        {
+          "check": "Metadata Completeness",
+          "expected": "All required fields present",
+          "actual": "COMPLETE",
+          "passed": true
+        }
+      ],
+      "failure_reasons": [],
+      "passed_count": 5,
+      "total_checks": 5
+    },
+    "validation_result": "PASS",
+    "validation_failure_reasons": [],
+    "performance_delta": {
+      "mae_delta": 0.07,
+      "r2_delta": 0.02,
+      "rmse_delta": 0.1
+    },
+    "target_metrics": {
+      "mae": 0.78,
+      "rmse": 1.02,
+      "r2_score": 0.96,
+      "cv_score": 0.94
+    },
+    "current_metrics": {
+      "mae": 0.85,
+      "rmse": 1.12,
+      "r2_score": 0.94,
+      "cv_score": 0.92
+    },
+    "created_at": "2026-08-18T17:12:54.467930",
+    "simulation_result": {
+      "simulation_id": "SIM-20260818-171254",
+      "rollback_id": "RB-20260818-171254-v110",
+      "target_model": "v1.1.0",
+      "passed": true,
+      "status": "SIMULATION_PASSED",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Registry Consistency Check",
+          "description": "Verifying model version 'v1.1.0' exists in model registry.",
+          "passed": true,
+          "detail": "Model found in registry."
+        },
+        {
+          "step": 2,
+          "name": "Artifact Accessibility",
+          "description": "Verifying artifact file is readable at: gradientboostingregressor_v1_1_0.pkl",
+          "passed": true,
+          "detail": "Artifact file accessible and readable."
+        },
+        {
+          "step": 3,
+          "name": "Checksum Integrity (SHA-256)",
+          "description": "Computing SHA-256 checksum and comparing against stored manifest value.",
+          "passed": true,
+          "detail": "SHA-256 VERIFIED against registry."
+        },
+        {
+          "step": 4,
+          "name": "Dataset Linkage Validation",
+          "description": "Verifying rollback target is linked to a valid dataset version.",
+          "passed": true,
+          "detail": "Dataset version '2026.08.001' linked."
+        },
+        {
+          "step": 5,
+          "name": "Rollback Target Confirmation",
+          "description": "Confirming rollback target 'v1.1.0' is distinct from current production 'v1.0.0'.",
+          "passed": true,
+          "detail": "Rollback target 'v1.1.0' confirmed as distinct from production 'v1.0.0'."
+        }
+      ],
+      "steps_passed": 5,
+      "steps_total": 5,
+      "errors": [],
+      "duration_ms": 9,
+      "timestamp": "2026-08-18T17:12:54.476201",
+      "note": "DRY RUN ONLY \u2014 production model NOT modified."
+    },
+    "approval_status": "PENDING",
+    "reviewed_by": null,
+    "approved_at": null
+  },
+  "RB-20260818-171310-v110": {
+    "rollback_id": "RB-20260818-171310-v110",
+    "status": "SIMULATED",
+    "current_production_model": "v1.0.0",
+    "current_model_name": "Production Baseline Model v1.0.0",
+    "current_model_algorithm": "GradientBoostingRegressor",
+    "target_model": "v1.1.0",
+    "target_model_name": "Candidate Retrained Model v1.1.0",
+    "target_model_algorithm": "GradientBoostingRegressor",
+    "target_model_status": "CANDIDATE",
+    "target_dataset_version": "2026.08.001",
+    "reason": "Simulation request",
+    "requested_by": "SYSTEM",
+    "artifact_path": "D:\\atendence-main\\backend\\models\\gradientboostingregressor_v1_1_0.pkl",
+    "artifact_status": "VERIFIED",
+    "artifact_size_bytes": 48,
+    "checksum": "80e91cf4c1f5e4a5...",
+    "checksum_status": "VERIFIED",
+    "dataset_status": "VERIFIED",
+    "eligibility_result": {
+      "eligible": true,
+      "model_version": "v1.1.0",
+      "model_name": "Candidate Retrained Model v1.1.0",
+      "status": "CANDIDATE",
+      "checks": [
+        {
+          "check": "Status Eligibility",
+          "expected": "ARCHIVED or PREVIOUS_PRODUCTION",
+          "actual": "CANDIDATE",
+          "passed": true
+        },
+        {
+          "check": "Artifact File Exists",
+          "expected": "File present on disk",
+          "actual": "EXISTS",
+          "passed": true
+        },
+        {
+          "check": "Checksum Verification (SHA-256)",
+          "expected": "80e91cf4c1f5e4a5...",
+          "actual": "80e91cf4c1f5e4a5...",
+          "passed": true
+        },
+        {
+          "check": "Dataset Linkage",
+          "expected": "Dataset version assigned",
+          "actual": "2026.08.001",
+          "passed": true
+        },
+        {
+          "check": "Metadata Completeness",
+          "expected": "All required fields present",
+          "actual": "COMPLETE",
+          "passed": true
+        }
+      ],
+      "failure_reasons": [],
+      "passed_count": 5,
+      "total_checks": 5
+    },
+    "validation_result": "PASS",
+    "validation_failure_reasons": [],
+    "performance_delta": {
+      "mae_delta": 0.07,
+      "r2_delta": 0.02,
+      "rmse_delta": 0.1
+    },
+    "target_metrics": {
+      "mae": 0.78,
+      "rmse": 1.02,
+      "r2_score": 0.96,
+      "cv_score": 0.94
+    },
+    "current_metrics": {
+      "mae": 0.85,
+      "rmse": 1.12,
+      "r2_score": 0.94,
+      "cv_score": 0.92
+    },
+    "created_at": "2026-08-18T17:13:10.150331",
+    "simulation_result": {
+      "simulation_id": "SIM-20260818-171310",
+      "rollback_id": "RB-20260818-171310-v110",
+      "target_model": "v1.1.0",
+      "passed": true,
+      "status": "SIMULATION_PASSED",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Registry Consistency Check",
+          "description": "Verifying model version 'v1.1.0' exists in model registry.",
+          "passed": true,
+          "detail": "Model found in registry."
+        },
+        {
+          "step": 2,
+          "name": "Artifact Accessibility",
+          "description": "Verifying artifact file is readable at: gradientboostingregressor_v1_1_0.pkl",
+          "passed": true,
+          "detail": "Artifact file accessible and readable."
+        },
+        {
+          "step": 3,
+          "name": "Checksum Integrity (SHA-256)",
+          "description": "Computing SHA-256 checksum and comparing against stored manifest value.",
+          "passed": true,
+          "detail": "SHA-256 VERIFIED against registry."
+        },
+        {
+          "step": 4,
+          "name": "Dataset Linkage Validation",
+          "description": "Verifying rollback target is linked to a valid dataset version.",
+          "passed": true,
+          "detail": "Dataset version '2026.08.001' linked."
+        },
+        {
+          "step": 5,
+          "name": "Rollback Target Confirmation",
+          "description": "Confirming rollback target 'v1.1.0' is distinct from current production 'v1.0.0'.",
+          "passed": true,
+          "detail": "Rollback target 'v1.1.0' confirmed as distinct from production 'v1.0.0'."
+        }
+      ],
+      "steps_passed": 5,
+      "steps_total": 5,
+      "errors": [],
+      "duration_ms": 0,
+      "timestamp": "2026-08-18T17:13:10.158329",
+      "note": "DRY RUN ONLY \u2014 production model NOT modified."
+    },
+    "approval_status": "PENDING",
+    "reviewed_by": null,
+    "approved_at": null
+  },
+  "RB-20260818-171318-v110": {
+    "rollback_id": "RB-20260818-171318-v110",
+    "status": "SIMULATED",
+    "current_production_model": "v1.0.0",
+    "current_model_name": "Production Baseline Model v1.0.0",
+    "current_model_algorithm": "GradientBoostingRegressor",
+    "target_model": "v1.1.0",
+    "target_model_name": "Candidate Retrained Model v1.1.0",
+    "target_model_algorithm": "GradientBoostingRegressor",
+    "target_model_status": "CANDIDATE",
+    "target_dataset_version": "2026.08.001",
+    "reason": "Simulation request",
+    "requested_by": "SYSTEM",
+    "artifact_path": "D:\\atendence-main\\backend\\models\\gradientboostingregressor_v1_1_0.pkl",
+    "artifact_status": "VERIFIED",
+    "artifact_size_bytes": 48,
+    "checksum": "80e91cf4c1f5e4a5...",
+    "checksum_status": "VERIFIED",
+    "dataset_status": "VERIFIED",
+    "eligibility_result": {
+      "eligible": true,
+      "model_version": "v1.1.0",
+      "model_name": "Candidate Retrained Model v1.1.0",
+      "status": "CANDIDATE",
+      "checks": [
+        {
+          "check": "Status Eligibility",
+          "expected": "ARCHIVED or PREVIOUS_PRODUCTION",
+          "actual": "CANDIDATE",
+          "passed": true
+        },
+        {
+          "check": "Artifact File Exists",
+          "expected": "File present on disk",
+          "actual": "EXISTS",
+          "passed": true
+        },
+        {
+          "check": "Checksum Verification (SHA-256)",
+          "expected": "80e91cf4c1f5e4a5...",
+          "actual": "80e91cf4c1f5e4a5...",
+          "passed": true
+        },
+        {
+          "check": "Dataset Linkage",
+          "expected": "Dataset version assigned",
+          "actual": "2026.08.001",
+          "passed": true
+        },
+        {
+          "check": "Metadata Completeness",
+          "expected": "All required fields present",
+          "actual": "COMPLETE",
+          "passed": true
+        }
+      ],
+      "failure_reasons": [],
+      "passed_count": 5,
+      "total_checks": 5
+    },
+    "validation_result": "PASS",
+    "validation_failure_reasons": [],
+    "performance_delta": {
+      "mae_delta": 0.07,
+      "r2_delta": 0.02,
+      "rmse_delta": 0.1
+    },
+    "target_metrics": {
+      "mae": 0.78,
+      "rmse": 1.02,
+      "r2_score": 0.96,
+      "cv_score": 0.94
+    },
+    "current_metrics": {
+      "mae": 0.85,
+      "rmse": 1.12,
+      "r2_score": 0.94,
+      "cv_score": 0.92
+    },
+    "created_at": "2026-08-18T17:13:18.630035",
+    "simulation_result": {
+      "simulation_id": "SIM-20260818-171318",
+      "rollback_id": "RB-20260818-171318-v110",
+      "target_model": "v1.1.0",
+      "passed": true,
+      "status": "SIMULATION_PASSED",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Registry Consistency Check",
+          "description": "Verifying model version 'v1.1.0' exists in model registry.",
+          "passed": true,
+          "detail": "Model found in registry."
+        },
+        {
+          "step": 2,
+          "name": "Artifact Accessibility",
+          "description": "Verifying artifact file is readable at: gradientboostingregressor_v1_1_0.pkl",
+          "passed": true,
+          "detail": "Artifact file accessible and readable."
+        },
+        {
+          "step": 3,
+          "name": "Checksum Integrity (SHA-256)",
+          "description": "Computing SHA-256 checksum and comparing against stored manifest value.",
+          "passed": true,
+          "detail": "SHA-256 VERIFIED against registry."
+        },
+        {
+          "step": 4,
+          "name": "Dataset Linkage Validation",
+          "description": "Verifying rollback target is linked to a valid dataset version.",
+          "passed": true,
+          "detail": "Dataset version '2026.08.001' linked."
+        },
+        {
+          "step": 5,
+          "name": "Rollback Target Confirmation",
+          "description": "Confirming rollback target 'v1.1.0' is distinct from current production 'v1.0.0'.",
+          "passed": true,
+          "detail": "Rollback target 'v1.1.0' confirmed as distinct from production 'v1.0.0'."
+        }
+      ],
+      "steps_passed": 5,
+      "steps_total": 5,
+      "errors": [],
+      "duration_ms": 0,
+      "timestamp": "2026-08-18T17:13:18.642259",
+      "note": "DRY RUN ONLY \u2014 production model NOT modified."
+    },
+    "approval_status": "PENDING",
+    "reviewed_by": null,
+    "approved_at": null
+  },
+  "RB-20260818-171328-v110": {
+    "rollback_id": "RB-20260818-171328-v110",
+    "status": "SIMULATED",
+    "current_production_model": "v1.0.0",
+    "current_model_name": "Production Baseline Model v1.0.0",
+    "current_model_algorithm": "GradientBoostingRegressor",
+    "target_model": "v1.1.0",
+    "target_model_name": "Candidate Retrained Model v1.1.0",
+    "target_model_algorithm": "GradientBoostingRegressor",
+    "target_model_status": "CANDIDATE",
+    "target_dataset_version": "2026.08.001",
+    "reason": "Simulation request",
+    "requested_by": "SYSTEM",
+    "artifact_path": "D:\\atendence-main\\backend\\models\\gradientboostingregressor_v1_1_0.pkl",
+    "artifact_status": "VERIFIED",
+    "artifact_size_bytes": 48,
+    "checksum": "80e91cf4c1f5e4a5...",
+    "checksum_status": "VERIFIED",
+    "dataset_status": "VERIFIED",
+    "eligibility_result": {
+      "eligible": true,
+      "model_version": "v1.1.0",
+      "model_name": "Candidate Retrained Model v1.1.0",
+      "status": "CANDIDATE",
+      "checks": [
+        {
+          "check": "Status Eligibility",
+          "expected": "ARCHIVED or PREVIOUS_PRODUCTION",
+          "actual": "CANDIDATE",
+          "passed": true
+        },
+        {
+          "check": "Artifact File Exists",
+          "expected": "File present on disk",
+          "actual": "EXISTS",
+          "passed": true
+        },
+        {
+          "check": "Checksum Verification (SHA-256)",
+          "expected": "80e91cf4c1f5e4a5...",
+          "actual": "80e91cf4c1f5e4a5...",
+          "passed": true
+        },
+        {
+          "check": "Dataset Linkage",
+          "expected": "Dataset version assigned",
+          "actual": "2026.08.001",
+          "passed": true
+        },
+        {
+          "check": "Metadata Completeness",
+          "expected": "All required fields present",
+          "actual": "COMPLETE",
+          "passed": true
+        }
+      ],
+      "failure_reasons": [],
+      "passed_count": 5,
+      "total_checks": 5
+    },
+    "validation_result": "PASS",
+    "validation_failure_reasons": [],
+    "performance_delta": {
+      "mae_delta": 0.07,
+      "r2_delta": 0.02,
+      "rmse_delta": 0.1
+    },
+    "target_metrics": {
+      "mae": 0.78,
+      "rmse": 1.02,
+      "r2_score": 0.96,
+      "cv_score": 0.94
+    },
+    "current_metrics": {
+      "mae": 0.85,
+      "rmse": 1.12,
+      "r2_score": 0.94,
+      "cv_score": 0.92
+    },
+    "created_at": "2026-08-18T17:13:28.924563",
+    "simulation_result": {
+      "simulation_id": "SIM-20260818-171328",
+      "rollback_id": "RB-20260818-171328-v110",
+      "target_model": "v1.1.0",
+      "passed": true,
+      "status": "SIMULATION_PASSED",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Registry Consistency Check",
+          "description": "Verifying model version 'v1.1.0' exists in model registry.",
+          "passed": true,
+          "detail": "Model found in registry."
+        },
+        {
+          "step": 2,
+          "name": "Artifact Accessibility",
+          "description": "Verifying artifact file is readable at: gradientboostingregressor_v1_1_0.pkl",
+          "passed": true,
+          "detail": "Artifact file accessible and readable."
+        },
+        {
+          "step": 3,
+          "name": "Checksum Integrity (SHA-256)",
+          "description": "Computing SHA-256 checksum and comparing against stored manifest value.",
+          "passed": true,
+          "detail": "SHA-256 VERIFIED against registry."
+        },
+        {
+          "step": 4,
+          "name": "Dataset Linkage Validation",
+          "description": "Verifying rollback target is linked to a valid dataset version.",
+          "passed": true,
+          "detail": "Dataset version '2026.08.001' linked."
+        },
+        {
+          "step": 5,
+          "name": "Rollback Target Confirmation",
+          "description": "Confirming rollback target 'v1.1.0' is distinct from current production 'v1.0.0'.",
+          "passed": true,
+          "detail": "Rollback target 'v1.1.0' confirmed as distinct from production 'v1.0.0'."
+        }
+      ],
+      "steps_passed": 5,
+      "steps_total": 5,
+      "errors": [],
+      "duration_ms": 0,
+      "timestamp": "2026-08-18T17:13:28.967875",
+      "note": "DRY RUN ONLY \u2014 production model NOT modified."
+    },
+    "approval_status": "PENDING",
+    "reviewed_by": null,
+    "approved_at": null
+  }
+}

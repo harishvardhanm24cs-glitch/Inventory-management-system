@@ -60,7 +60,7 @@ export const NotificationGroupSection: React.FC<NotificationGroupSectionProps> =
     <div className="space-y-8">
       {groups.map((group) => (
         <div key={group.groupLabel} className="space-y-3">
-          {/* Date Group Header */}
+          
           <div className="flex items-center gap-2 border-b border-slate-800/80 pb-2">
             <Calendar className="h-4 w-4 text-cyan-400" />
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">
@@ -71,7 +71,7 @@ export const NotificationGroupSection: React.FC<NotificationGroupSectionProps> =
             </span>
           </div>
 
-          {/* Group Items List */}
+          
           <div className="space-y-3">
             {group.items.map((item) => {
               const Icon = categoryIcons[item.category] || ShieldAlert;
@@ -91,7 +91,7 @@ export const NotificationGroupSection: React.FC<NotificationGroupSectionProps> =
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
-                    {/* Icon & Details */}
+                    
                     <div className="flex items-start gap-3.5 flex-1 min-w-0">
                       <div
                         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${
@@ -107,7 +107,7 @@ export const NotificationGroupSection: React.FC<NotificationGroupSectionProps> =
 
                       <div className="space-y-1 flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                          {/* Unread Blue Dot */}
+                          
                           {!item.isRead && (
                             <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse shrink-0" />
                           )}
@@ -137,7 +137,7 @@ export const NotificationGroupSection: React.FC<NotificationGroupSectionProps> =
                       </div>
                     </div>
 
-                    {/* Actions */}
+                    
                     <div className="flex items-center gap-1 shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => onToggleRead(item.id)}

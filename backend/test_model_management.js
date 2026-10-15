@@ -1,16 +1,11 @@
 import modelManager from './services/modelManager.js';
 import aiPredictionEngine from './services/aiPredictionEngine.js';
 
-/**
- * test_model_management.js
- * Verification test suite for Module 4: AI Model Management System.
- */
-
 async function runTests() {
   console.log('=== RUNNING AI MODEL MANAGEMENT SUITE TESTS ===\n');
 
   try {
-    // 1. Initial Model Registry Audit
+    
     console.log('[1/5] Auditing Model Registry Initialization...');
     const initialModels = modelManager.listAllModels();
     console.log('  ✓ Initial registered models count:', initialModels.length);
@@ -19,7 +14,7 @@ async function runTests() {
       throw new Error('Registry failed to initialize default framework adapters!');
     }
 
-    // 2. Custom Model Registration Test
+    
     console.log('\n[2/5] Testing Model Registration across Framework Adapters...');
     const newTF = modelManager.registerNewModel({
       name: 'XGBoost High Capacity Demand Model',
@@ -30,7 +25,7 @@ async function runTests() {
     });
     console.log(`  ✓ Registered model '${newTF.name}' (${newTF.framework} ${newTF.version})`);
 
-    // 3. Dynamic Runtime Model Switching Test
+    
     console.log('\n[3/5] Testing Dynamic Runtime Model Switching...');
     const switchRes = modelManager.switchActiveModel('tensorflow_deep_demand_v1');
     console.log('  ✓ Switched active model to:', switchRes.activeModelId);
@@ -38,13 +33,13 @@ async function runTests() {
       throw new Error('Failed to switch active model ID!');
     }
 
-    // Serve prediction with active TensorFlow model
+    
     const overviewTF = await aiPredictionEngine.getOverviewPredictions();
     console.log(`  ✓ Prediction served by strategy: '${overviewTF.model_strategy}'`);
     console.log(`    - Demand predictions count: ${overviewTF.predictions.demand.length}`);
     console.log(`    - Model tag on sample prediction: '${overviewTF.predictions.demand[0]?.model_used}'`);
 
-    // 4. Graceful Fallback Test (Missing / Non-Existent Model)
+    
     console.log('\n[4/5] Testing Graceful Fallback Mechanism (Missing Model Handling)...');
     const fallbackRes = modelManager.switchActiveModel('non_existent_model_999');
     console.log('  ✓ Attempted switch to invalid model. Fallback triggered:', fallbackRes.fallback);
@@ -53,7 +48,7 @@ async function runTests() {
     const fallbackOverview = await aiPredictionEngine.getOverviewPredictions();
     console.log(`  ✓ Predictions served seamlessly during fallback: ${fallbackOverview.predictions.demand.length} items.`);
 
-    // 5. Performance Analytics & Metrics Verification
+    
     console.log('\n[5/5] Testing Model Performance Analytics Logging...');
     const perfData = modelManager.getPerformanceAnalytics();
     console.log('  ✓ Total models tracked:', perfData.total_registered_models);

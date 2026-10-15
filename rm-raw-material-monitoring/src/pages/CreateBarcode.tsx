@@ -133,7 +133,7 @@ export const CreateBarcode = () => {
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 print:block">
-                {/* Form Section */}
+                
                 <div className="lg:col-span-7 space-y-8 print:hidden">
                     <Card className="premium-card overflow-hidden">
                         <div className="p-8 border-b border-slate-50">
@@ -205,7 +205,7 @@ export const CreateBarcode = () => {
                     </Card>
                 </div>
 
-                {/* Preview Section */}
+                
                 <div className="lg:col-span-5 space-y-8">
                     <Card className="premium-card bg-slate-50 p-10 flex flex-col items-center justify-center min-h-[400px] relative border-dashed border-slate-300">
                         <div className="absolute top-6 left-6 flex items-center gap-2">
@@ -274,7 +274,7 @@ export const CreateBarcode = () => {
                 </div>
             </div>
 
-            {/* Print Only View */}
+            
             <div className="hidden print:block w-full h-full p-8">
                 <div className="grid grid-cols-2 gap-10">
                     {(isBulk && bulkLabels.length > 0 ? bulkLabels : [{barcodeId, paintName, paintWeight}]).map((label, idx) => (

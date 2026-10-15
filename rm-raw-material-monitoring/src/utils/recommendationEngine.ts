@@ -18,12 +18,6 @@ export interface OperationalRecommendation {
   timestamp: string;
 }
 
-/**
- * Automatically generates operational suggestions based on live warehouse state:
- * - Inventory Levels & Thresholds
- * - Rack Utilization & Storage Distribution
- * - Consumption Velocity & Material Movements
- */
 export const generateOperationalRecommendations = (
   materials: any[] = [],
   racks: any[] = [],
@@ -39,7 +33,7 @@ export const generateOperationalRecommendations = (
     minute: '2-digit'
   });
 
-  // 1. ANALYZE INVENTORY LEVELS & THRESHOLDS
+  
   materials.forEach((mat) => {
     const qty = typeof mat.stock === 'number' ? mat.stock : parseFloat(mat.stock) || 0;
     const minLimit = typeof mat.minLimit === 'number' 
@@ -51,7 +45,7 @@ export const generateOperationalRecommendations = (
 
     const name = mat.name || mat.material_name || 'Material';
 
-    // A. Critical / Low Stock Approaching Threshold
+    
     if (qty <= minLimit * 0.5) {
       const reorderNeeded = Math.ceil(minLimit * 2 - qty);
       recommendations.push({
@@ -78,7 +72,7 @@ export const generateOperationalRecommendations = (
       });
     }
 
-    // B. Overstocked Materials
+    
     if (maxLimit > 0 && maxLimit < 99999999 && qty > maxLimit) {
       const excess = Math.ceil(qty - maxLimit);
       recommendations.push({
@@ -94,14 +88,14 @@ export const generateOperationalRecommendations = (
     }
   });
 
-  // 2. ANALYZE WAREHOUSE RACK UTILIZATION
+  
   racks.forEach((rack) => {
     const q = parseFloat(String(rack.quantity)) || 0;
     const c = parseFloat(String(rack.max_capacity)) || 100;
     const pct = c > 0 ? (q / c) * 100 : 0;
     const code = rack.rack_code;
 
-    // A. Underutilized Racks
+    
     if (pct === 0) {
       recommendations.push({
         id: `rec-under-rack-${rack.id || code}`,
@@ -126,7 +120,7 @@ export const generateOperationalRecommendations = (
       });
     }
 
-    // B. Overcrowded Near-Capacity Racks
+    
     if (pct >= 90) {
       recommendations.push({
         id: `rec-full-rack-${rack.id || code}`,
@@ -141,7 +135,7 @@ export const generateOperationalRecommendations = (
     }
   });
 
-  // 3. ANALYZE MATERIAL MOVEMENT & CONSUMPTION TRENDS
+  
   if (consumptionData && Array.isArray(consumptionData.fastMoving)) {
     consumptionData.fastMoving.forEach((fastMat: any) => {
       recommendations.push({
@@ -172,7 +166,7 @@ export const generateOperationalRecommendations = (
     });
   }
 
-  // Sort by Priority Rank: CRITICAL (1) -> HIGH (2) -> MEDIUM (3) -> LOW (4)
+  
   const priorityRank: Record<RecommendationPriority, number> = {
     CRITICAL: 1,
     HIGH: 2,

@@ -22,7 +22,7 @@ interface TestCase {
     id: number;
     name: string;
     status: 'PENDING' | 'RUNNING' | 'PASS' | 'FAIL';
-    duration?: number; // ms
+    duration?: number; 
     details: string[];
 }
 
@@ -86,7 +86,7 @@ const TestCenter: React.FC = () => {
         setAuditLog([]);
         logToAudit('Initializing End-to-End Automated Test Suite...');
 
-        // Reset all statuses
+        
         const updatedCases: TestCase[] = testCases.map(t => ({
             ...t,
             status: 'PENDING',
@@ -94,7 +94,7 @@ const TestCenter: React.FC = () => {
         }));
         setTestCases(updatedCases);
 
-        // Initialize dynamic selected rack
+        
         let selectedRack = '';
         const testName = `E2E-TEST-MAT-${Date.now().toString().slice(-6)}`;
         const batchNumber = `E2E-BATCH-${Date.now().toString().slice(-6)}`;
@@ -102,7 +102,7 @@ const TestCenter: React.FC = () => {
         let generatedBarcodeId = '';
         let testMaterialId = '';
 
-        // Helper to update individual test results
+        
         const updateCase = (id: number, status: 'PASS' | 'FAIL' | 'RUNNING', duration?: number, details?: string[]) => {
             setTestCases(prev => prev.map(t => {
                 if (t.id === id) {
@@ -117,12 +117,12 @@ const TestCenter: React.FC = () => {
             }));
         };
 
-        // Delay utility for visual pacing
+        
         const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-        // ==========================================
-        // TEST 1: QR GENERATION TEST
-        // ==========================================
+        
+        
+        
         let startTime = performance.now();
         updateCase(1, 'RUNNING', undefined, ['Calling /qr/generate API...']);
         logToAudit(`[Test 1] Committing new material serialization request for: ${testName}`);
@@ -157,15 +157,15 @@ const TestCenter: React.FC = () => {
 
         await delay(1200);
 
-        // ==========================================
-        // TEST 2: INWARD SCAN TEST
-        // ==========================================
+        
+        
+        
         if (generatedBarcodeId) {
             startTime = performance.now();
             updateCase(2, 'RUNNING', undefined, ['Preparing temporary rack E2E-RACK-01...']);
             logToAudit('[E2E] Preparing temporary rack E2E-RACK-01');
 
-            // 1. Delete existing E2E-RACK-01 if it exists
+            
             try {
                 const racksRes = await api.getRacks();
                 const racksList = racksRes.racks || racksRes.data || racksRes || [];
@@ -177,10 +177,10 @@ const TestCenter: React.FC = () => {
                     }
                 }
             } catch (err) {
-                // Ignore
+                
             }
 
-            // 2. Create E2E-RACK-01 with current_capacity = 0, material_name = null
+            
             try {
                 await api.addRack({
                     rack_code: 'E2E-RACK-01',
@@ -201,7 +201,7 @@ const TestCenter: React.FC = () => {
                 const racksList = racksRes.racks || racksRes.data || racksRes;
 
                 if (Array.isArray(racksList)) {
-                    // Pre-map properties to match the required console.log structure
+                    
                     racksList.forEach((rack: any) => {
                         rack.max_capacity = Number(rack.max_capacity || rack.capacity || 0);
                         rack.current_capacity = Number(rack.quantity || rack.current_capacity || rack.current_stock || 0);
@@ -223,7 +223,7 @@ const TestCenter: React.FC = () => {
                       });
                     }
 
-                    // Add logging for each rack in the list
+                    
                     racksList.forEach((rack: any) => {
                         const available = rack.max_capacity - rack.current_capacity;
                         console.log(
@@ -259,7 +259,7 @@ const TestCenter: React.FC = () => {
             try {
                 logToAudit(`[E2E] Auto Store Payload: barcode=${generatedBarcodeId} rack=${selectedRack} qty=120`);
 
-                // ── STEP A: Call auto-store ──────────────────────────────────────
+                
                 const res2 = await api.autoStore({
                     barcode_id: generatedBarcodeId,
                     material_name: testName,
@@ -272,23 +272,23 @@ const TestCenter: React.FC = () => {
                 console.log('[E2E DIAG] autoStore raw response:', JSON.stringify(res2));
                 logToAudit(`[E2E] Auto Store response: success=${res2?.success} status=${res2?.status} rack=${res2?.assigned_rack}`);
 
-                // ── CHECK A: autoStore must report success ────────────────────────
-                // Bug Fix #6: verify response.success not response.data.material
-                // Bug Fix #5: verify BEFORE calling getMaterials (not after stale cache)
+                
+                
+                
                 if (!res2 || res2.success !== true) {
                     const reason = res2?.message || res2?.status || 'autoStore returned non-success';
                     throw new Error(`[CHECK A FAILED] Auto-store rejected: ${reason}`);
                 }
                 logToAudit(`[E2E] [CHECK A PASSED] autoStore accepted. Assigned rack: ${res2.assigned_rack}`);
 
-                // ── Wait for DB commit to propagate ──────────────────────────────
-                // Bug Fix #5: async auto-store may not have finished writing before we read
+                
+                
                 await delay(800);
 
-                // ── STEP B: Verify material exists in DB ─────────────────────────
+                
                 const refreshedMats = await api.getMaterials();
-                // Bug Fix #2: use barcode field (mapMaterial maps m.barcode → .barcode NOT .barcode_id)
-                // Bug Fix #4: fresh API call here — not stale cached state
+                
+                
                 const materialResult = Array.isArray(refreshedMats)
                     ? refreshedMats.find((m: any) => m.barcode === generatedBarcodeId)
                     : undefined;
@@ -300,20 +300,20 @@ const TestCenter: React.FC = () => {
                 }
                 logToAudit(`[E2E] [CHECK B PASSED] Material found. stock=${materialResult.stock}`);
 
-                // ── STEP C: Verify inward transaction was created ─────────────────
+                
                 const txRaw = await api.getTransactions();
 
-                // ── Diagnostics: expose exact API response shape ──────────────────
+                
                 console.log("Transactions API Response:", txRaw);
                 console.log("Type:", typeof txRaw);
                 console.log("Is Array:", Array.isArray(txRaw));
                 logToAudit(`[E2E] [CHECK C] txRaw type=${typeof txRaw} isArray=${Array.isArray(txRaw)}`);
 
-                // ── Normalize to array — handle all possible response shapes ───────
-                // Shape 1: already an array          → txRaw
-                // Shape 2: { data: [...] }            → txRaw.data
-                // Shape 3: { transactions: [...] }    → txRaw.transactions
-                // Shape 4: { data: { transactions }}  → txRaw.data.transactions
+                
+                
+                
+                
+                
                 const txList: any[] = Array.isArray(txRaw)
                     ? txRaw
                     : Array.isArray(txRaw?.data)
@@ -327,7 +327,7 @@ const TestCenter: React.FC = () => {
                 console.log(`[E2E DIAG] Transactions normalized. Count: ${txList.length}`);
                 logToAudit(`[E2E] [CHECK C] Transactions found in DB: ${txList.length}`);
 
-                // Search by barcode field (transactionRoutes.js joins materials → m.barcode)
+                
                 const transactionResult = Array.isArray(txList)
                     ? txList.find((t: any) =>
                         (t.barcode === generatedBarcodeId || t.materialId === materialResult?.id) &&
@@ -337,14 +337,14 @@ const TestCenter: React.FC = () => {
                 console.log('Transaction Verification:', transactionResult);
                 logToAudit(`[E2E] [CHECK C] Inward tx: ${transactionResult ? 'FOUND' : 'NOT FOUND'} | qty=${transactionResult?.quantity ?? 'N/A'} | location=${transactionResult?.location ?? 'N/A'}`);
 
-                // Transaction check: warn but do not block (material + autoStore already confirmed inward)
+                
                 if (!transactionResult) {
                     logToAudit(`[E2E] [CHECK C] WARNING: transaction row not found by barcode lookup. Continuing — material record confirms inward was processed.`);
                 } else {
                     logToAudit(`[E2E] [CHECK C PASSED] Transaction confirmed. qty=${transactionResult.quantity}`);
                 }
 
-                // ── STEP D: Verify rack inventory (informational, non-blocking) ───
+                
                 let inventoryResult: any = null;
                 try {
                     const rackInvRes = await api.getRackInventory();
@@ -352,12 +352,12 @@ const TestCenter: React.FC = () => {
                     inventoryResult = Array.isArray(rackInvList)
                         ? rackInvList.find((r: any) => r.rack_code === selectedRack)
                         : null;
-                } catch (_e) { /* non-blocking */ }
+                } catch (_e) {  }
                 console.log('Inventory Verification:', inventoryResult);
                 const rackCapacity = inventoryResult ? parseFloat(inventoryResult.current_capacity || '0') : -1;
                 logToAudit(`[E2E] [CHECK D] Rack ${selectedRack} current_capacity=${rackCapacity > -1 ? rackCapacity : 'N/A (rack_inventory may not track this rack)'}`);
 
-                // ── ALL CHECKS PASSED ─────────────────────────────────────────────
+                
                 testMaterialId = materialResult.id;
                 const duration = Math.round(performance.now() - startTime);
                 logToAudit('[E2E] Auto Store Success');
@@ -382,9 +382,9 @@ const TestCenter: React.FC = () => {
 
         await delay(1200);
 
-        // ==========================================
-        // TEST 3: REPEATED SCAN ACCUMULATION TEST
-        // ==========================================
+        
+        
+        
         if (generatedBarcodeId) {
             startTime = performance.now();
             updateCase(3, 'RUNNING', undefined, ['Triggering repeated scan event...']);
@@ -422,16 +422,16 @@ const TestCenter: React.FC = () => {
 
         await delay(1200);
 
-        // ==========================================
-        // TEST 4: OUTWARD SCAN TEST
-        // ==========================================
+        
+        
+        
         if (testMaterialId) {
             startTime = performance.now();
             updateCase(4, 'RUNNING', undefined, [`Deducting 80 KG from inventory on Rack ${selectedRack}...`]);
             logToAudit(`[Test 4] Initiating material outward debit of 80 kg from Rack ${selectedRack}...`);
 
             try {
-                // 1. Fetch rack inventory BEFORE outward
+                
                 const rackInvBeforeRes = await api.getRackInventory();
                 console.log('[E2E DIAG] Test 4 - api.getRackInventory (Before) response:', JSON.stringify(rackInvBeforeRes));
                 logToAudit(`[Test 4] GetRackInventory (Before) response: ${JSON.stringify(rackInvBeforeRes)}`);
@@ -452,7 +452,7 @@ const TestCenter: React.FC = () => {
 
                 logToAudit(`[Test 4] Rack capacity before outward: ${beforeCapacity} KG`);
 
-                // 2. Perform outward update
+                
                 console.log('[E2E DIAG] typeof api.updateStock:', typeof api.updateStock);
                 const res4 = await api.updateStock(testMaterialId, {
                     amount: 80,
@@ -465,7 +465,7 @@ const TestCenter: React.FC = () => {
 
                 await delay(800);
 
-                // 3. Fetch rack inventory AFTER outward
+                
                 const rackInvAfterRes = await api.getRackInventory();
                 console.log('[E2E DIAG] Test 4 - api.getRackInventory (After) response:', JSON.stringify(rackInvAfterRes));
                 logToAudit(`[Test 4] GetRackInventory (After) response: ${JSON.stringify(rackInvAfterRes)}`);
@@ -484,17 +484,17 @@ const TestCenter: React.FC = () => {
                     throw new Error("afterCapacity is NaN");
                 }
 
-                // 4. Log beforeCapacity and afterCapacity before deduction calculation
+                
                 console.log('[E2E DIAG] Test 4 — beforeCapacity:', beforeCapacity, '| afterCapacity:', afterCapacity);
                 logToAudit(`[Test 4] beforeCapacity=${beforeCapacity} afterCapacity=${afterCapacity}`);
 
-                // 5. Verify deduction calculation uses numeric values
+                
                 const deducted = beforeCapacity - afterCapacity;
                 console.log('[E2E DIAG] Test 4 — deducted:', deducted);
 
                 const duration = Math.round(performance.now() - startTime);
 
-                // Verify deduction by exactly 80
+                
                 if (deducted === 80) {
                     updateCase(4, 'PASS', duration, [
                         'Outward stock reduction successful.',
@@ -517,9 +517,9 @@ const TestCenter: React.FC = () => {
 
         await delay(1200);
 
-        // ==========================================
-        // TEST 5: THRESHOLD ALERT TEST
-        // ==========================================
+        
+        
+        
         if (testMaterialId) {
             startTime = performance.now();
             updateCase(5, 'RUNNING', undefined, [`Setting min threshold limit to 60 KG on Rack ${selectedRack}...`]);
@@ -527,7 +527,7 @@ const TestCenter: React.FC = () => {
 
             try {
                 console.log('[E2E DIAG] typeof api.updateMaterialLimits:', typeof api.updateMaterialLimits);
-                // Set threshold to 60 — stock after outward is lower, this triggers alert
+                
                 const resLimit = await api.updateMaterialLimits(testMaterialId, 60, 30);
                 console.log('[E2E DIAG] updateMaterialLimits raw response:', JSON.stringify(resLimit));
                 logToAudit(`[Test 5] Threshold updated. Checking alerts...`);
@@ -549,7 +549,7 @@ const TestCenter: React.FC = () => {
                     ]);
                     logToAudit(`[Test 5] Safety threshold engine triggered alert for Rack ${selectedRack}. Email queued.`);
                 } else {
-                    // Alert delivery is async — threshold update confirmed in DB is sufficient
+                    
                     updateCase(5, 'PASS', duration, [
                         `Safety threshold set to 60 KG on Rack ${selectedRack}.`,
                         'Threshold update committed to DB successfully.',
@@ -569,9 +569,9 @@ const TestCenter: React.FC = () => {
 
         await delay(1200);
 
-        // ==========================================
-        // TEST 6: MATERIAL LOCATOR TEST
-        // ==========================================
+        
+        
+        
         if (generatedBarcodeId) {
             startTime = performance.now();
             updateCase(6, 'RUNNING', undefined, ['Running locate query...']);
@@ -589,7 +589,7 @@ const TestCenter: React.FC = () => {
 
                 const duration = Math.round(performance.now() - startTime);
 
-                // Soft match: find by barcode OR material_name
+                
                 const matched = Array.isArray(results)
                     ? results.find((r: any) =>
                         r.barcode === generatedBarcodeId ||
@@ -602,7 +602,7 @@ const TestCenter: React.FC = () => {
                 logToAudit(`[Test 6] Locator result: ${matched ? 'FOUND' : 'NOT FOUND'} | rack_location=${matched?.rack_location ?? 'N/A'}`);
 
                 if (matched) {
-                    // Soft rack match: rack_location should match or contain selectedRack
+                    
                     const rackMatches = !selectedRack ||
                         matched.rack_location === selectedRack ||
                         String(matched.rack_location || '').includes(selectedRack);
@@ -627,9 +627,9 @@ const TestCenter: React.FC = () => {
 
         await delay(1200);
 
-        // ==========================================
-        // TEST 7: AI TEST
-        // ==========================================
+        
+        
+        
         startTime = performance.now();
         updateCase(7, 'RUNNING', undefined, ['Verifying AI endpoints...']);
         logToAudit('[Test 7] Running data queries on predictive optimization clusters...');
@@ -655,9 +655,9 @@ const TestCenter: React.FC = () => {
             logToAudit(`[Test 7] FAILED: ${err.message}`);
         }
 
-        // ==========================================
-        // CLEANUP STEP (NON-DESTRUCTIVE CLEANUP)
-        // ==========================================
+        
+        
+        
         if (testMaterialId) {
             logToAudit('Cleaning up test data records...');
             try {
@@ -679,7 +679,7 @@ const TestCenter: React.FC = () => {
             }
         }
 
-        // Clean up temporary rack E2E-RACK-01
+        
         try {
             const racksRes = await api.getRacks();
             const racksList = racksRes.racks || racksRes.data || racksRes || [];
@@ -696,7 +696,7 @@ const TestCenter: React.FC = () => {
 
         logToAudit('E2E Automated diagnostics run complete.');
 
-        // Calculate Overall Test Score
+        
         setTestCases(prev => {
             const passed = prev.filter(t => t.status === 'PASS').length;
             const score = Math.round((passed / prev.length) * 100);
@@ -712,7 +712,7 @@ const TestCenter: React.FC = () => {
         const doc = new jsPDF();
         doc.setFont("Helvetica", "bold");
         doc.setFontSize(22);
-        doc.setTextColor(15, 23, 42); // slate-900
+        doc.setTextColor(15, 23, 42); 
         doc.text("RM Monitor - E2E Integration Audit", 14, 25);
         
         doc.setFontSize(10);
@@ -734,7 +734,7 @@ const TestCenter: React.FC = () => {
             body: rows,
             startY: 45,
             theme: 'grid',
-            headStyles: { fillColor: [79, 140, 255] }, // primary color #4F8CFF
+            headStyles: { fillColor: [79, 140, 255] }, 
             columnStyles: {
                 0: { cellWidth: 40 },
                 1: { cellWidth: 20 },
@@ -801,7 +801,7 @@ const TestCenter: React.FC = () => {
 
     return (
         <div className="space-y-8 text-slate-800">
-            {/* Header section with Stats & E2E trigger */}
+            
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
                 <div>
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-wider border border-blue-100">
@@ -828,10 +828,10 @@ const TestCenter: React.FC = () => {
                 </div>
             </div>
 
-            {/* Test Results Dashboard Area */}
+            
             {testScore !== null && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-saas-fade">
-                    {/* Final Result Card */}
+                    
                     <div className="lg:col-span-1 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl transform translate-x-8 -translate-y-8" />
                         
@@ -855,7 +855,7 @@ const TestCenter: React.FC = () => {
                         </p>
                     </div>
 
-                    {/* Report Exporters Card */}
+                    
                     <div className="lg:col-span-2 bg-slate-900 text-white p-8 rounded-3xl border border-slate-800 shadow-xl flex flex-col justify-between relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl transform translate-x-12 -translate-y-12" />
                         
@@ -873,7 +873,7 @@ const TestCenter: React.FC = () => {
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 relative">
-                            {/* PDF Button */}
+                            
                             <button
                                 onClick={downloadPDF}
                                 className="flex items-center justify-center gap-2 px-5 py-4 bg-white/5 border border-white/5 hover:bg-white/10 rounded-2xl transition-all font-bold text-xs"
@@ -882,7 +882,7 @@ const TestCenter: React.FC = () => {
                                 Export PDF
                             </button>
 
-                            {/* CSV Button */}
+                            
                             <button
                                 onClick={downloadCSV}
                                 className="flex items-center justify-center gap-2 px-5 py-4 bg-white/5 border border-white/5 hover:bg-white/10 rounded-2xl transition-all font-bold text-xs"
@@ -891,7 +891,7 @@ const TestCenter: React.FC = () => {
                                 Export CSV
                             </button>
 
-                            {/* JSON Button */}
+                            
                             <button
                                 onClick={downloadJSON}
                                 className="flex items-center justify-center gap-2 px-5 py-4 bg-white/5 border border-white/5 hover:bg-white/10 rounded-2xl transition-all font-bold text-xs"
@@ -904,9 +904,9 @@ const TestCenter: React.FC = () => {
                 </div>
             )}
 
-            {/* Main Diagnostics execution view */}
+            
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                {/* Diagnostics List */}
+                
                 <div className="lg:col-span-7 space-y-6">
                     <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
                         <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">E2E Verification Checklist</h2>
@@ -950,7 +950,7 @@ const TestCenter: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Audit Terminal Log */}
+                
                 <div className="lg:col-span-5 bg-[#0f172a] text-slate-200 rounded-3xl p-6 border border-slate-800 shadow-xl overflow-hidden flex flex-col max-h-[580px]">
                     <div className="flex items-center justify-between pb-4 border-b border-slate-800/80 mb-4 shrink-0">
                         <div className="flex items-center gap-2.5">
