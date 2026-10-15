@@ -7,7 +7,7 @@
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "cd rm-raw-material-monitoring && npm run client",
     "dev:backend": "cd backend && npm run dev",
-    "install:all": "npm install && cd rm-raw-material-monitoring && npm install && cd ../backend && npm install"
+    "install:all": "npm install && cd rm-raw-material-monitoring && npm install --legacy-peer-deps && cd ../backend && npm install"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
